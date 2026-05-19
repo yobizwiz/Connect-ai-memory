@@ -40,3 +40,4 @@ _CEO 에이전트만 읽고 쓰는 개인 노트. 학습·교훈·자주 쓰는 
 - [2026-05-19] https://www.ydmcn.com/classroom/index.jsp?cuid=17655988 → 보고서 sessions/2026-05-19T07-59/_report.md
 - [2026-05-19] https://www.ydmcn.com/classroom/viewer.jsp?cuid=17655988&lid=1647825 → 보고서 sessions/2026-05-19T08-05/_report.md
 - [2026-05-19] 링크 영상 봤어? → 보고서 sessions/2026-05-19T08-08/_report.md
+- [2026-05-19] 아니 링크준 주소의 영상을 봤냐고 → 보고서 sessions/2026-05-19T08-10/_report.md
