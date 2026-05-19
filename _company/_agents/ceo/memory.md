@@ -38,3 +38,4 @@ _CEO 에이전트만 읽고 쓰는 개인 노트. 학습·교훈·자주 쓰는 
 - [2026-05-19] 어떤 진행중인 작업이 있니? → 보고서 sessions/2026-05-19T07-48/_report.md
 - [2026-05-19] 계정 연결해주면 비디오 강의도 보고 습득할수 있니? → 보고서 sessions/2026-05-19T07-56/_report.md
 - [2026-05-19] https://www.ydmcn.com/classroom/index.jsp?cuid=17655988 → 보고서 sessions/2026-05-19T07-59/_report.md
+- [2026-05-19] https://www.ydmcn.com/classroom/viewer.jsp?cuid=17655988&lid=1647825 → 보고서 sessions/2026-05-19T08-05/_report.md
