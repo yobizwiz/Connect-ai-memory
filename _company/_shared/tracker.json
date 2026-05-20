@@ -64,6 +64,17 @@
       "sessionDir": "2026-05-19T22-34",
       "evidence": "완료: sessions/2026-05-19T22-34/_report.md\n- Researcher: 현재 시장에서 가장 불안감을 자극할 만한 '구조적 취약성' 관련 트렌드와 규제 변화 리스크를 3가지 이상 수집하고, 해당 리스크가 기업에 미칠 \n- 현빈: 수집된 리스크 데이터를 기반으로, 고객이 서비스를 인지하는 순간부터 유료 컨설팅 결제에 이르기까지의 완벽한 3단계 퍼널(Funnel) 구조를 설\n- Writer: 설계된 3단계 퍼널 구조(Awareness → Fear → Action)에 맞춰서 실제 고객에게 노출될 구체적인 카피라이팅과 시나리오를 작성해 \n\nCEO 종합 요점: ## 🗂 작업 라운드 — 누가 뭐 했나\n\n### 🔍 Researcher _(Trend & Data Researcher)_\n> 📋 **지시**: 현재 시장에서 가장 불안감을 자극할 만한 '구조적 취약성' 관련 트렌드와 규제 변화 리스크를 3가지 이상 수집하고, 해당 리스크가 기업에 미칠 수 있는 구체적인 재무 손실액(Loss Meter 기준)의 범위와 ",
       "completedAt": "2026-05-19T22:36:10.323Z"
+    },
+    {
+      "id": "20260520193608-8r1u",
+      "title": "신규 회사 설립 타당성 검토",
+      "description": "이거 회사하나 더 설립할수도 있나?",
+      "owner": "agent",
+      "createdAt": "2026-05-20T19:36:08.330Z",
+      "status": "in_progress",
+      "nudges": 0,
+      "priority": "normal",
+      "preAlarmsSent": []
     }
   ]
 }
