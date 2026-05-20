@@ -1,0 +1,136 @@
+/* ------------------------------------------ */
+/* Red Flash: 시스템 오류 및 위협 시각 효과 (CSS) */
+/* [근거: Self-RAG, Designer 메모리] */
+/* ------------------------------------------ */
+
+:root {
+    --red-zone-color: #C0392B; /* Dark Crimson - 경고/위협 주 색상 */
+    --neutral-black: #1A1A1A;  /* 배경색, 깊이감을 주는 기본 톤 */
+    --mono-font: 'Roboto Mono', monospace; /* 데이터/경고 전용 고정폭 폰트 */
+}
+
+/* ------------------------------------------ */
+/* 1. 글리치(Glitch) 애니메이션 정의 - 핵심 효과 */
+/* ------------------------------------------ */
+@keyframes glitch {
+    0% { transform: translate(0); opacity: 1; }
+    20% { transform: translate(-3px, 7px); opacity: 0.9; }
+    40% { transform: translate(3px, -5px); opacity: 0.8; }
+    60% { transform: translate(-2px, 10px); opacity: 0.7; }
+    80% { transform: translate(2px, -3px); opacity: 0.9; }
+    100% { transform: translate(0); opacity: 1; }
+}
+
+/* 글리치 클래스 적용 (적용 시 애니메이션 반복) */
+.glitch-text {
+    position: relative;
+    animation: glitch-anim 2s infinite linear alternate; /* 2초 간격으로 불안정성 부여 */
+    display: inline-block;
+}
+
+/* 글리치 효과를 위한 가상 요소 오버레이 (Chromatic Aberration 시뮬레이션) */
+.glitch-text::before,
+.glitch-text::after {
+    content: attr(data-text); /* 원본 텍스트 반복 사용 */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Red Shift (빨간색 왜곡) 오버레이 */
+.glitch-text::before {
+    left: -2px;
+    text-shadow: -2px 0 #ff00c0, 2px 0 #00aaff; /* 색상 왜곡 조합 */
+    clip: rect(4px, 9999px, 1px, 0);
+    animation: glitch-anim-before 3s infinite linear alternate;
+}
+
+/* Blue Shift (파란색 왜곡) 오버레이 */
+.glitch-text::after {
+    left: 2px;
+    text-shadow: -2px 0 #ff00c0, 2px 0 #00aaff; /* 색상 왜곡 조합 */
+    clip: rect(18px, 9999px, 56px, 0);
+    animation: glitch-anim-after 3s infinite linear alternate;
+}
+
+/* 글리치 애니메이션 키프레임 정의 (불안정성 강조) */
+@keyframes glitch-anim {
+    0% { transform: translate(0); opacity: 1; }
+    25% { transform: translate(-4px, -4px); opacity: 0.8; }
+    75% { transform: translate(4px, 4px); opacity: 0.9; }
+    100% { transform: translate(0); opacity: 1; }
+}
+
+@keyframes glitch-anim-before {
+    0%, 100% { transform: translate(-2px, 0); opacity: 0.7; }
+    50% { transform: translate(3px, -2px); opacity: 1; }
+}
+
+@keyframes glitch-anim-after {
+    0%, 100% { transform: translate(2px, 0); opacity: 0.8; }
+    50% { transform: translate(-3px, 2px); opacity: 1; }
+}
+
+
+/* ------------------------------------------ */
+/* 2. 경고 배너 (Alert Banner) 스타일링 */
+/* ------------------------------------------ */
+.red-flash-banner {
+    background-color: var(--neutral-black);
+    border: 3px solid var(--red-zone-color);
+    box-shadow: 0 0 15px rgba(192, 57, 43, 0.8); /* Red Zone Glow */
+    padding: 1rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.red-flash-banner h2 {
+    color: var(--red-zone-color);
+    font-family: var(--mono-font);
+    margin-bottom: 0.5rem;
+}
+
+/* 카운트다운 타이머 섹션 스타일 */
+.countdown-container {
+    display: flex;
+    justify-content: center;
+    gap: 3rem; /* 시간 간격 확보 */
+    margin-top: 1.5rem;
+}
+
+.time-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 80px;
+}
+
+.time-digit {
+    font-family: var(--mono-font);
+    font-size: 4rem; /* 강조를 위한 큰 사이즈 */
+    color: #FFD700; /* 경고 느낌의 노란색/금속성 색상 */
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+    padding: 0.5rem;
+}
+
+/* ------------------------------------------ */
+/* 3. 타이머 실패 시각 효과 (Critical Failure) */
+/* ------------------------------------------ */
+@keyframes flash-blink {
+    from { opacity: 1; }
+    to { opacity: 0.2; }
+}
+
+.time-digit.critical-fail {
+    animation: flash-blink 0.3s linear infinite alternate; /* 깜빡임 효과 */
+    color: var(--red-zone-color);
+    text-shadow: 0 0 15px rgba(192, 57, 43, 0.9);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
