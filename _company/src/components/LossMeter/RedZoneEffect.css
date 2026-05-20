@@ -1,0 +1,144 @@
+/* 핵심 스타일링 및 애니메이션 정의 파일 */
+/* 이 CSS는 React의 상태 변화에 따라 동적으로 클래스를 추가하여 시각적 위협을 조성합니다. */
+
+.red-zone-container {
+  position: relative;
+  overflow: hidden; /* 글리치 노이즈가 영역을 벗어나지 않게 처리 */
+  padding: 20px;
+  border: 3px solid #1A1A1A;
+  background-color: #121212;
+  box-shadow: 0 0 15px rgba(192, 57, 43, 0.8);
+}
+
+/* === Red Zone (Critical) - 공포 및 위협 극대화 === */
+.red-zone-container.active-glitch {
+  border-color: #C0392B; /* Dark Crimson */
+  background-color: rgba(192, 57, 43, 0.1);
+  animation: flash-critical 0.8s infinite alternate;
+}
+
+/* 글리치 노이즈 효과 (CSS 기반) */
+.glitch-overlay {
+  position: absolute;
+  top: -10%;
+  left: -10%;
+  width: 120%;
+  height: 120%;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 0.05),
+    rgba(255, 0, 0, 0.05) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  animation: glitch-pattern 2s infinite steps(1); /* 반복적인 글리치 패턴 */
+}
+
+@keyframes flash-critical {
+  from { box-shadow: 0 0 15px #C0392B, inset 0 0 10px rgba(192, 57, 43, 0.8); }
+  to { box-shadow: 0 0 30px #C0392B, inset 0 0 15px rgba(192, 57, 43, 1); }
+}
+
+@keyframes glitch-pattern {
+    from { transform: translate(0, 0) skewX(0deg); opacity: 0.8; }
+    to { transform: translate(-5vw, 5vh) skewX(5deg); opacity: 0.5; }
+}
+
+/* === Warning (Yellow) - 주의 단계 === */
+.red-zone-container.warning-pulse {
+  border-color: #F39C12; /* Alert Highlight Yellow */
+  background-color: rgba(243, 156, 18, 0.1);
+  animation: pulse-warning 2s infinite ease-in-out;
+}
+
+@keyframes pulse-warning {
+    from { box-shadow: 0 0 10px #F39C12; }
+    to { box-shadow: 0 0 25px #F39C12, inset 0 0 15px rgba(243, 156, 18, 0.7); }
+}
+
+/* === Status Card Styling (공통) === */
+.status-card {
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    transition: all 0.5s ease;
+}
+
+/* Red Zone의 권위적 디자인 */
+.status-critical {
+  background-color: #3a1c1c; /* 어두운 배경색으로 무게감 부여 */
+  border: 2px solid #C0392B;
+  color: white;
+}
+
+/* Warning Zone의 경고적 디자인 */
+.status-warning {
+  background-color: #4d461f; /* 어두운 황갈색 배경 */
+  border: 2px solid #F39C12;
+  color: white;
+}
+
+/* Safe Zone의 안정적 디자인 */
+.status-safe {
+    background-color: #1e3a24; /* 진한 녹색 계열 */
+    border: 2px solid #27ae60;
+    color: white;
+}
+
+.metric-box {
+  font-size: 4rem;
+  margin: 15px 0;
+}
+.loss-value {
+    display: block;
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #FFD700; /* 금색 강조 */
+}
+
+/* 입력 섹션 및 버튼 스타일링 */
+.data-input-section {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 30px;
+  padding: 20px;
+  border-bottom: 1px dashed #333;
+}
+
+.data-input-section label, .score-display {
+    min-width: 250px;
+}
+
+.analysis-button {
+  padding: 12px 40px;
+  font-size: 1.1em;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+  margin-bottom: 50px;
+}
+
+.analysis-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* 리스크 레벨에 따른 버튼 색상 */
+.analysis-button.critical {
+  background-color: #C0392B;
+  box-shadow: 0 4px #8e3127;
+}
+.analysis-button.safe {
+    background-color: #2ecc71;
+    box-shadow: 0 4px #25a660;
+}
+
+/* Summary Class */
+.risk-summary {
+  margin-top: 30px;
+  padding: 15px;
+  border-radius: 8px;
+  font-size: 1.2em;
+}
+.risk-summary.red-zone { background-color: #4d1f1f; color: #C0392B; }
+.risk-summary.warning { background-color: #5c501b; color: #F39C12; }
