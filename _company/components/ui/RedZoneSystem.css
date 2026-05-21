@@ -1,0 +1,105 @@
+/* ======================================================= */
+/* 🔴 Red Zone System: Core CSS Definitions (Global Scope)   */
+/* 위협, 경고, 오류 메시지 전반에 적용되는 스타일 정의    */
+/* ======================================================= */
+
+/* 1. 핵심 컬러 팔레트 재정의 및 사용 (Self-RAG 근거 유지) */
+:root {
+    --color-red-zone: #C0392B; /* Dark Crimson - 경고/위협 */
+    --color-authority-blue: #2980B9; /* Deep Slate Blue - 해결책/신뢰 */
+    --color-neutral-black: #1A1A1A; /* 기본 배경색 */
+}
+
+/* 2. 글리치 노이즈 효과 (Glitch Effect) */
+@keyframes glitch {
+    0% { transform: translate(0, 0); }
+    20% { transform: translate(-3px, 3px); opacity: 0.95; }
+    40% { transform: translate(3px, -3px); opacity: 1; }
+    60% { transform: translate(-2px, 2px); opacity: 0.8; }
+    80% { transform: translate(2px, -2px); opacity: 1; }
+    100% { transform: translate(0, 0); }
+}
+
+.glitch-text {
+    /* 기본 글리치 효과를 적용할 요소 */
+    position: relative;
+    display: inline-block;
+    animation: glitch 2s infinite linear alternate; /* 주기적인 깜빡임 애니메이션 */
+    font-family: 'Roboto Mono', monospace, sans-serif !important; /* 권위적이고 시스템적인 느낌 강조 */
+}
+
+/* 글리치 분해 효과를 위한 CSS::before 및 ::after 사용 (핵심 기법) */
+.glitch-text::before, .glitch-text::after {
+    content: attr(data-text); /* 원본 텍스트 내용을 가져옴 */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* ::before는 빨간색 오류 노이즈를 담당 */
+.glitch-text::before {
+    background: linear-gradient(90deg, transparent, var(--color-red-zone), transparent);
+    clip-path: inset(20% 0 75% 0); /* 노이즈가 화면 일부만 가리키게 함 */
+    animation: glitch-anim-before 0.5s infinite alternate;
+    /* 실제 글리치 효과 구현을 위해, transform과 opacity를 주기적으로 변하게 함 */
+}
+
+/* ::after는 파란색 왜곡/노이즈를 담당 */
+.glitch-text::after {
+    background: linear-gradient(90deg, transparent, #2980B9, transparent);
+    clip-path: inset(65% 0 10% 0);
+    animation: glitch-anim-after 0.5s infinite alternate;
+}
+
+/* 글리치 애니메이션 키프레임 정의 */
+@keyframes glitch-anim-before {
+    0% { transform: translate(0); }
+    25% { transform: translate(-3px, 1px); opacity: 0.8; }
+    75% { transform: translate(3px, -1px); opacity: 1;}
+}
+
+@keyframes glitch-anim-after {
+    0% { transform: translate(0); }
+    25% { transform: translate(-2px, 2px); opacity: 0.9; }
+    75% { transform: translate(2px, -2px); opacity: 1;}
+}
+
+/* 3. 크리티컬 에러 경고 박스 (RedZoneAlertBox) */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.red-zone-alert-box {
+    background-color: var(--color-red-zone);
+    border: 3px solid #FF9A8B; /* 경계선 강조 */
+    color: white;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 0 30px rgba(192, 57, 43, 0.8); /* 강렬한 그림자 */
+    animation: shake 0.5s infinite linear; /* 지속적인 진동 효과 부여 */
+}
+
+/* 4. 배경 오버레이 (Data Overload Background) */
+#data-overload-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; /* 마우스 이벤트를 통과시켜야 함 (기능성 유지) */
+    opacity: 0.15; /* 낮은 투명도로 배경에만 깔리게 설정 */
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(41, 128, 185, 0.05),
+        rgba(41, 128, 185, 0.05) 1px,
+        transparent 1px,
+        transparent 3px
+    ); /* 파란색 계열의 미세한 그리드 노이즈 */
+    animation: noise-pulse 10s infinite linear; /* 부드럽게 깜빡이는 효과 추가 */
+}
+
+@keyframes noise-pulse {
+    from { opacity: 0.15; }
+    to { opacity: 0.2; }
+}
