@@ -78,6 +78,125 @@
       "sessionDir": "2026-05-20T19-36",
       "evidence": "완료: sessions/2026-05-20T19-36/_report.md\n- Researcher: 추가 회사 설립 관련하여 한국 법률 및 세무제도 측면에서 필수적으로 검토해야 할 최신 정보(법인세, 부가가치세, 사업자 등록 절차 등)를 광범위\n- 현빈: 수집된 법률/세무 데이터를 바탕으로, 현재 yobizwiz의 목표('한달 순이익 3만불 이상')와 '잠재적 손실액 기반 리스크 보험'이라는 핵심\n- Writer: Researcher와 Business가 제공한 모든 분석 자료를 통합하여, 사용자가 당장 실행에 옮길 수 있는 형태의 매우 전문적이고 권위적인 \n\nCEO 종합 요점: ## 🗂 작업 라운드 — 누가 뭐 했나\n\n### 🔍 Researcher _(Trend & Data Researcher)_\n> 📋 **지시**: 추가 회사 설립 관련하여 한국 법률 및 세무제도 측면에서 필수적으로 검토해야 할 최신 정보(법인세, 부가가치세, 사업자 등록 절차 등)를 광범위하게 수집하고 요약하세요. 특히 '지주회사', '계열사'와 같은 구",
       "completedAt": "2026-05-20T19:38:16.423Z"
+    },
+    {
+      "id": "20260521022700-czbg",
+      "title": "모든 경고 UI 요소에 `Roboto Mono` 적용 확인.",
+      "description": "자동 등록 (Designer 산출물에서 추출)",
+      "owner": "agent",
+      "agentIds": [
+        "designer"
+      ],
+      "createdAt": "2026-05-21T02:27:00.636Z",
+      "status": "done",
+      "sessionDir": "2026-05-21T02-25",
+      "nudges": 0,
+      "priority": "normal",
+      "preAlarmsSent": [],
+      "evidence": "완료: sessions/2026-05-21T02-25/_report.md\n- 코다리: Designer와 Writer가 확정한 'Red Zone'의 최종 시스템 경고 카피와 UI 사양(Spec)을 기반으로, 실제 랜딩 페이지에 임베\n- Designer: Writer와 Researcher가 제시한 모든 리스크 테마에 공통적으로 적용될 '시스템 경고' UI 에셋(글리치, Red Flash 애니메이션\n- Writer: 모든 콘텐츠(영상, 릴스, 랜딩 페이지)에 통일적으로 사용될 'Critical Warning' 카피라이팅 가이드라인을 확정하세요. 위협의 긴급성\n\nCEO 종합 요점: ## 🗂 작업 라운드 — 누가 뭐 했나\n\n### 💻 코다리 _(시니어 풀스택 엔지니어)_\n> 📋 **지시**: Designer와 Writer가 확정한 'Red Zone'의 최종 시스템 경고 카피와 UI 사양(Spec)을 기반으로, 실제 랜딩 페이지에 임베드할 인터랙티브 CTA 코드를 완성하세요. 이 코드는 사용자가 진단 요청 버튼을 누를 때 3단계 게",
+      "completedAt": "2026-05-21T02:28:02.753Z"
+    },
+    {
+      "id": "20260521022700-fu35",
+      "title": "전체 페이지는 다크 모드 (`#1A1A1A`) 기반으로 설계 확정.",
+      "description": "자동 등록 (Designer 산출물에서 추출)",
+      "owner": "agent",
+      "agentIds": [
+        "designer"
+      ],
+      "createdAt": "2026-05-21T02:27:00.671Z",
+      "status": "done",
+      "sessionDir": "2026-05-21T02-25",
+      "nudges": 0,
+      "priority": "normal",
+      "preAlarmsSent": [],
+      "evidence": "완료: sessions/2026-05-21T02-25/_report.md\n- 코다리: Designer와 Writer가 확정한 'Red Zone'의 최종 시스템 경고 카피와 UI 사양(Spec)을 기반으로, 실제 랜딩 페이지에 임베\n- Designer: Writer와 Researcher가 제시한 모든 리스크 테마에 공통적으로 적용될 '시스템 경고' UI 에셋(글리치, Red Flash 애니메이션\n- Writer: 모든 콘텐츠(영상, 릴스, 랜딩 페이지)에 통일적으로 사용될 'Critical Warning' 카피라이팅 가이드라인을 확정하세요. 위협의 긴급성\n\nCEO 종합 요점: ## 🗂 작업 라운드 — 누가 뭐 했나\n\n### 💻 코다리 _(시니어 풀스택 엔지니어)_\n> 📋 **지시**: Designer와 Writer가 확정한 'Red Zone'의 최종 시스템 경고 카피와 UI 사양(Spec)을 기반으로, 실제 랜딩 페이지에 임베드할 인터랙티브 CTA 코드를 완성하세요. 이 코드는 사용자가 진단 요청 버튼을 누를 때 3단계 게",
+      "completedAt": "2026-05-21T02:28:02.792Z"
+    },
+    {
+      "id": "20260521022700-dkwx",
+      "title": "Red Flash와 Glitch 애니메이션은 단순 CSS가 아닌, **시간적 흐름**을 가진 이벤트로 처리 (JS/TS 필요).",
+      "description": "자동 등록 (Designer 산출물에서 추출)",
+      "owner": "agent",
+      "agentIds": [
+        "designer"
+      ],
+      "createdAt": "2026-05-21T02:27:00.706Z",
+      "status": "done",
+      "sessionDir": "2026-05-21T02-25",
+      "nudges": 0,
+      "priority": "normal",
+      "preAlarmsSent": [],
+      "evidence": "완료: sessions/2026-05-21T02-25/_report.md\n- 코다리: Designer와 Writer가 확정한 'Red Zone'의 최종 시스템 경고 카피와 UI 사양(Spec)을 기반으로, 실제 랜딩 페이지에 임베\n- Designer: Writer와 Researcher가 제시한 모든 리스크 테마에 공통적으로 적용될 '시스템 경고' UI 에셋(글리치, Red Flash 애니메이션\n- Writer: 모든 콘텐츠(영상, 릴스, 랜딩 페이지)에 통일적으로 사용될 'Critical Warning' 카피라이팅 가이드라인을 확정하세요. 위협의 긴급성\n\nCEO 종합 요점: ## 🗂 작업 라운드 — 누가 뭐 했나\n\n### 💻 코다리 _(시니어 풀스택 엔지니어)_\n> 📋 **지시**: Designer와 Writer가 확정한 'Red Zone'의 최종 시스템 경고 카피와 UI 사양(Spec)을 기반으로, 실제 랜딩 페이지에 임베드할 인터랙티브 CTA 코드를 완성하세요. 이 코드는 사용자가 진단 요청 버튼을 누를 때 3단계 게",
+      "completedAt": "2026-05-21T02:28:02.829Z"
+    },
+    {
+      "id": "20260521022700-u9ff",
+      "title": "게이트키퍼 로직과 연동될 `GatekeeperCTA` 컴포넌트의 스펙에 위의 타이밍 스펙 적용.",
+      "description": "자동 등록 (Designer 산출물에서 추출)",
+      "owner": "agent",
+      "agentIds": [
+        "designer"
+      ],
+      "createdAt": "2026-05-21T02:27:00.739Z",
+      "status": "done",
+      "sessionDir": "2026-05-21T02-25",
+      "nudges": 0,
+      "priority": "normal",
+      "preAlarmsSent": [],
+      "evidence": "완료: sessions/2026-05-21T02-25/_report.md\n- 코다리: Designer와 Writer가 확정한 'Red Zone'의 최종 시스템 경고 카피와 UI 사양(Spec)을 기반으로, 실제 랜딩 페이지에 임베\n- Designer: Writer와 Researcher가 제시한 모든 리스크 테마에 공통적으로 적용될 '시스템 경고' UI 에셋(글리치, Red Flash 애니메이션\n- Writer: 모든 콘텐츠(영상, 릴스, 랜딩 페이지)에 통일적으로 사용될 'Critical Warning' 카피라이팅 가이드라인을 확정하세요. 위협의 긴급성\n\nCEO 종합 요점: ## 🗂 작업 라운드 — 누가 뭐 했나\n\n### 💻 코다리 _(시니어 풀스택 엔지니어)_\n> 📋 **지시**: Designer와 Writer가 확정한 'Red Zone'의 최종 시스템 경고 카피와 UI 사양(Spec)을 기반으로, 실제 랜딩 페이지에 임베드할 인터랙티브 CTA 코드를 완성하세요. 이 코드는 사용자가 진단 요청 버튼을 누를 때 3단계 게",
+      "completedAt": "2026-05-21T02:28:02.863Z"
+    },
+    {
+      "id": "20260521054121-4s76",
+      "title": "모든 애니메이션은 `requestAnimationFrame` 기반으로 부드럽게 처리해야 합니다.",
+      "description": "자동 등록 (Designer 산출물에서 추출)",
+      "owner": "agent",
+      "agentIds": [
+        "designer"
+      ],
+      "createdAt": "2026-05-21T05:41:21.389Z",
+      "status": "done",
+      "sessionDir": "2026-05-21T05-40",
+      "nudges": 0,
+      "priority": "normal",
+      "preAlarmsSent": [],
+      "evidence": "완료: sessions/2026-05-21T05-40/_report.md\n- Writer: 랜딩 페이지의 '무료 진단 요청' 제출 버튼 바로 위 영역(Pre-Conversion Zone)에 들어갈 핵심 카피 세트를 작성해 주세요. 이 \n- Designer: Writer가 제공할 랜딩 페이지의 '시스템 경고' 섹션(Pre-Conversion Zone)에 사용할 디자인 가이드를 확정해 주세요. 특히, \n\nCEO 종합 요점: ## 🗂 작업 라운드 — 누가 뭐 했나\n\n### ✍️ Writer _(Copywriter)_\n> 📋 **지시**: 랜딩 페이지의 '무료 진단 요청' 제출 버튼 바로 위 영역(Pre-Conversion Zone)에 들어갈 핵심 카피 세트를 작성해 주세요. 이 카피는 사용자가 스스로 리스크를 느끼고 공포와 긴급함을 극대화하도록 유도해야 합니다. 다음 요소를",
+      "completedAt": "2026-05-21T05:41:53.388Z"
+    },
+    {
+      "id": "20260521054121-i1uu",
+      "title": "`$Y$` 값 출력 시, 금액 단위마다 글자가 개별적으로 타이핑되는 효과(Typewriter Effect)를 적용합니다.",
+      "description": "자동 등록 (Designer 산출물에서 추출)",
+      "owner": "agent",
+      "agentIds": [
+        "designer"
+      ],
+      "createdAt": "2026-05-21T05:41:21.425Z",
+      "status": "done",
+      "sessionDir": "2026-05-21T05-40",
+      "nudges": 0,
+      "priority": "normal",
+      "preAlarmsSent": [],
+      "evidence": "완료: sessions/2026-05-21T05-40/_report.md\n- Writer: 랜딩 페이지의 '무료 진단 요청' 제출 버튼 바로 위 영역(Pre-Conversion Zone)에 들어갈 핵심 카피 세트를 작성해 주세요. 이 \n- Designer: Writer가 제공할 랜딩 페이지의 '시스템 경고' 섹션(Pre-Conversion Zone)에 사용할 디자인 가이드를 확정해 주세요. 특히, \n\nCEO 종합 요점: ## 🗂 작업 라운드 — 누가 뭐 했나\n\n### ✍️ Writer _(Copywriter)_\n> 📋 **지시**: 랜딩 페이지의 '무료 진단 요청' 제출 버튼 바로 위 영역(Pre-Conversion Zone)에 들어갈 핵심 카피 세트를 작성해 주세요. 이 카피는 사용자가 스스로 리스크를 느끼고 공포와 긴급함을 극대화하도록 유도해야 합니다. 다음 요소를",
+      "completedAt": "2026-05-21T05:41:53.421Z"
+    },
+    {
+      "id": "20260521054121-isru",
+      "title": "마우스 오버/호버 이벤트가 발생해도 애니메이션 플로우가 중단되어서는 안 됩니다. (사용자의 액션은 '진단 요청' 버튼 클릭에만 집중되어야 합니다.)",
+      "description": "자동 등록 (Designer 산출물에서 추출)",
+      "owner": "agent",
+      "agentIds": [
+        "designer"
+      ],
+      "createdAt": "2026-05-21T05:41:21.463Z",
+      "status": "done",
+      "sessionDir": "2026-05-21T05-40",
+      "nudges": 0,
+      "priority": "normal",
+      "preAlarmsSent": [],
+      "evidence": "완료: sessions/2026-05-21T05-40/_report.md\n- Writer: 랜딩 페이지의 '무료 진단 요청' 제출 버튼 바로 위 영역(Pre-Conversion Zone)에 들어갈 핵심 카피 세트를 작성해 주세요. 이 \n- Designer: Writer가 제공할 랜딩 페이지의 '시스템 경고' 섹션(Pre-Conversion Zone)에 사용할 디자인 가이드를 확정해 주세요. 특히, \n\nCEO 종합 요점: ## 🗂 작업 라운드 — 누가 뭐 했나\n\n### ✍️ Writer _(Copywriter)_\n> 📋 **지시**: 랜딩 페이지의 '무료 진단 요청' 제출 버튼 바로 위 영역(Pre-Conversion Zone)에 들어갈 핵심 카피 세트를 작성해 주세요. 이 카피는 사용자가 스스로 리스크를 느끼고 공포와 긴급함을 극대화하도록 유도해야 합니다. 다음 요소를",
+      "completedAt": "2026-05-21T05:41:53.454Z"
     }
   ]
 }
