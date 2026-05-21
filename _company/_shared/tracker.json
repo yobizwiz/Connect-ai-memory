@@ -197,6 +197,17 @@
       "preAlarmsSent": [],
       "evidence": "완료: sessions/2026-05-21T05-40/_report.md\n- Writer: 랜딩 페이지의 '무료 진단 요청' 제출 버튼 바로 위 영역(Pre-Conversion Zone)에 들어갈 핵심 카피 세트를 작성해 주세요. 이 \n- Designer: Writer가 제공할 랜딩 페이지의 '시스템 경고' 섹션(Pre-Conversion Zone)에 사용할 디자인 가이드를 확정해 주세요. 특히, \n\nCEO 종합 요점: ## 🗂 작업 라운드 — 누가 뭐 했나\n\n### ✍️ Writer _(Copywriter)_\n> 📋 **지시**: 랜딩 페이지의 '무료 진단 요청' 제출 버튼 바로 위 영역(Pre-Conversion Zone)에 들어갈 핵심 카피 세트를 작성해 주세요. 이 카피는 사용자가 스스로 리스크를 느끼고 공포와 긴급함을 극대화하도록 유도해야 합니다. 다음 요소를",
       "completedAt": "2026-05-21T05:41:53.454Z"
+    },
+    {
+      "id": "20260521180706-14qv",
+      "title": "YouTube 콘텐츠 제작 파이프라인 개발 (기술 구현)",
+      "description": "일단 하던 작업 계속해",
+      "owner": "agent",
+      "createdAt": "2026-05-21T18:07:06.375Z",
+      "status": "in_progress",
+      "nudges": 0,
+      "priority": "normal",
+      "preAlarmsSent": []
     }
   ]
 }
