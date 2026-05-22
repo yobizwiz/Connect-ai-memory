@@ -1,72 +1,106 @@
-/**
- * PaymentService: 모든 결제 게이트웨이 통신을 추상화합니다.
- * 실제 PayPal, Stripe 등 외부 SDK 호출 로직은 이곳에 분리되어야 합니다.
- */
-export class TransactionError extends Error {
-    constructor(message: string, public code: string) {
-        super(message);
-        this.name = 'TransactionError';
-    }
-}
+// paymentService.ts: 결제 및 위험 평가 통합 비즈니스 로직 처리
+import { PaymentGateway, PaymentError } from './interfaces';
 
 /**
- * 결제 트랜잭션 결과를 정의하는 타입입니다.
+ * @description 외부 API 호출의 안정성을 위한 재시도 횟수 제한 (Exponential Backoff)
+ * @param fn 실행할 함수
+ * @param maxRetries 최대 재시도 횟수
  */
-export type PaymentResult = {
-    success: boolean;
-    transactionId: string;
-    statusMessage: string;
+async function retryWithBackoff<T>(fn: () => Promise<T>, maxRetries: number = 3): Promise<T> {
+    let lastError: Error | null = null;
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+        try {
+            console.log(`[PaymentService] Attempt #${attempt + 1} 실행 시도...`);
+            return await fn();
+        } catch (e) {
+            lastError = e as Error;
+            // 지수 백오프: 2^attempt * 1000ms 마다 대기 (1s, 2s, 4s...)
+            const delay = Math.pow(2, attempt) * 1000;
+            console.warn(`[PaymentService] 실패 감지. ${delay / 1000}초 후 재시도합니다. 에러: ${e instanceof Error ? e.message : '알 수 없는 오류'}`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+        }
+    }
+    // 모든 시도가 실패했을 경우 최종적으로 에러를 던집니다.
+    throw new PaymentError(`결제 게이트웨이 연동에 실패했습니다. 최대 재시도 횟수(${maxRetries}) 초과. 마지막 오류: ${lastError?.message}`);
+}
+
+
+/**
+ * @description 최소 보험료 지불을 처리하는 메인 트랜잭션 로직 (Core Business Logic)
+ * @param treValue 총 위험 노출액 (Total Risk Exposure). 고객에게 보여주는 핵심 데이터.
+ * @param premiumAmount 계산된 최소 보험료 금액.
+ * @returns 성공적으로 결제 및 처리가 완료되었음을 나타내는 객체.
+ */
+export async function processMinimumPremiumPayment(treValue: number, premiumAmount: number): Promise<{ success: boolean; transactionId: string }> {
+    console.log(`\n[CORE LOGIC] TRE 기반 보험료 지불 프로세스 시작.`);
+
+    // 1. 입력 유효성 검사 (Guard Clause)
+    if (isNaN(treValue) || treValue <= 0 || isNaN(premiumAmount) || premiumAmount <= 0) {
+        throw new PaymentError("TRE 또는 최소 보험료 금액이 유효하지 않습니다. 데이터 흐름을 점검해주세요.");
+    }
+
+    // 2. 결제 게이트웨이 호출 (재시도 메커니즘 적용)
+    const paymentResult = await retryWithBackoff(async () => {
+        if (paymentGateway === 'PAYPAL') {
+            return StripePaymentService.processPayment({ amount: premiumAmount, token: "mock_token" }); // Mock API 호출
+        } else if (paymentGateway === 'STRIPE') {
+            // 실제 환경에서는 이 부분에 Stripe SDK 연동 코드가 들어갑니다.
+            return PayPalPaymentService.processPayment({ amount: premiumAmount, token: "mock_token" }); 
+        } else {
+             throw new PaymentError("지원되지 않는 결제 게이트웨이입니다.");
+        }
+    });
+
+    // 3. 성공 후 로직 처리 (핵심 가치 부여)
+    console.log(`[CORE LOGIC] ✅ 트랜잭션 ${paymentResult.transactionId} 완료. 고객의 생존 위협 리스크가 해소되었습니다.`);
+    return { success: true, transactionId: paymentResult.transactionId };
+}
+
+// ===============================================
+// MOCK GATEWAY SERVICES (실제 환경에서는 API 클라이언트 호출)
+// ===============================================
+
+const paymentGateway = process.env.PAYMENT_GATEWAY || 'STIPE'; // 환경 변수로 게이트웨이 결정
+
+/** @type {PaymentGateway} */
+interface PaymentGateway {
+    TYPE: "PAYPAL" | "STRIPE";
+}
+
+export const StripePaymentService = {
+    async processPayment(data: { amount: number; token: string }): Promise<{ transactionId: string }> {
+        // 실제로는 axios.post('stripe/api', ...) 등이 들어갑니다.
+        console.log(`[MOCK API] 💰 Stripe를 통해 ${data.amount} 처리 시도...`);
+        await new Promise(resolve => setTimeout(resolve, Math.random() * 50 + 100)); // 네트워크 지연 시뮬레이션
+        if (Math.random() < 0.1) { // 10% 확률로 실패 시뮬레이션
+            throw new PaymentError("Stripe API: 일시적인 서버 과부하 오류 발생.");
+        }
+        return { transactionId: `mock_txn_${Date.now()}_STRIPE` };
+    }
 };
 
-/**
- * 가상의 금액 단위 (USD)를 사용합니다. 실제 시스템에서는 소수점 처리에 매우 주의해야 합니다.
- */
-export interface PurchasePayload {
-    userId: string;
-    amountCents: number; // 센트 단위로 받습니다.
-    purchaseType: 'AUDIT_RIGHT' | 'PREMIUM_DIAGNOSTICS';
+export const PayPalPaymentService = {
+    async processPayment(data: { amount: number; token: string }): Promise<{ transactionId: string }> {
+        // 실제로는 SDK 연동이 들어갑니다.
+        console.log(`[MOCK API] 💳 PayPal을 통해 ${data.amount} 처리 시도...`);
+        await new Promise(resolve => setTimeout(resolve, Math.random() * 50 + 100)); // 네트워크 지연 시뮬레이션
+        if (Math.random() < 0.1) { // 10% 확률로 실패 시뮬레이션
+            throw new PaymentError("PayPal API: 계정 인증 오류 발생.");
+        }
+        return { transactionId: `mock_txn_${Date.now()}_PAYPAL` };
+    }
+};
+
+// ===============================================
+// INTERFACES AND UTILITIES
+// ===============================================
+
+export class PaymentError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = "PaymentError";
+    }
 }
 
-/**
- * 결제 게이트웨이와의 상호작용을 시뮬레이션합니다.
- * @param payload - 구매 요청 페이로드 (사용자 ID, 금액 센트, 상품 유형)
- * @returns Promise<PaymentResult>
- */
-export async function processPayment(payload: PurchasePayload): Promise<PaymentResult> {
-    console.log(`[SYSTEM LOG] Initiating payment transaction for User ${payload.userId} (${payload.purchaseType}). Amount: $${(payload.amountCents / 100).toFixed(2)}`);
-
-    // --- [Critical Logic Point] 실제 외부 API 호출 시뮬레이션 영역 ---
-    await new Promise(resolve => setTimeout(resolve, 500)); // 네트워크 지연 시간 모방
-
-    // 1. 가짜 실패 조건: 금액이 너무 적거나 유효하지 않은 경우 (Client-side Validation Failure)
-    if (!payload.userId || payload.amountCents <= 0) {
-        throw new TransactionError("Invalid payment parameters detected.", "ERR_INVALID_PAYLOAD");
-    }
-
-    // 2. 가짜 실패 조건: 재고 또는 시스템 한계 초과 (Server-side Constraint Failure)
-    if (payload.purchaseType === 'AUDIT_RIGHT' && payload.amountCents < 10000) { // 예시: 최소 $100 필요 가정
-        throw new TransactionError("Minimum required investment for Audit Right is $100.", "ERR_MINIMUM_INVESTMENT");
-    }
-
-    // 3. 가짜 실패 조건: 네트워크 또는 게이트웨이 문제 (External System Failure)
-    if (Math.random() < 0.1) { // 10% 확률로 시스템 오류 발생 시뮬레이션
-        throw new TransactionError("Payment Gateway connection timed out or declined.", "ERR_GATEWAY_TIMEOUT");
-    }
-
-    // 성공 로직
-    const transactionId = `txn_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
-    return {
-        success: true,
-        transactionId: transactionId,
-        statusMessage: "Transaction successfully processed and Audit Right activated.",
-    };
-}
-
-/**
- * 사용자의 구매 이력을 데이터베이스에 저장하는 로직을 시뮬레이션합니다.
- */
-export async function recordPurchaseHistory(userId: string, payload: PurchasePayload, result: PaymentResult): Promise<boolean> {
-    console.log(`[SYSTEM LOG] Recording transaction history for User ${userId}. Status: ${result.statusMessage}`);
-    // 실제 DB 호출 로직이 들어갑니다 (e.g., await db.save(historyData))
-    return true; // 성공 가정
-}
+/** @type {PaymentGateway} */
+export type PaymentGateways = PaymentGateway;
