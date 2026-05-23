@@ -12,7 +12,7 @@ describe('MockThreatIndexService Integration Test (E2E Flow)', () => {
     };
 
     // 테스트를 위한 가상의 Critical Alert 컴포넌트 Mocking (실제 환경에서는 이 컴포넌트를 직접 호출하는 대신, 데이터 구조 검증에 집중함)
-    jest.mock('../../components/CredibilitySection', () => ({ __esModule: true, default: jest.fn(() => <div>Mock Credibility Section</div>) }));
+    jest.mock('../../components/credibility-section/CredibilitySection', () => ({ __esModule: true, default: jest.fn(() => <div>Mock Credibility Section</div>) }));
 
 
     test('1. Low Risk Scenario: 위협 지수가 낮을 때 정상적으로 데이터를 처리하는지 검증합니다.', async () => {

@@ -4,12 +4,25 @@
  */
 
 // 리스크 레벨 정의 (Enum 사용 권장)
-export type RiskLevel = 'LOW' | 'MEDIUM' | 'HIGH';
+export type RiskLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 
 interface ThreatIndexData {
     index: number; // 0 ~ 100 사이의 지수
     riskLevel: RiskLevel;
     message: string;
+}
+
+export interface ThreatInputData {
+    externalApiCall1: string;
+    regulatoryCheckResult: string;
+    userBehaviorAnomalyScore: number;
+}
+
+export interface ThreatReport {
+    threatIndex: number;
+    riskLevel: 'LOW' | 'MEDIUM' | 'CRITICAL';
+    reportData: { details: string };
+    isCriticalAlertTriggered: boolean;
 }
 
 /**
@@ -22,7 +35,7 @@ export const fetchThreatIndex = async (systemId: string): Promise<ThreatIndexDat
 
     // 1초에서 2초 사이의 임의 지연을 주어 실제 네트워크 호출 느낌을 줍니다.
     const delay = Math.random() * 1000 + 1000;
-    await new Promise(resolve => setTimeout(resolve, delay));
+    await new Promise<void>(resolve => setTimeout(() => resolve(), delay));
 
     // 가상의 위험도 로직: 시스템 ID에 따라 임의로 리스크를 결정합니다.
     let index: number;
@@ -52,3 +65,50 @@ export const fetchThreatIndex = async (systemId: string): Promise<ThreatIndexDat
     console.log(`[API Call] Threat Index 조회 완료 - Risk Level: ${result.riskLevel}`);
     return result;
 };
+
+/**
+ * 입력 데이터(외부 API 호출 결과, 규제 체크 결과, 비정상 행위 점수 등)를 바탕으로
+ * 위협 보고서 데이터를 계산하여 반환합니다.
+ */
+export const calculateThreat = async (data: ThreatInputData): Promise<ThreatReport> => {
+    const isCritical = 
+        data.externalApiCall1.includes('CRITICAL') || 
+        data.regulatoryCheckResult.includes('IMMEDIATE') || 
+        data.userBehaviorAnomalyScore >= 0.9;
+        
+    const isMedium = 
+        data.externalApiCall1.includes('Minor') || 
+        data.regulatoryCheckResult.includes('Review') || 
+        data.userBehaviorAnomalyScore >= 0.4;
+
+    let threatIndex = 0.15;
+    let riskLevel: 'LOW' | 'MEDIUM' | 'CRITICAL' = 'LOW';
+    let details = 'Minimal risk detected.';
+    let isCriticalAlertTriggered = false;
+
+    if (isCritical) {
+        threatIndex = 0.98;
+        riskLevel = 'CRITICAL';
+        details = 'SYSTEMIC FAILURE IMMINENT. IMMEDIATE ACTION REQUIRED.';
+        isCriticalAlertTriggered = true;
+    } else if (isMedium) {
+        threatIndex = 0.6;
+        riskLevel = 'MEDIUM';
+        details = 'Potential compliance gap detected.';
+        isCriticalAlertTriggered = false;
+    }
+
+    return {
+        threatIndex,
+        riskLevel,
+        reportData: { details },
+        isCriticalAlertTriggered
+    };
+};
+
+const MockThreatIndexService = {
+    fetchThreatIndex,
+    calculateThreat,
+};
+
+export default MockThreatIndexService;
