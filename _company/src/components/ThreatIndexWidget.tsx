@@ -1,5 +1,6 @@
 import React from 'react';
-import { RiskLevel } from '../types/risk'; // 타입 정의는 별도 파일로 가정합니다.
+
+export type RiskLevel = 'NORMAL' | 'WARNING' | 'CRITICAL';
 
 // Designer님이 제공한 스펙을 기반으로 컴포넌트를 설계합니다.
 interface ThreatIndexProps {
