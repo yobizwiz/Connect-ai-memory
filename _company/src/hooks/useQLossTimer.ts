@@ -12,29 +12,26 @@ export const useQLossTimer = (initialRisk: number = 5) => {
   const [currentQLoss, setCurrentQLoss] = useState(Math.min(100, initialRisk));
   const [isRedZoneActive, setIsRedZoneActive] = useState(false);
 
-  // 시간 경과에 따른 QLoss 상승 로직 (매 5초마다 위험 증가)
+  // 1. 시간 경과에 따른 QLoss 상승 타이머 로직 (매 5초마다 위험 증가)
+  // [WHY] 상태 종속성을 최소화하여 5초 인터벌 주기가 리셋 없이 정확하고 일정하게 보장됩니다.
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setCurrentQLoss(prevLoss => {
-        if (prevLoss >= 100) return 100; // 상한선 제한
-        // 시간 경과에 따른 기본 손실률: -5점/5초
-        let newLoss = prevLoss + 5;
-
-        // [WHY] QLoss가 임계치(85)에 도달하면 Red Zone 플래싱을 강제 발동시켜야 합니다.
-        if (newLoss >= 85 && !isRedZoneActive) {
-          setIsRedZoneActive(true);
-        } else if (newLoss < 85 && isRedZoneActive) {
-            // 임계치 아래로 내려가면 Red Zone을 해제하는 로직은 복잡하므로, 일단 유지하도록 합니다.
-            // 혹은 사용자 행동이 있을 때만 재설정합니다.
-        }
-
-        return Math.min(100, newLoss);
-      });
+      setCurrentQLoss(prevLoss => Math.min(100, prevLoss + 5));
     }, 5000); // 5초 간격으로 실행
 
     // 클린업 함수: 인터벌을 반드시 해제해야 메모리 누수를 막습니다.
     return () => clearInterval(intervalId);
-  }, [isRedZoneActive]);
+  }, []);
+
+  // 2. QLoss 위험도 변화에 따른 Red Zone 동기화 로직 (Side-Effect 격리)
+  // [WHY] 리액트의 functional state setter 내부에서 다른 상태(setIsRedZoneActive)를 갱신하던 안티패턴을 제거했습니다.
+  useEffect(() => {
+    if (currentQLoss >= 85) {
+      setIsRedZoneActive(true);
+    } else {
+      setIsRedZoneActive(false);
+    }
+  }, [currentQLoss]);
 
 
   /**
@@ -52,7 +49,6 @@ export const useQLossTimer = (initialRisk: number = 5) => {
     }
 
     setCurrentQLoss(prevLoss => Math.max(0, prevLoss - reductionFactor));
-    setIsRedZoneActive(false);
   }, []);
 
 
