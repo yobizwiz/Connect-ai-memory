@@ -1,5 +1,11 @@
 // src/utils/riskCalculators.ts: QLoss 시간 감쇠 및 증폭 로직 관리 (핵심 비즈니스)
 
+declare global {
+    interface Window {
+        initialLoadTime?: number;
+    }
+}
+
 /**
  * 초기 리스크 손실액을 계산하는 함수. (기존 구현 활용 가정)
  */
@@ -16,7 +22,8 @@ export const calculateInitialLoss = (formData: FormData): number => {
  * @returns 증가된 QLoss 값
  */
 export const calculateTimeDecay = (prevLoss: number, currentTime: number): number => {
-    const elapsedSeconds = Math.floor((currentTime - window.initialLoadTime) / 1000); // 가정된 초기 로드 시간 사용
+    const initialTime = typeof window !== 'undefined' ? window.initialLoadTime || currentTime : currentTime;
+    const elapsedSeconds = Math.floor((currentTime - initialTime) / 1000); // 안전하게 초기 로드 시간 획득
     if (elapsedSeconds < 5) return prevLoss;
 
     // Time Decay Formula: Loss increases by a factor based on the logarithm of time elapsed.
