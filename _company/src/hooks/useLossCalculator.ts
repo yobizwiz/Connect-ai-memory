@@ -7,11 +7,22 @@ interface LossState {
   isTimerRunning: boolean;
 }
 
-const INITIAL_LOSS = 0;
+interface LossCalculatorReturn extends LossState {
+  triggerActionFailureSpike: (spikeAmount: number) => void;
+}
+
 const TIME_INTERVAL_MS = 1000; // 1 second interval for demonstration
 const LOSS_PER_SECOND = 5; // $Loss per second
 
-export const useLossCalculator = (initialQLoss: number): LossState => {
+// Hoist helper function for initialization safety
+function calculateRiskLevel(scaledQLoss: number): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
+  if (scaledQLoss < 20) return 'LOW';
+  if (scaledQLoss < 50) return 'MEDIUM';
+  if (scaledQLoss < 80) return 'HIGH';
+  return 'CRITICAL'; // Above 80 -> Critical
+}
+
+export const useLossCalculator = (initialQLoss: number): LossCalculatorReturn => {
   const [lossState, setLossState] = useState<LossState>({
     currentQLoss: initialQLoss,
     riskLevel: 'LOW',
@@ -47,22 +58,16 @@ export const useLossCalculator = (initialQLoss: number): LossState => {
     return () => clearInterval(intervalId);
   }, [calculateTimeLoss, lossState.isTimerRunning]);
 
-
-  // Simple risk calculation logic based on QLoss (0 to 1000)
-  const calculateRiskLevel = (scaledQLoss: number): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' => {
-    if (scaledQLoss < 20) return 'LOW';
-    if (scaledQLoss < 50) return 'MEDIUM';
-    if (scaledQLoss < 80) return 'HIGH';
-    return 'CRITICAL'; // Above 80 -> Critical
-  };
-
   // Initial calculation to set the correct state on mount
   useEffect(() => {
     setLossState(prev => ({
       ...prev,
       riskLevel: calculateRiskLevel(Math.floor((initialQLoss / 10) * 1)),
     }));
-  }, [calculateTimeLoss]);
+  }, [initialQLoss]);
 
-  return lossState;
+  return {
+    ...lossState,
+    triggerActionFailureSpike,
+  };
 };

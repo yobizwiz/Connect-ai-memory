@@ -60,8 +60,8 @@ const QLossGauge: React.FC<QLossGaugeProps> = ({ qlossValue, isCritical }) => {
 
                 {/* Static Gauge Fill (The actual $QLoss$ line) */}
                 <div
-                    className={`absolute top-0 left-0 h-full rounded-[2px] transition-all duration-700 ease-out`}
-                    style={{ width: `${qlossValue}%`, backgroundColor: styles.colorClass.replace('bg-', 'bg-') }}
+                    className={`absolute top-0 left-0 h-full rounded-[2px] transition-all duration-700 ease-out ${styles.colorClass}`}
+                    style={{ width: `${qlossValue}%` }}
                 ></div>
             </div>
 

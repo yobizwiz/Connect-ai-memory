@@ -47,14 +47,17 @@ const ReportViewerPrototype: React.FC = () => {
     return () => clearInterval(timer);
   }, [timeLeft, isLocked]);
 
-  // 2. 게이트키핑 로직 (조건부 경고 활성화)
+  // 2. 게이트키핑 로직 (조건부 경고 활성화 및 타이머 클린업 버그 수정)
   useEffect(() => {
     if (data.riskScore < 50 && timeLeft > 0 && !isLocked) {
       // 리스크가 특정 임계점(50점) 이하로 떨어지면, 시간적 긴급성을 무시하고 강제 경고를 발생시키는 로직 시뮬레이션
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         alert("🚨 경고: 리스크 점수가 안전 수준으로 판단되어 추가적인 심층 분석이 필요합니다. 지금 전문가에게 문의하여 '시스템적 공백'을 채우십시오!");
         setIsLocked(true); // 시스템 잠금 상태로 전환
       }, 5000);
+
+      // 클린업 함수 반환: 디펜던시(timeLeft 등)가 계속 변할 때 이전 타이머 누적을 방지하여 alert 무한 루프 방지
+      return () => clearTimeout(timeoutId);
     }
   }, [data.riskScore, timeLeft, isLocked]);
 
@@ -71,9 +74,9 @@ const ReportViewerPrototype: React.FC = () => {
       </h2>
 
       {/* 🚨 타이머 및 게이트키핑 섹션 (가장 눈에 띄게 구현) */}
-      <div className={`p-4 mb-6 rounded-lg text-center ${riskClass}`}>
-        <h3 className="text-xl font-extrabold tracking-widest uppercase">
-          남은 분석 시간: <span className="text-white text-2xl">{timeLeft}초</span>
+      <div className={`p-4 mb-6 rounded-lg text-center text-white ${riskClass}`}>
+        <h3 className="text-xl font-extrabold tracking-widest uppercase text-white">
+          남은 분석 시간: <span className="text-white text-2xl font-mono">{timeLeft}초</span>
         </h3>
         {isLocked && (
             <div className="mt-2 p-2 bg-black rounded text-yellow-300 font-mono animate-pulse">
