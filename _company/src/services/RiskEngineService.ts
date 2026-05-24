@@ -34,7 +34,8 @@ export const calculateStructuralRisk = (externalData: Record<string, number>): R
     let totalRiskScore = (complianceScore * 0.4) + (volatilityScore * 0.35) + (efficiencyScore * 0.25);
 
     // 점수는 0에서 100 사이로 클리핑하고, 소수점 처리
-    totalRiskScore = Math.min(Math.max(totalRiskScore, 0), 100).toFixed(2);
+    totalRiskScore = Math.min(Math.max(totalRiskScore, 0), 100);
+    totalRiskScore = Math.round(totalRiskScore * 100) / 100; // 소수점 둘째 자리 반올림
 
     let threatLevel: ThreatLevel;
     let summaryTitle: string;
@@ -42,15 +43,15 @@ export const calculateStructuralRisk = (externalData: Record<string, number>): R
     let requiredAction: Array<{ title: string, details: string, isPaidSolutionRequired: boolean }>;
 
     // 3. 리스크 레벨에 따른 결과 구조화 (Gatekeeper Alert 로직)
-    if (parseFloat(totalRiskScore) > 75) {
+    if (totalRiskScore > 75) {
         threatLevel = "CRITICAL";
         summaryTitle = "🚨 [RED ZONE 경고] 시스템적 생존 위협 감지: 즉각적인 프로세스 강제 개입 필요.";
-        description = `현재 구조적 리스크 점수 ${totalRiskScore}점은 치명적 수준입니다. 이대로 방치할 경우, 수백만 달러 규모의 재무적 손실을 초래할 가능성이 높습니다.`;
+        description = `현재 구조적 리스크 점수 ${totalRiskScore.toFixed(2)}점은 치명적 수준입니다. 이대로 방치할 경우, 수백만 달러 규모의 재무적 손실을 초래할 가능성이 높습니다.`;
         requiredAction = [
             { title: "Guardian Protocol 가입", details: "위협 지수 기반 자동 모니터링 및 실시간 개입 시스템을 구축해야 합니다.", isPaidSolutionRequired: true },
             { title: "전문가 긴급 진단 요청", details: "yobizwiz의 고권위 진단을 통해 위험 벡터를 재정의해야 합니다.", isPaidSolutionRequired: true }
         ];
-    } else if (parseFloat(totalRiskScore) > 45) {
+    } else if (totalRiskScore > 45) {
         threatLevel = "HIGH";
         summaryTitle = `⚠️ [주의] 구조적 결함 감지: ${Math.floor(totalRiskScore)}점, 모니터링 강화 필요.`;
         description = `현재 시스템은 잠재적인 취약점을 내포하고 있습니다. 근본 원인 분석을 통해 리스크를 관리해야 합니다.`;
@@ -67,7 +68,7 @@ export const calculateStructuralRisk = (externalData: Record<string, number>): R
     }
 
     return {
-        riskScore: parseFloat(totalRiskScore),
+        riskScore: totalRiskScore,
         threatLevel: threatLevel,
         summaryTitle: summaryTitle,
         description: description,

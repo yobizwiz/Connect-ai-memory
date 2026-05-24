@@ -31,14 +31,18 @@ describe('ClientSideGatekeeperAlert', () => {
 
   // 3. 상호작용 테스트: 경고창의 CTA 버튼 클릭 시 동작을 모방
   test('should prevent action upon button click attempt', () => {
+    // window.alert가 Jest Mock이 아니어서 에러가 발생하므로 스파이로 모킹합니다.
+    const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
+
     render(<ClientSideGatekeeperAlert riskScore={0.8} onProceed={() => {}} />);
     const button = screen.getByRole('button');
 
     // 버튼 클릭 이벤트를 발생시킵니다.
     fireEvent.click(button); 
 
-    // 실제로는 alert() 함수를 모킹하여 호출 여부를 확인해야 하지만, 
-    // 여기서는 사용자에게 경고가 주입되는 과정을 테스트합니다.
-    expect(window.alert).toHaveBeenCalledWith(expect.stringContaining("시스템 위협 감지"));
+    expect(alertSpy).toHaveBeenCalledWith(expect.stringContaining("시스템 위협 감지"));
+
+    // 스파이 해제
+    alertSpy.mockRestore();
   });
 });

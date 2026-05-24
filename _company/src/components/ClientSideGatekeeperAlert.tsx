@@ -13,16 +13,16 @@ interface GatekeeperProps {
 const ClientSideGatekeeperAlert: React.FC<GatekeeperProps> = ({ riskScore, onProceed }) => {
   const [isVisible, setIsVisible] = useState(false);
 
-  // 70% (0.7) 임계치 초과 여부를 체크합니다.
-  if (riskScore < 0.7) {
-    return null; // 위험도가 낮으면 아무것도 하지 않습니다.
-  }
-
   const handleAlertTrigger = useCallback(() => {
     setIsVisible(true);
     // 경고가 표시되면, 실제로 CTA를 막는 부모 컴포넌트의 로직이 필요합니다.
     // 여기서는 시각적 차단과 함께 콜백을 준비합니다.
   }, []);
+
+  // 70% (0.7) 임계치 초과 여부를 체크합니다. (모든 Hook 호출 이후에 수행하여 Rules of Hooks 준수)
+  if (riskScore < 0.7) {
+    return null; // 위험도가 낮으면 아무것도 하지 않습니다.
+  }
 
   const handleDismissAttempt = () => {
     // CEO 지시사항에 따라, 이 경고는 절대 쉽게 해제되어서는 안 됩니다.
