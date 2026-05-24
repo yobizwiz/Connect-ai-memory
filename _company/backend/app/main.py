@@ -120,11 +120,3 @@ async def get_report_access(payment_success: bool):
 if __name__ == "__main__":
     # 개발 환경에서 uvicorn 실행하는 방법
     uvicorn.run(app, host="0.0.0.0", port=8000)
-```
-
-<create_file path="./backend/requirements.txt">
-```text
-fastapi
-uvicorn[standard]
-pydantic>=2.0
-python-jose # JWT 또는 서명 검증을 위해 추가 고려 필요

@@ -1,0 +1,4 @@
+fastapi
+uvicorn[standard]
+pydantic>=2.0
+python-jose # JWT 또는 서명 검증을 위해 추가 고려 필요
