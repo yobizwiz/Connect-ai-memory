@@ -27,7 +27,7 @@ export const fetchCredibilityReport = async (clientData: any): Promise<RiskData>
     console.log(`[API Stub] Analyzing risk for client data...`);
     
     // 3초 지연 시뮬레이션 (사용자에게 '분석 중'이라는 전문적인 시간적 압박감 제공)
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    await new Promise<void>(resolve => setTimeout(() => resolve(), 3000));
 
     // 실제 백엔드 호출 대신 Mock 데이터를 반환합니다.
     return generateMockRiskData();

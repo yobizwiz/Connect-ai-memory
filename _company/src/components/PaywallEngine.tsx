@@ -203,7 +203,7 @@ export const PaywallEngine: React.FC<PaywallProps> = () => {
                     {isLoading ? (
                         <div className="flex items-center justify-center">
                             <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-80" d="M7 10a3 3 0 013 3v3a9 9 0 11-9-9z"></path></svg>
-                            위험 데이터 분석 중... (시스템 로딩)
+                            분석 데이터 분석 중... (시스템 로딩)
                         </div>
                     ) : '총 위험 노출액 및 최소 보험료 계산 시작'}
                 </button>

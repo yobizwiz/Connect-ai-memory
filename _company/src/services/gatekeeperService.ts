@@ -4,8 +4,6 @@
  * 모든 외부 호출은 여기서 관리하며, Mocking을 통해 테스트 용이성을 확보합니다.
  */
 
-import { GatekeeperResponse } from '../types/gatekeeperTypes';
-
 /**
  * 사용자의 초기 리스크 진단 요청을 시뮬레이션하고 게이트키퍼 플로우를 시작합니다.
  * @param initialData - 사용자 입력 데이터 (예: 산업군, 법규 준수 여부 등)
@@ -16,7 +14,7 @@ export const initiateRiskCheck = async (initialData: { industry: string; complia
 
     // 실제 환경에서는 Next.js API Route나 별도의 백엔드 서버를 호출해야 합니다.
     // 여기서는 구조적 무결성을 위해 Mocking을 사용합니다.
-    await new Promise(resolve => setTimeout(resolve, 1500)); // 시간 지연 시뮬레이션 (Time Pressure)
+    await new Promise<void>(resolve => setTimeout(() => resolve(), 1500)); // 시간 지연 시뮬레이션 (Time Pressure)
 
     if (!initialData.complianceStatus) {
         return {
@@ -54,7 +52,7 @@ export const initiateRiskCheck = async (initialData: { industry: string; complia
 export const processPaymentGatekeeper = async (riskDetails: { lossEstimateY: number }): Promise<{ success: boolean, message: string }> => {
     console.log(`[API Call] Attempting payment gatekeeper logic...`);
 
-    await new Promise(resolve => setTimeout(resolve, 2000)); // 긴 지연 시간 (Decisiveness required)
+    await new Promise<void>(resolve => setTimeout(() => resolve(), 2000)); // 긴 지연 시간 (Decisiveness required)
 
     if (riskDetails.lossEstimateY && riskDetails.lossEstimateY > 10000) {
         // 결제 유도 성공 시나리오
