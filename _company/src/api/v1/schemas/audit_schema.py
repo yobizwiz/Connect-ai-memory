@@ -19,6 +19,6 @@ class AuditReport(BaseModel):
     report_id: str = Field(..., description="발급된 보고서의 고유 ID.")
     generated_at: str = Field(..., description="보고서 생성 시간 (ISO 8601).")
     overall_risk_score: float = Field(..., ge=0.0, le=10.0, description="종합 리스크 점수 (10점 만점, 높을수록 위험).")
-    compliance_status: str = Field(..., description="진단 상태 ('High Risk', 'Moderate Risk', 'Compliant').").
+    compliance_status: str = Field(..., description="진단 상태 ('High Risk', 'Moderate Risk', 'Compliant').")
     critical_vulnerabilitys: List[str] = Field(..., description="발견된 치명적 취약점 목록.")
     recommendations: List[str] = Field(..., description="즉각적인 개선 및 감사 권고 사항 목록.")

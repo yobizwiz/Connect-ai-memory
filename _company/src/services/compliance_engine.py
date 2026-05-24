@@ -45,8 +45,8 @@ class ComplianceEngine:
         for risk in risk_data:
             # 리스크 유형에 따라 가중치를 다르게 적용
             weight = self._weights.get(risk.risk_type, 0.1)
-            # 점수는 (Impact Score * Weight * 2)를 통해 조정됨. 최대치는 100 내외로 제한.
-            score_contribution = int(risk.impact_score * weight * 2 + random.randint(-5, 5))
+            # 점수는 (Impact Score * Weight * 25)를 통해 조정됨. 최대치는 100 내외로 제한.
+            score_contribution = int(risk.impact_score * weight * 25 + random.randint(-3, 3))
             total_score += max(0, score_contribution)
 
         # 점수가 너무 높거나 낮지 않도록 클리핑 (0 ~ 100 범위 유지)
@@ -73,7 +73,7 @@ class ComplianceEngine:
         # 1. 리스크 데이터 가공 및 필터링 (MVP 시뮬레이션)
         unresolved_risks: List[RiskItem] = []
         for r in raw_data.get("potential_risks", []):
-            if r["is_critical"] and r["impact"] >= 6:
+            if r.get("is_critical", True) and r.get("impact", 0) >= 6:
                 # 데이터 구조에 맞춰 RiskItem 객체로 변환 및 추가
                 risk = RiskItem(
                     title=r["name"],

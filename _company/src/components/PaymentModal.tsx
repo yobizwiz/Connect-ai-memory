@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // 시뮬레이션용
-import { useTheme } from 'next-themes';
 
 // --- Type Definitions ---
 interface PaymentData {
@@ -63,7 +61,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ data, onSuccess, onCancel }
     try {
       // 3. PayPal API 호출 시뮬레이션 (실제로는 백엔드 게이트웨이와 통신)
       console.log('--- Attempting Mandatory Transaction ---');
-      await new Promise((resolve, reject) => setTimeout(resolve, 2000)); // 2초 지연
+      await new Promise<void>(resolve => setTimeout(() => resolve(), 2000)); // 2초 지연
       
       // 성공 시뮬레이션 로직 (실제로는 API 응답에 의존)
       if (Math.random() > 0.1) { 
@@ -149,8 +147,20 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ data, onSuccess, onCancel }
               className={`px-8 py-3 font-bold rounded shadow-lg transition duration-300 ${isProcessing ? 'bg-gray-500 cursor-not-allowed' : data.riskScore === 'CRITICAL' ? 'bg-red-600 hover:bg-red-700 ring-4 ring-red-900' : 'bg-blue-600 hover:bg-blue-700'}`}
             >
               {isProcessing ? (
-                <div className="flex items-center">
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-80" d="M</div>
+                <div className="flex items-center justify-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span>보안 채널 연결 중...</span>
+                </div>
+              ) : (
+                `의무 감사($${data.amount}) 진행`
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
