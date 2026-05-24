@@ -1,8 +1,8 @@
-// Use Loss Calculator Hook: Handles all QLoss state logic (Time & Action triggers)
+// Use Loss Calculator Hook: Handles all QLoss state logic (Time, Action, and Sales Triggers)
 import { useState, useEffect, useCallback } from 'react';
 
 interface LossState {
-  currentQLoss: number; // Current calculated loss amount ($QLoss)
+  currentQLoss: number; // Current calculated total risk exposure (Total Risk Exposure, $QLoss)
   riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'; // Systemic risk level
   isTimerRunning: boolean;
 }
