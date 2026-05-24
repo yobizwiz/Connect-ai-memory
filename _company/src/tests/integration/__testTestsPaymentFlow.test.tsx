@@ -1,79 +1,102 @@
-import { render, screen, fireEvent, act } from '@testing-library/react';
 import React from 'react';
-// Assume PaymentGateway component is in this directory and receives QLoss prop
-import PaymentGateway from '../../components/PaymentGateway'; 
-import * as paymentApi from '../../services/paymentApi';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import PaymentGatewaySimulator from '../../components/PaymentGatewaySimulator';
+import * as qlossService from '../../services/qlossService';
 
-// --- MOCKING SERVICES AND COMPONENTS ---
-// 1. Mock the entire backend API module to control responses for testing specific failure states.
-jest.mock('../../services/paymentApi', () => ({
-  default: {
-    processPayment: jest.fn(),
-  },
+// Mocking the entire service to control timing and return values for deterministic testing
+jest.mock('../../services/qlossService', () => ({
+    simulatePaymentFlow: jest.fn(),
+    getRedZoneStyles: jest.fn((qloss) => {
+        if (qloss >= 75) return "bg-red-900/80 border-red-600";
+        if (qloss >= 40) return "bg-yellow-900/80 border-yellow-600";
+        return "bg-blue-900/70 border-blue-600";
+    }),
 }));
 
-describe('E2E Payment Gateway Integration Test (Systemic Failure Simulation)', () => {
-  // Before each test, clear mocks to ensure clean state
-  beforeEach(() => {
-    (paymentApi.default.processPayment).mockClear();
-  });
-
-  it('should activate Red Zone/Jittering and fail gracefully when QLoss is critical (>= 75%)', async () => {
-    // ARRANGE: Setup the test environment with initial state
-    const INITIAL_QLOSS = 60; // Start below threshold
-    
-    // Mock successful payment for low risk initially
-    (paymentApi.default.processPayment).mockResolvedValue({ success: true, message: 'Transaction approved.' });
-
-    // ACT: Render the component with initial QLoss state
-    render(<PaymentGateway qLoss={INITIAL_QLOSS} />);
-
-    // ASSERT 1: Verify normal operation at low risk (initial check)
-    expect(screen.getByText(/Proceed to Payment/i)).toBeInTheDocument();
-    // Check that payment API was called correctly for the initial state
-    // Note: Actual assertion logic depends on component's internal flow, but we confirm mock call setup.
-
-    // --- Critical Scenario Triggering ---
-    const CRITICAL_QLOSS = 85; // Above critical threshold (75%)
-    console.log(`\n--- Simulating QLoss jump from ${INITIAL_QLOSS}% to ${CRITICAL_QLOSS}% ---\n`);
-
-    // ACT: Update the component state/props with a critical QLoss value.
-    // In a real app, this would be triggered by an external global store update (e.g., Redux). 
-    // Here we simulate forcing the prop change for testing purposes.
-    const { rerender } = render(<PaymentGateway qLoss={INITIAL_QLOSS} />);
-    rerender(<PaymentGateway qLoss={CRITICAL_QLOSS} />);
-
-    // ASSERT 2: Verify visual state changes immediately upon reaching critical QLoss
-    // This assumes the component exposes a visible warning element based on Red Zone logic.
-    const redZoneElement = screen.queryByRole('alert', { name: /system risk high/i });
-    expect(redZoneElement).toBeInTheDocument(); // Must display the primary Red Zone warning.
-
-    // Check for the specific instability indicator (Jittering/Flickering text or class)
-    const jitterWarning = screen.getByText(/WARNING: System Integrity Compromised/i); 
-    expect(jitterWarning).toBeInTheDocument();
-
-    // --- Payment Attempt in Critical State ---
-    // ARRANGE for failure: Mock the backend API to return a CRITICAL risk error when called from this state.
-    const CRITICAL_ERROR_RESPONSE = {
-      success: false, 
-      errorCode: 'RISK_LEVEL_CRITICAL', 
-      message: 'Payment processing halted due to unacceptable systemic instability.'
-    };
-    (paymentApi.default.processPayment).mockResolvedValueOnce(CRITICAL_ERROR_RESPONSE);
-
-    // ACT: Attempt the payment submission (e.g., clicking a button)
-    const payButton = screen.getByRole('button', { name: /Pay Now/i });
-    fireEvent.click(payButton);
-
-    // ASSERT 3: Verify API was called, and the UI correctly reflects the failure status derived from critical QLoss.
-    await act(async () => {
-      // Wait for async state update (loading -> error)
-      await new Promise(resolve => setTimeout(() => resolve(), 10)); 
+describe('PaymentGatewaySimulator Integration Test', () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
     });
 
-    expect(paymentApi.default.processPayment).toHaveBeenCalledTimes(1);
-    expect(screen.getByText(/Transaction Failed/i)).toBeInTheDocument(); // Should show general failure message
-    expect(screen.getByText(/RISK_LEVEL_CRITICAL/i)).toBeInTheDocument(); // Must display the specific critical error code from the API response.
+    it('✅ Case 1: Low Risk (Success) - QLoss < 40%', async () => {
+        // Mock API to return a low-risk result
+        qlossService.simulatePaymentFlow.mockResolvedValueOnce({
+            qloss: 25,
+            status: 'SUCCESS',
+            message: "거래가 성공적으로 처리되었습니다. 구조적 무결성이 확인되었습니다.",
+            details: {}
+        });
 
-  });
+        render(<PaymentGatewaySimulator />);
+
+        // Simulate interaction for low risk (Compliance Pass, Low Tolerance)
+        const select = screen.getByLabelText(/필수 규정 준수 항목 검토 완료 여부:/i);
+        fireEvent.change(select, { target: { value: 'yes' } });
+        
+        const rangeSlider = screen.getByRole('slider');
+        fireEvent.change(rangeSlider, { target: { value: '1' } });
+
+        // Trigger the submission (API call)
+        await fireEvent.submit(screen.getByRole('button', { name: /위험성 평가 시작/i }));
+
+        await waitFor(() => {
+            expect(screen.getByText(/25%/i)).toBeInTheDocument(); // Check QLoss score
+            expect(screen.getByText(/구조적 무결성이 확인되었습니다/i)).toBeInTheDocument(); // Check success message
+            expect(qlossService.simulatePaymentFlow).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    it('⚠️ Case 2: Mid Risk (Warning) - QLoss 40% <= QLoss < 75%', async () => {
+        // Mock API to return a warning result (e.g., Compliance Fail, Medium Tolerance)
+        qlossService.simulatePaymentFlow.mockResolvedValueOnce({
+            qloss: 60,
+            status: 'WARNING',
+            message: "⚠️ 리스크 레벨 상승: QLoss 60%. 추가 검토가 필요하며, 전문가의 개입이 권장됩니다.",
+            details: {}
+        });
+
+        render(<PaymentGatewaySimulator />);
+
+        // Simulate interaction for warning risk (Compliance Fail)
+        const select = screen.getByLabelText(/필수 규정 준수 항목 검토 완료 여부:/i);
+        fireEvent.change(select, { target: { value: 'no' } });
+        
+        const rangeSlider = screen.getByRole('slider');
+        fireEvent.change(rangeSlider, { target: { value: '5' } });
+
+        // Trigger the submission (API call)
+        await fireEvent.submit(screen.getByRole('button', { name: /위험성 평가 시작/i }));
+
+        await waitFor(() => {
+            expect(screen.getByText(/60%/i)).toBeInTheDocument(); // Check QLoss score
+            expect(screen.getByText(/전문가의 개입이 권장됩니다/i)).toBeInTheDocument(); 
+        });
+    });
+
+    it('🚨 Case 3: High Risk (Critical Failure) - QLoss >= 75%', async () => {
+        // Mock API to return a critical failure result (High Compliance Fail, Low Tolerance)
+        qlossService.simulatePaymentFlow.mockResolvedValueOnce({
+            qloss: 92,
+            status: 'CRITICAL_FAILURE',
+            message: "🚨 시스템 경고! 임계치를 초과했습니다. 구조적 무결성 확보가 즉시 필요합니다. 해결책을 제시하십시오.",
+            details: {}
+        });
+
+        render(<PaymentGatewaySimulator />);
+
+        // Simulate interaction for critical risk
+        const select = screen.getByLabelText(/필수 규정 준수 항목 검토 완료 여부:/i);
+        fireEvent.change(select, { target: { value: 'no' } });
+        
+        const rangeSlider = screen.getByRole('slider');
+        fireEvent.change(rangeSlider, { target: { value: '1' } });
+
+        // Trigger the submission (API call)
+        await fireEvent.submit(screen.getByRole('button', { name: /위험성 평가 시작/i }));
+
+        await waitFor(() => {
+            expect(screen.getByText(/92%/i)).toBeInTheDocument(); // Check QLoss score
+            expect(screen.getByText(/즉시 전문가의 도움이 필요합니다/i)).toBeInTheDocument(); // Check critical message
+        });
+    });
 });
