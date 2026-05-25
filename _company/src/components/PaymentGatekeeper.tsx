@@ -91,9 +91,10 @@ const PaymentGatekeeper: React.FC<PaymentGatekeeperProps> = ({ onProceedToPaymen
         <div className="text-center mt-10">
             <button 
                 onClick={handlePurchaseAttempt} // 결제 시도 함수 호출
-                className="bg-[#C0392B] hover:bg-[#A03027] text-white font-bold py-4 px-16 rounded-lg transition duration-300 shadow-xl transform hover:scale-105"
+                disabled={isProcessing}
+                className={`bg-[#C0392B] hover:bg-[#A03027] text-white font-bold py-4 px-16 rounded-lg transition duration-300 shadow-xl transform hover:scale-105 ${isProcessing ? 'opacity-60 cursor-not-allowed' : ''}`}
             >
-                Mini-Report 구매 및 리스크 해소하기
+                {isProcessing ? '구조적 무결성 검증 중...' : 'Mini-Report 구매 및 리스크 해소하기'}
             </button>
         </div>
     );

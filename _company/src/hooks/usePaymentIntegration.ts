@@ -28,8 +28,8 @@ export const usePaymentIntegration = () => {
      * @description 결제 프로세스를 시뮬레이션합니다. (가상 PG API 호출)
      * @param options - 구매할 티어와 가격 정보를 받습니다.
      */
-    const initiateCheckout = useCallback(async (options: PaymentOptions): Promise<void> => {
-        if (!options.tier || !options.priceId) {
+    const initiateCheckout = useCallback(async (options?: PaymentOptions): Promise<void> => {
+        if (!options || !options.tier || !options.priceId) {
             setCheckoutState({ isLoading: false, isSuccess: false, message: '유효한 구매 옵션이 필요합니다.' });
             return;
         }

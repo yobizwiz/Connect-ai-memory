@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import QLossGatekeeper from '../components/QLossGatekeeper';
-import { FaCreditCard, FaStore } from 'react-icons/fa'; // 필요한 아이콘만 임포트
+import { FaCreditCard, FaStore, FaShieldAlt } from 'react-icons/fa'; // 필요한 아이콘만 임포트
 
 // 부모 컴포넌트 (실제 Landing Page 역할을 수행)
 const HomePage: React.FC = () => {

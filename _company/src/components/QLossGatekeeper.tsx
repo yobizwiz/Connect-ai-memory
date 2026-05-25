@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { FaBolt, FaExclamationTriangle, FaShieldAlt } from 'react-icons/fa';
+import { FaBolt, FaExclamationTriangle } from 'react-icons/fa';
 
 // --- [ Type Definitions & Constants ] -------------------
 
@@ -44,7 +44,7 @@ const simulateApiCall = async (payload: any): Promise<string> => {
 // --- [ Core Component ] -------------------
 
 interface QLossGatekeeperProps {
-    onPurchaseAttempt: (result: string) => void; // 부모 컴포넌트가 리스크 결과를 받아서 처리하는 콜백
+    onPurchaseAttempt: (result: any) => void; // 부모 컴포넌트가 리스크 결과를 받아서 처리하는 콜백
 }
 
 const QLossGatekeeper: React.FC<QLossGatekeeperProps> = ({ onPurchaseAttempt }) => {
@@ -110,6 +110,7 @@ const QLossGatekeeper: React.FC<QLossGatekeeperProps> = ({ onPurchaseAttempt }) 
                         <h2 className="text-2xl font-bold text-white">시스템 연결 중...</h2>
                         <p className="text-slate-400 mt-1">구조적 무결성 진단 데이터 전송을 위해 시스템 검증을 수행합니다. 잠시만 기다려 주십시오.</p>
                     </div>
+                );
             case 'QLOSS_ACTIVE':
                 const styles = getRedZoneStyles(riskLevel || 'CRITICAL');
                 return (
@@ -136,7 +137,10 @@ const QLossGatekeeper: React.FC<QLossGatekeeperProps> = ({ onPurchaseAttempt }) 
                          <p className='text-white/90'>당신의 시스템은 현재의 리스크를 감당할 수 없습니다.</p>
                          {/* 최종 CTA 버튼: 이 버튼을 누르면 부모 컴포넌트가 유료 결제 플로우로 강제 전환 */}
                         <button 
-                            onClick={() => { /* 실제로는 /pay 페이지로 강제 이동 로직 */ }}
+                            onClick={() => {
+                                setStatus('SUCCESS');
+                                onPurchaseAttempt({ status: "SUCCESS", message: "Mini-Report purchased successfully." });
+                            }}
                             className="mt-8 px-12 py-3 text-xl font-bold bg-red-600 hover:bg-red-700 transition duration-300 shadow-[0_4px_15px_rgba(192,57,43,0.7)]">
                             👉 구조적 무결성 확보 (유료 Mini-Report 구매)
                         </button>
@@ -144,6 +148,16 @@ const QLossGatekeeper: React.FC<QLossGatekeeperProps> = ({ onPurchaseAttempt }) 
                  );
             case 'SUCCESS':
                 return <div className="text-center text-green-400 p-6 border border-green-500 rounded-lg">✅ 진단 및 결제 플로우가 성공적으로 완료되었습니다. 감사합니다.</div>;
+            case 'INITIAL':
+                return (
+                    <div className="text-center">
+                        <button 
+                            onClick={handlePurchaseClick}
+                            className="px-12 py-4 text-xl font-bold bg-red-600 hover:bg-red-700 text-white rounded-lg transition duration-300 shadow-[0_4px_15px_rgba(192,57,43,0.7)]">
+                            Mini-Report 구매 및 리스크 해소하기
+                        </button>
+                    </div>
+                );
             default:
                 return null;
         }

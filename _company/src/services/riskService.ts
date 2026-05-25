@@ -1,4 +1,4 @@
-import { FinancialRiskLevel } from '../types/financialTypes'; // 가상의 타입 정의 파일
+// 구조적 리스크 레벨을 판정하고, 각 레벨별 재무적 손실 위험도를 비동기적으로 시뮬레이션합니다.
 
 /**
  * @description 구조적 리스크 레벨을 판정하고, 각 레벨별 재무적 손실 위험도를 비동기적으로 시뮬레이션합니다.
@@ -28,13 +28,13 @@ export const getSystemicRiskReport = async (inputData: { auditScore?: number; co
             level: 'Low',
             description: '현재 구조는 일반적인 산업 표준을 준수하고 있습니다.',
             risk_score: Math.floor(Math.random() * 10) + 1, // 1~10점
-            potential_loss_usd: `${(Math.random() * 10).toFixed(2)} Million`, // $0M ~ $10M 사이의 낮은 손실액
+            potential_loss_usd: `$${(Math.random() * 10).toFixed(2)} Million`, // $0M ~ $10M 사이의 낮은 손실액
         };
         result.MEDIUM = {
             level: 'Medium',
             description: '경미한 규제 이격 지점이 발견되었습니다. 즉각적인 검토가 필요합니다.',
             risk_score: Math.floor(Math.random() * 20) + 11, // 11~30점
-            potential_loss_usd: `${(Math.random() * 50).toFixed(2)} Million`, // $50M ~ $500M 사이의 중간 손실액
+            potential_loss_usd: `$${(Math.random() * 50).toFixed(2)} Million`, // $50M ~ $500M 사이의 중간 손실액
         };
         result.HIGH = {
             level: 'High',
@@ -49,13 +49,13 @@ export const getSystemicRiskReport = async (inputData: { auditScore?: number; co
             level: 'Low',
             description: '기본적인 구조는 안전하나, 몇 가지 최적화 포인트가 누락되었습니다.',
             risk_score: Math.floor(Math.random() * 15) + 6,
-            potential_loss_usd: `${(Math.random() * 20).toFixed(2)} Million`,
+            potential_loss_usd: `$${(Math.random() * 20).toFixed(2)} Million`,
         };
         result.MEDIUM = {
             level: 'Medium',
             description: '주요 규제 영역에서 중대한 Gap이 발견되었습니다. 전문적인 진단이 필수적입니다.',
             risk_score: Math.floor(Math.random() * 30) + 16,
-            potential_loss_usd: `${(Math.random() * 200).toFixed(2)} Million`,
+            potential_loss_usd: `$${(Math.random() * 200).toFixed(2)} Million`,
         };
          // High Risk를 최대치로 설정하여 공포감 극대화
         result.HIGH = {

@@ -1,6 +1,7 @@
-// @ts-ignore - 실제 환경에서는 Mocking이 필요합니다.
 import { runRiskAnalysis } from '../riskAnalyzerService';
 import * as React from 'react';
+import { render, screen, act } from '@testing-library/react';
+import '@testing-library/jest-dom';
 
 // 테스트 목적으로 컴포넌트 구조를 모킹합니다.
 const WarningDisplayComponent = ({ level, message }: { level: string; message: string }) => (
@@ -86,7 +87,7 @@ describe('E2E QLoss 75% 임계치 도달 시나리오 통합 테스트', () => {
       expect(timeDelta).toBeGreaterThanOrEqual(1500); // 최소 1.5초 이상의 여유 시간 보장 검증
       console.log(`💯 [Time Check] 경고 메시지 출력부터 최종 CTA 전환까지의 물리적 간격: ${timeDelta}ms 확보 완료.`);
     } else {
-        fail("시간적 흐름상 Critical Path가 깨졌습니다. 경고와 CTA 사이의 딜레이를 재검토해야 합니다.");
+        throw new Error("시간적 흐름상 Critical Path가 깨졌습니다. 경고와 CTA 사이의 딜레이를 재검토해야 합니다.");
     }
   });
 });

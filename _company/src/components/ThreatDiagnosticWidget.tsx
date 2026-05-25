@@ -243,15 +243,7 @@ export default function HomePage() {
   );
 }
 
-// Helper function for Tailwind CSS utility (for Red Zone logic)
-function getRedZoneStyles(level: ThreatLevel): string {
-  switch (level) {
-    case 'CRITICAL': return "bg-red-900/80 border-red-500 shadow-[0_0_30px_rgba(255,0,0,0.7)]";
-    case 'HIGH': return "bg-yellow-900/60 border-yellow-400 shadow-lg";
-    case 'MEDIUM': return "bg-blue-900/50 border-blue-300 shadow-md";
-    default: return "bg-gray-800 border-gray-700 shadow-xl";
-  }
-}
+
 
 // 컴파일러 테스트를 위한 Dummy 함수 (실제 프로젝트에서는 필요 없음)
 const dummyTest = () => {
