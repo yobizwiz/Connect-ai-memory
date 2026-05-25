@@ -18,7 +18,7 @@ export interface QLossResult {
  */
 export const simulatePaymentFlow = async (inputData: { complianceCheckPass: boolean; riskToleranceLevel: number }): Promise<QLossResult> => {
     // 3초 지연을 주어 로딩 상태를 체감하게 만듭니다. [근거: 코다리 개인 메모리]
-    await new Promise(resolve => setTimeout(resolve, 2500));
+    await new Promise<void>(resolve => setTimeout(() => resolve(), 2500));
 
     let qlossScore = 0;
     let status: QLossResult['status'] = 'SUCCESS';

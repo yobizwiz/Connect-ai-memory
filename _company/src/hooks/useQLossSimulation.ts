@@ -75,18 +75,14 @@ export const useQLossSimulation = (initialValue: number = 10) => {
     useEffect(() => {
         // 데모 목적으로 QLoss가 1초마다 증가하는 효과를 추가합니다.
         const interval = setInterval(() => {
-            simulateQLossIncrease(2); // 초당 2씩 증가
+            setState(prevState => {
+                let newLevel = Math.min(prevState.level + 2, 100); // 초당 2씩 증가
+                return calculateRiskState(newLevel);
+            });
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [simulateQLossIncrease]);
-
-
-    // 초기 리스크 상태 설정 (사용자 입력 시)
-    useEffect(() => {
-        const initialRisk = calculateRiskState(initialValue);
-        setState({ level: initialValue, riskLevel: initialRisk.riskLevel, alertActive: initialRisk.alertActive, ctaForced: initialRisk.ctaForced });
-    }, [initialValue, calculateRiskState]);
+    }, [calculateRiskState]);
 
 
     return {

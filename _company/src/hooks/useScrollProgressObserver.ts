@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
  * @param elementRef - 관측 대상 DOM 요소를 참조할 React Ref 객체.
  * @returns {number} 0 (아직 안 보임)부터 1 (완전히 보임) 사이의 진행률 값.
  */
-const useScrollProgressObserver = (elementRef: React.RefObject<HTMLElement>): [React.MutableRefObject<HTMLElement>, number] => {
+const useScrollProgressObserver = (elementRef: React.RefObject<HTMLElement>): [React.RefObject<HTMLElement>, number] => {
     const [scrollProgress, setScrollProgress] = useState(0);
 
     useEffect(() => {
@@ -37,9 +37,11 @@ const useScrollProgressObserver = (elementRef: React.RefObject<HTMLElement>): [R
         observer.observe(elementRef.current);
 
         return () => {
-            observer.unobserve(elementRef.current); // 클린업 함수: Observer 해제
+            if (elementRef.current) {
+                observer.unobserve(elementRef.current); // 클린업 함수: Observer 해제
+            }
         };
-    }, [elementRef]);
+    }, [elementRef, elementRef.current]);
 
     // React Ref 객체와 현재 스크롤 진행률을 반환합니다.
     return [elementRef, scrollProgress];

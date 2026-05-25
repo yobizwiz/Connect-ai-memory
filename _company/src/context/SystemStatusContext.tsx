@@ -15,9 +15,18 @@ const defaultState: SystemState = {
   isSystemCompromised: false,
 };
 
-export const SystemStatusContext = createContext<SystemState>(defaultState);
+// Context Value의 명시적인 타입 규격 수립
+interface SystemStatusContextType {
+  state: SystemState;
+  updateThreatLevel: (newLevel: SystemThreatLevel, error?: string) => void;
+  triggerFailure: (message: string) => void;
+}
 
-export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+// undefined 초기화를 통해 명확한 Provider 결속 여부 점검
+export const SystemStatusContext = createContext<SystemStatusContextType | undefined>(undefined);
+
+// 중복 명명 버그(SystemProvider) 방지를 위해 고유 이름인 SystemStatusProvider로 변경
+export const SystemStatusProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, setState] = useState<SystemState>(defaultState);
 
   // 시스템 상태 업데이트 함수 (Threat Level 변경)
@@ -48,4 +57,11 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   );
 };
 
-export const useSystemStatus = () => useContext(SystemStatusContext);
+// Safe Context Hook Guard 적용
+export const useSystemStatus = () => {
+  const context = useContext(SystemStatusContext);
+  if (!context) {
+    throw new Error('useSystemStatus must be used within a SystemStatusProvider');
+  }
+  return context;
+};

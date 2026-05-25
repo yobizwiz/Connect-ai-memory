@@ -31,7 +31,7 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [currentReport, setCurrentReport] = useState<ReportData>({
     riskScore: 0.1, // 기본값은 낮은 위험도로 시작
     systemLevel: 'SAFE',
-    reportDetails: { critical_gap: "None", mitigation_required: [], suggested_action: "" },
+    reportDetails: { critical_gap: "None", mitigation_required: "None", suggested_action: "" },
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -54,7 +54,7 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const newReport: ReportData = {
         riskScore: score,
         systemLevel: systemLevel,
-        reportDetails: details || { critical_gap: "Analysis Complete.", mitigation_required: ["Structural Immunity"], suggested_action: "Gold Tier Consultation" }
+        reportDetails: details || { critical_gap: "Analysis Complete.", mitigation_required: "Structural Immunity", suggested_action: "Gold Tier Consultation" }
     };
 
     // 3. 비동기 처리 시뮬레이션 (API 호출 대기 시간)

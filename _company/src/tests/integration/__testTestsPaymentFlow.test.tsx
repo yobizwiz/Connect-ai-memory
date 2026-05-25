@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import PaymentGatewaySimulator from '../../components/PaymentGatewaySimulator';
+import PaymentGateway from '../../components/PaymentGateway';
 import * as qlossService from '../../services/qlossService';
 
 // Mocking the entire service to control timing and return values for deterministic testing
@@ -13,21 +13,23 @@ jest.mock('../../services/qlossService', () => ({
     }),
 }));
 
-describe('PaymentGatewaySimulator Integration Test', () => {
+const mockedSimulatePaymentFlow = qlossService.simulatePaymentFlow as jest.Mock;
+
+describe('PaymentGateway Integration Test', () => {
     beforeEach(() => {
         jest.clearAllMocks();
     });
 
     it('✅ Case 1: Low Risk (Success) - QLoss < 40%', async () => {
         // Mock API to return a low-risk result
-        qlossService.simulatePaymentFlow.mockResolvedValueOnce({
+        mockedSimulatePaymentFlow.mockResolvedValueOnce({
             qloss: 25,
             status: 'SUCCESS',
             message: "거래가 성공적으로 처리되었습니다. 구조적 무결성이 확인되었습니다.",
             details: {}
         });
 
-        render(<PaymentGatewaySimulator />);
+        render(<PaymentGateway />);
 
         // Simulate interaction for low risk (Compliance Pass, Low Tolerance)
         const select = screen.getByLabelText(/필수 규정 준수 항목 검토 완료 여부:/i);
@@ -48,14 +50,14 @@ describe('PaymentGatewaySimulator Integration Test', () => {
 
     it('⚠️ Case 2: Mid Risk (Warning) - QLoss 40% <= QLoss < 75%', async () => {
         // Mock API to return a warning result (e.g., Compliance Fail, Medium Tolerance)
-        qlossService.simulatePaymentFlow.mockResolvedValueOnce({
+        mockedSimulatePaymentFlow.mockResolvedValueOnce({
             qloss: 60,
             status: 'WARNING',
             message: "⚠️ 리스크 레벨 상승: QLoss 60%. 추가 검토가 필요하며, 전문가의 개입이 권장됩니다.",
             details: {}
         });
 
-        render(<PaymentGatewaySimulator />);
+        render(<PaymentGateway />);
 
         // Simulate interaction for warning risk (Compliance Fail)
         const select = screen.getByLabelText(/필수 규정 준수 항목 검토 완료 여부:/i);
@@ -75,14 +77,14 @@ describe('PaymentGatewaySimulator Integration Test', () => {
 
     it('🚨 Case 3: High Risk (Critical Failure) - QLoss >= 75%', async () => {
         // Mock API to return a critical failure result (High Compliance Fail, Low Tolerance)
-        qlossService.simulatePaymentFlow.mockResolvedValueOnce({
+        mockedSimulatePaymentFlow.mockResolvedValueOnce({
             qloss: 92,
             status: 'CRITICAL_FAILURE',
             message: "🚨 시스템 경고! 임계치를 초과했습니다. 구조적 무결성 확보가 즉시 필요합니다. 해결책을 제시하십시오.",
             details: {}
         });
 
-        render(<PaymentGatewaySimulator />);
+        render(<PaymentGateway />);
 
         // Simulate interaction for critical risk
         const select = screen.getByLabelText(/필수 규정 준수 항목 검토 완료 여부:/i);
@@ -96,7 +98,7 @@ describe('PaymentGatewaySimulator Integration Test', () => {
 
         await waitFor(() => {
             expect(screen.getByText(/92%/i)).toBeInTheDocument(); // Check QLoss score
-            expect(screen.getByText(/즉시 전문가의 도움이 필요합니다/i)).toBeInTheDocument(); // Check critical message
+            expect(screen.getByText(/구조적 무결성 확보가 즉시 필요합니다/i)).toBeInTheDocument(); // Check critical message
         });
     });
 });

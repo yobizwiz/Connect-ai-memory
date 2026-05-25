@@ -46,9 +46,9 @@ const PaymentGateway: React.FC = () => {
                 <label htmlFor="card">복구 자금 결제 (월 $1,999 USD):</label>
                 {/* 카드 정보 입력 필드는 실제 API와 연동되므로, Mockup에서는 구조만 정의합니다. */}
                 <div style={{ display: 'flex', gap: '20px' }}>
-                    <input type="text" placeholder="카드 번호 (XXXX XXXX)" style={/* ... Red Zone 스타일 */}/>
-                    <input type="text" placeholder="유효기간 MM/YY" style={/* ... Red Zone 스타일 */}/>
-                    <input type="password" placeholder="CVV" style={/* ... Red Zone 스타일 */}/>
+                    <input type="text" placeholder="카드 번호 (XXXX XXXX)" style={{ flex: 2, padding: '15px', border: '2px solid #C0392B', backgroundColor: '#2c2c2c', color: 'white' }}/>
+                    <input type="text" placeholder="유효기간 MM/YY" style={{ flex: 1, padding: '15px', border: '2px solid #C0392B', backgroundColor: '#2c2c2c', color: 'white' }}/>
+                    <input type="password" placeholder="CVV" style={{ flex: 1, padding: '15px', border: '2px solid #C0392B', backgroundColor: '#2c2c2c', color: 'white' }}/>
                 </div>
             </div>
 
