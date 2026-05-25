@@ -276,6 +276,57 @@
       "sessionDir": "2026-05-22T16-47",
       "evidence": "완료: sessions/2026-05-22T16-47/_report.md\n- 코다리: 레딧(Reddit) 커뮤니티에 콘텐츠 게시가 필요합니다. 현재 회사의 핵심 메시지인 '재무적 손실액($)'과 '구조적 보호막' 개념을 활용하여,\n\nCEO 종합 요점: 💻 코다리: 작업 시작합니다. 이 지시는 마케팅 영역이지만, 핵심 목표(재무적 손실 공포 유발 $\\rightarrow$ 해결책 판매)를 달성하기 위해 저는 이를 **'고위험 콘텐츠 배포 시스템 설계 및 구현'**의 관점에서 접근하겠습니다. ⚙️\n\n레딧 게시물은 단순한 글이 아니라, 타겟 청중의 심리를 분석하여 '내가 모르는 위험'을 발견하게 만드는 일종의",
       "completedAt": "2026-05-22T16:47:46.509Z"
+    },
+    {
+      "id": "20260525195554-irer",
+      "title": "모든 컴포넌트 구현 시 `Inter`와 `Roboto Mono`의 서체 계층 구조를 준수했는지 확인.",
+      "description": "자동 등록 (Designer 산출물에서 추출)",
+      "owner": "agent",
+      "agentIds": [
+        "designer"
+      ],
+      "createdAt": "2026-05-25T19:55:54.056Z",
+      "status": "done",
+      "sessionDir": "2026-05-25T19-54",
+      "nudges": 0,
+      "priority": "normal",
+      "preAlarmsSent": [],
+      "evidence": "완료: sessions/2026-05-25T19-54/_report.md\n- 코다리: Designer와 Writer가 확정한 'QLoss Gateway Flow' 스펙(Red Zone/Timer, API 게이트웨이)을 기반으로 프\n- Designer: Developer에게 핸드오프할 'QLoss Gateway' 관련 모든 비주얼 자산(Red Zone 오버레이, 글리치 애니메이션 스펙, 타이머 \n- 루나: 개발자가 구현할 'QLoss Gateway'의 모든 단계(위험 경고 발생 시, 타이머 감소 시, 오류 메시지 출력 시)에 맞는 구체적인 사운드 \n\nCEO 종합 요점: ## 🗂 작업 라운드 — 누가 뭐 했나\n\n### 💻 코다리 _(시니어 풀스택 엔지니어)_\n> 📋 **지시**: Designer와 Writer가 확정한 'QLoss Gateway Flow' 스펙(Red Zone/Timer, API 게이트웨이)을 기반으로 프론트엔드 프로토타입 개발을 즉시 시작하십시오. 특히 결제 직전 단계에서 구조적 위험(Structur",
+      "completedAt": "2026-05-25T20:09:07.402Z"
+    },
+    {
+      "id": "20260525195554-rgc0",
+      "title": "Red Zone 플래시 효과는 단순한 색상 변경이 아닌, **애니메이션(Opacity/Filter)**으로 처리되었는지 검증.",
+      "description": "자동 등록 (Designer 산출물에서 추출)",
+      "owner": "agent",
+      "agentIds": [
+        "designer"
+      ],
+      "createdAt": "2026-05-25T19:55:54.062Z",
+      "status": "done",
+      "sessionDir": "2026-05-25T19-54",
+      "nudges": 0,
+      "priority": "normal",
+      "preAlarmsSent": [],
+      "evidence": "완료: sessions/2026-05-25T19-54/_report.md\n- 코다리: Designer와 Writer가 확정한 'QLoss Gateway Flow' 스펙(Red Zone/Timer, API 게이트웨이)을 기반으로 프\n- Designer: Developer에게 핸드오프할 'QLoss Gateway' 관련 모든 비주얼 자산(Red Zone 오버레이, 글리치 애니메이션 스펙, 타이머 \n- 루나: 개발자가 구현할 'QLoss Gateway'의 모든 단계(위험 경고 발생 시, 타이머 감소 시, 오류 메시지 출력 시)에 맞는 구체적인 사운드 \n\nCEO 종합 요점: ## 🗂 작업 라운드 — 누가 뭐 했나\n\n### 💻 코다리 _(시니어 풀스택 엔지니어)_\n> 📋 **지시**: Designer와 Writer가 확정한 'QLoss Gateway Flow' 스펙(Red Zone/Timer, API 게이트웨이)을 기반으로 프론트엔드 프로토타입 개발을 즉시 시작하십시오. 특히 결제 직전 단계에서 구조적 위험(Structur",
+      "completedAt": "2026-05-25T20:09:07.407Z"
+    },
+    {
+      "id": "20260525195554-3m4s",
+      "title": "전체 흐름에서 사용자의 '성공 경험'을 배제하고, 오직 '위험 감지 $\\rightarrow$ 공포 자극 $\\rightarrow$ 해결책 수용'의 루프를 유지했는지 점검.",
+      "description": "자동 등록 (Designer 산출물에서 추출)",
+      "owner": "agent",
+      "agentIds": [
+        "designer"
+      ],
+      "createdAt": "2026-05-25T19:55:54.066Z",
+      "status": "done",
+      "sessionDir": "2026-05-25T19-54",
+      "nudges": 0,
+      "priority": "normal",
+      "preAlarmsSent": [],
+      "evidence": "완료: sessions/2026-05-25T19-54/_report.md\n- 코다리: Designer와 Writer가 확정한 'QLoss Gateway Flow' 스펙(Red Zone/Timer, API 게이트웨이)을 기반으로 프\n- Designer: Developer에게 핸드오프할 'QLoss Gateway' 관련 모든 비주얼 자산(Red Zone 오버레이, 글리치 애니메이션 스펙, 타이머 \n- 루나: 개발자가 구현할 'QLoss Gateway'의 모든 단계(위험 경고 발생 시, 타이머 감소 시, 오류 메시지 출력 시)에 맞는 구체적인 사운드 \n\nCEO 종합 요점: ## 🗂 작업 라운드 — 누가 뭐 했나\n\n### 💻 코다리 _(시니어 풀스택 엔지니어)_\n> 📋 **지시**: Designer와 Writer가 확정한 'QLoss Gateway Flow' 스펙(Red Zone/Timer, API 게이트웨이)을 기반으로 프론트엔드 프로토타입 개발을 즉시 시작하십시오. 특히 결제 직전 단계에서 구조적 위험(Structur",
+      "completedAt": "2026-05-25T20:09:07.411Z"
     }
   ]
 }
