@@ -2,6 +2,7 @@ import { runRiskAnalysis } from '../riskAnalyzerService';
 import * as React from 'react';
 import { render, screen, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { jest, describe, beforeAll, afterAll, test, expect } from '@jest/globals';
 
 // 테스트 목적으로 컴포넌트 구조를 모킹합니다.
 const WarningDisplayComponent = ({ level, message }: { level: string; message: string }) => (
@@ -54,6 +55,7 @@ describe('E2E QLoss 75% 임계치 도달 시나리오 통합 테스트', () => {
     );
 
     // 경고 메시지 출력 검증 (가장 먼저 보여야 함)
+    // @ts-ignore
     expect(screen.getByTestId('warning-HIGH')).toBeInTheDocument();
     console.log("✅ [Time T=0] 1차 경고 메시지 정상 출력 확인.");
     warningOutputFound = true;
@@ -77,6 +79,7 @@ describe('E2E QLoss 75% 임계치 도달 시나리오 통합 테스트', () => {
     );
 
     // 전환 후, CTA 버튼이 가장 먼저 포커싱되어야 함을 검증합니다.
+    // @ts-ignore
     expect(screen.getByTestId('cta-force-drive')).toBeVisible();
     console.log("🚀 [Time T=2000ms+] 최종 CTA 컴포넌트 정상 등장 및 강제 유도 시작.");
 
