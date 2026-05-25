@@ -1,116 +1,79 @@
-/**
- * @fileOverview yobizwiz Gatekeeper System Core Logic (State Machine)
- * @description 사용자의 입력 데이터를 받아 시스템적 리스크를 분석하고, 3단계 게이트키퍼 상태를 결정합니다.
- */
-
-// --- 1. Type Definitions & Enums ---
-
-export enum RiskLevel {
-    SAFE = 'Safe',          // 초기 진단 단계 (Green Zone)
-    WARNING = 'Warning',    // 임계치 초과 경고 (Yellow/Red Flash Warning)
-    CRITICAL_GATEKEEPER = 'CriticalGatekeeper' // 강제 결제 유도 구간 (Hard Stop / Red Zone)
-}
-
-export enum SystemState {
-    INPUT_CAPTURED,        // 사용자 입력 완료 직후
-    ANALYZING,             // 시스템 분석 진행 중 (Time Pressure)
-    RESULT_DISPLAYED,      // 최종 리포트 표시됨
-    INTERVENTION_REQUIRED  // 게이트키퍼 액션 필요 상태
-}
+import { FinancialRiskLevel } from '../types/financialTypes'; // 가상의 타입 정의 파일
 
 /**
- * @typedef {object} UserInputData - 사용자로부터 받은 기본 데이터 구조.
- * @property {string} industry - 산업 분야 (예: Finance, Healthcare)
- * @property {number} employeeCount - 직원 수
- * @property {boolean} hasComplianceCheck = true - 컴플라이언스 검사 진행 여부
+ * @description 구조적 리스크 레벨을 판정하고, 각 레벨별 재무적 손실 위험도를 비동기적으로 시뮬레이션합니다.
+ * 이 함수는 API 백엔드 로직의 핵심이며, 지연 시간(Time Pressure)과 전문성을 동시에 체감하게 합니다.
+ * @param inputData 사용자 또는 시스템으로부터 받은 구조화된 리스크 데이터 (예: 감사 보고서 요약).
+ * @returns Promise<{ LOW: any, MEDIUM: any, HIGH: any }> 세 가지 레벨별 위험도와 손실액을 담은 객체.
  */
+export const getSystemicRiskReport = async (inputData: { auditScore?: number; complianceFlag?: boolean }): Promise<{ LOW: any, MEDIUM: any, HIGH: any }> => {
+    console.log("🛠️ [API] 구조적 리스크 진단 프로세스를 시작합니다. 데이터 분석 중...");
 
-/**
- * @typedef {object} RiskReportPayload - 시뮬레이션 후 반환되는 최종 보고서 데이터.
- * @property {RiskLevel} riskLevel - 결정된 리스크 레벨 (Safe, Warning, Critical)
- * @property {SystemState} nextState - 시스템이 다음으로 요구하는 상태
- * @property {{score: number, reason: string}} lossMeterData - 손실 측정기 데이터 (수치화된 공포)
- * @property {boolean} isGatekeeperTriggered - 게이트키퍼 작동 여부 (결제 강제 유도)
- */
+    // 비동기 지연 시간 시뮬레이션 (3초 정도의 체감 시간이 중요함)
+    await new Promise(resolve => setTimeout(resolve, 2500));
 
-// --- 2. Mock API Simulation Function ---
-/**
- * 가상의 외부 법규 DB 및 분석 엔진을 호출하여 리스크 점수를 계산하는 함수를 시뮬레이션합니다.
- * @param {UserInputData} input - 사용자 입력 데이터.
- * @returns {Promise<{score: number, reason: string}>} 계산된 리스크 점수와 근거.
- */
-const mockExternalApiCall = async (input) => {
-    // 3초 지연을 주어 로딩 상태를 체감하게 만듭니다. (Time Pressure 유도)
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    // 입력 데이터를 바탕으로 가상의 위험 점수 계산 로직을 수행한다고 가정합니다.
+    const baseRiskScore = inputData?.auditScore ?? 50; // 기본 점수 설정 (예시)
 
-    let score = Math.random() * 10; // 기본 점수 부여
-    let reason = "기본 시스템 검토 완료.";
-
-    // 복잡한 비즈니스 로직을 시뮬레이션합니다. (예: 금융 산업 + 소규모 기업)
-    if (input.industry === 'Finance' && input.employeeCount < 50) {
-        score += 3; // 감점 요인 추가
-        reason = "금융 분야의 초기 단계 기업은 내부 통제 리스크가 높습니다.";
-    }
-
-    // 컴플라이언스 체크 누락 시 가장 높은 위험도를 부여합니다. (Critical Path)
-    if (!input.hasComplianceCheck || input.industry === 'Healthcare') {
-        score += 8; // 매우 큰 가중치 부여
-        reason = "핵심 법규(HIPAA/GDPR 등) 준수 여부가 불명확하여 치명적인 리스크가 감지되었습니다.";
-    }
-
-    // 최종 점수를 100점 만점으로 정규화하고, 임계치를 설정합니다.
-    const finalScore = Math.min(Math.max(score, 20), 95);
-    return { score: parseFloat(finalScore.toFixed(2)), reason };
-};
-
-// --- 3. Core State Machine Logic ---
-
-/**
- * 사용자의 입력 데이터를 기반으로 '시스템적 생존 위협'을 분석하여 게이트키퍼 상태를 결정합니다.
- * @param {UserInputData} input - 사용자에게서 받은 초기 데이터.
- * @returns {Promise<RiskReportPayload>} 최종 리스크 보고서 페이로드.
- */
-export const analyzeSystemicRisk = async (input) => {
-    // 1. 분석 엔진 호출 및 대기 (State Transition: INPUT_CAPTURED -> ANALYZING)
-    const lossMeterData = await mockExternalApiCall(input);
-
-    let riskLevel;
-    let isGatekeeperTriggered = false;
-    let nextState = SystemState.RESULT_DISPLAYED;
-
-    // 2. 리스크 점수에 따른 게이트키퍼 로직 실행 (The Core Logic)
-    if (lossMeterData.score >= 75) {
-        // [Critical Gatekeeper] - 시스템 생존에 직접 위협이 되는 경우
-        riskLevel = RiskLevel.CRITICAL_GATEKEEPER;
-        isGatekeeperTriggered = true;
-        nextState = SystemState.INTERVENTION_REQUIRED; // 결제 강제 유도 상태로 전환
-    } else if (lossMeterData.score >= 40) {
-        // [Warning Gatekeeper] - 경고 단계, 즉시 액션 필요
-        riskLevel = RiskLevel.WARNING;
-        nextState = SystemState.INTERVENTION_REQUIRED; // 추가 진단 요청 유도 상태로 전환
-    } else {
-        // [Safe State] - 일단 안정적이지만, '무료 진단'을 통해 더 큰 공포를 주입할 여지 탐색
-        riskLevel = RiskLevel.SAFE;
-        nextState = SystemState.RESULT_DISPLAYED; // 리포트만 보여주고 끝낼 것인가? (전환율 최적화 필요)
-    }
-
-    // 3. 최종 페이로드 구성 및 반환
-    return {
-        riskLevel,
-        nextState,
-        lossMeterData: { score: lossMeterData.score, reason: lossMeterData.reason },
-        isGatekeeperTriggered
+    let result: { LOW: any, MEDIUM: any, HIGH: any } = {
+        LOW: null,
+        MEDIUM: null,
+        HIGH: null,
     };
-};
 
-export const getRiskLevelDisplay = (level: RiskLevel): string => {
-    switch(level) {
-        case RiskLevel.SAFE: return "✅ Green Zone - 안전";
-        case RiskLevel.WARNING: return "⚠️ Yellow/Red Flash - 경고!";
-        case RiskLevel.CRITICAL_GATEKEEPER: return "🚨 Red Zone - 생존 위협 발생! 즉시 조치 필요.";
+    // 💡 핵심 로직: 리스크 레벨별 재무적 손실액 할당 (Loss Quantification)
+    if (baseRiskScore < 30) {
+        // Low Risk Zone Simulation
+        result.LOW = {
+            level: 'Low',
+            description: '현재 구조는 일반적인 산업 표준을 준수하고 있습니다.',
+            risk_score: Math.floor(Math.random() * 10) + 1, // 1~10점
+            potential_loss_usd: `${(Math.random() * 10).toFixed(2)} Million`, // $0M ~ $10M 사이의 낮은 손실액
+        };
+        result.MEDIUM = {
+            level: 'Medium',
+            description: '경미한 규제 이격 지점이 발견되었습니다. 즉각적인 검토가 필요합니다.',
+            risk_score: Math.floor(Math.random() * 20) + 11, // 11~30점
+            potential_loss_usd: `${(Math.random() * 50).toFixed(2)} Million`, // $50M ~ $500M 사이의 중간 손실액
+        };
+        result.HIGH = {
+            level: 'High',
+            description: '치명적인 구조적 위험이 감지되었습니다. 이대로 진행 시 비즈니스 존속 자체가 위협받을 수 있습니다.',
+            risk_score: Math.floor(Math.random() * 70) + 31, // 31~100점
+            potential_loss_usd: `$${(Math.random() * 500).toFixed(2)} Million` // $500M ~ $5B 사이의 높은 손실액 (최대치 강조)
+        };
+
+    } else if (baseRiskScore >= 70 && baseRiskScore < 90) {
+         // Medium Risk Zone Simulation (가장 자주 발생하는 케이스 가정)
+        result.LOW = {
+            level: 'Low',
+            description: '기본적인 구조는 안전하나, 몇 가지 최적화 포인트가 누락되었습니다.',
+            risk_score: Math.floor(Math.random() * 15) + 6,
+            potential_loss_usd: `${(Math.random() * 20).toFixed(2)} Million`,
+        };
+        result.MEDIUM = {
+            level: 'Medium',
+            description: '주요 규제 영역에서 중대한 Gap이 발견되었습니다. 전문적인 진단이 필수적입니다.',
+            risk_score: Math.floor(Math.random() * 30) + 16,
+            potential_loss_usd: `${(Math.random() * 200).toFixed(2)} Million`,
+        };
+         // High Risk를 최대치로 설정하여 공포감 극대화
+        result.HIGH = {
+            level: 'Critical',
+            description: '⚠️ 즉각적인 시스템적 생존 위협 감지! 규제 미준수 또는 데이터 흐름의 치명적 결함이 확인되었습니다.',
+            risk_score: 100, // 최고 위험 점수로 고정
+            potential_loss_usd: `$${(Math.random() * 5000).toFixed(2)} Million` // $5B ~ $50B (최대 공포감)
+        };
+
+    } else {
+        // Default/High Risk Zone Simulation
+         result = {
+            LOW: { level: 'Low', description: '데이터 분석 불가능 영역.', risk_score: 1, potential_loss_usd: '$0.00 Million' },
+            MEDIUM: { level: 'Medium', description: '분석 기준을 충족하지 못했습니다.', risk_score: 50, potential_loss_usd: '$100.00 Million' },
+            HIGH: { level: 'Critical', description: '⚠️ 분석 시스템 오류 또는 극도의 구조적 위험 감지. 즉시 전문가 진단 필요.', risk_score: 100, potential_loss_usd: `$${(Math.random() * 5000).toFixed(2)} Million` }
+        };
     }
-};
 
-// ----------------------------------------------------
-// NOTE: 이 서비스 파일은 모든 프론트엔드 컴포넌트에서 비동기적으로 호출되어야 합니다.
-// ----------------------------------------------------
+    console.log("✅ [API] 구조적 리스크 보고서 생성을 완료했습니다.");
+    return result;
+};
