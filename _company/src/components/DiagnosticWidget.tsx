@@ -78,7 +78,23 @@ const DiagnosticWidget: React.FC<WidgetProps> = ({ initialData }) => {
 
   // 1. 실패 시나리오 (Red Zone 강제)
   if (isCriticalFailure && result === null) {
-    return <SystemFailureDisplay title="CRITICAL SYSTEM FAILURE" code="503: EXTERNAL DATA SOURCE UNREACHABLE" />;
+    const mockState = {
+      loading: false,
+      data: null,
+      error: {
+        code: 'API_CONTRACT_VIOLATION' as const,
+        details: '503: EXTERNAL DATA SOURCE UNREACHABLE'
+      }
+    };
+    return (
+      <SystemFailureDisplay 
+        state={mockState} 
+        onRetry={() => {
+          setIsCriticalFailure(false);
+          setInput(initialData);
+        }} 
+      />
+    );
   }
 
   // 2. 성공/경고 시나리오 통합

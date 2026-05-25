@@ -273,6 +273,14 @@
             dataFlowInput.addEventListener('input', updateSimulation);
             manualReviewSelect.addEventListener('change', updateSimulation);
 
+            // CTA 버튼 클릭 시 알림 표시
+            const auditButton = document.getElementById('auditButton');
+            if (auditButton) {
+                auditButton.addEventListener('click', () => {
+                    alert('🚨 [시스템 알림] 컴플라이언스 게이트웨이 구축 설계 요청 프로토콜이 성공적으로 작동되었습니다. 1:1 리스크 방어 컨설팅 세션이 배정될 예정입니다.');
+                });
+            }
+
             // 최초 로딩 시 한 번 실행하여 초기 상태 설정
             updateSimulation();
 

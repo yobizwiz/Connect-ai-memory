@@ -4,15 +4,27 @@
  * 코드가 아닌, yobizwiz의 영업 전략이 담겨있는 곳입니다. 절대 간소화해서는 안 됩니다.
  */
 
-import { ReportValidationInput } from '../types/validation.types'; // 가상의 타입 정의 파일 가정
+export interface ReportValidationInput {
+    reportDataSummary: {
+        potentialOperationalValue: number;
+        complianceCheckAreas: string[];
+        industrySector: string;
+    };
+    userActionContext: string;
+}
 
-/**
- * @typedef {object} GatewayValidationResponse
- * @property {'SUCCESS' | 'WARNING' | 'CRITICAL_FAILURE'} status - 게이트웨이의 최종 상태.
- * @property {number} riskScore - 0.0 (안전) ~ 1.0 (위험).
- * @property {boolean} validationPassed - 결제 진행 가능 여부.
- * @property {object} gatewayMessagePayload - 프론트엔드에 전달될 공포 유발 메시지 페이로드.
- */
+export interface GatewayValidationResponse {
+    status: 'SUCCESS' | 'WARNING' | 'CRITICAL_FAILURE';
+    riskScore: number;
+    validationPassed: boolean;
+    gatewayMessagePayload: {
+        title: string;
+        severityLevel: 'LOW' | 'HIGH' | 'CRITICAL';
+        detailedRiskExplanation: string;
+        requiredMitigationAction: string[];
+        estimatedLossRangeUSD?: { min: number; max: number } | null;
+    };
+}
 
 /**
  * [Pain Point 1] 사용자 데이터 기반의 잠재적 재무 손실액을 추정합니다. (Quantitative Fear)
@@ -20,7 +32,7 @@ import { ReportValidationInput } from '../types/validation.types'; // 가상의 
  * @param {ReportValidationInput['reportDataSummary']} summary - 보고서 요약 정보.
  * @returns {{ min: number; max: number } | null} 추정되는 최소/최대 손실액 (USD).
  */
-export function calculatePotentialLoss(summary) {
+export function calculatePotentialLoss(summary: ReportValidationInput['reportDataSummary']) {
     // [Implementation Detail] 산업군, 검사 항목의 누락 지수(Missing Index), 그리고 잠재적 가치에 대한 역산 공식 적용.
     const baseLoss = summary.potentialOperationalValue * 0.1; // 최소한 10% 손실 가정
 
@@ -43,7 +55,7 @@ export function calculatePotentialLoss(summary) {
  * @param {Array<any>} recommendedSolutionOptions - 추천하는 대체 솔루션 목록.
  * @returns {{ totalMitigationBenefit: number; effectiveAnnualRateUSD: number}} Mitigation Benefit 구조체.
  */
-export function calculateMitigationValue(currentCost, recommendedSolutionOptions) {
+export function calculateMitigationValue(currentCost: number, recommendedSolutionOptions: any[]) {
     // [Implementation Detail] 잠재적 손실액 (P1에서 계산된 값)을 기준으로, 솔루션 도입 시 얻게 되는 재무적 이득을 계산하여 '보험 효과'로 포장해야 합니다.
     const totalBenefit = 3_000_000; // 최소 $3M의 가치 증명 시작점
     const effectiveRate = (totalBenefit - currentCost) / 5;
@@ -61,7 +73,7 @@ export function calculateMitigationValue(currentCost, recommendedSolutionOptions
  * @param {ReportValidationInput} input - 현재 유입된 요청 데이터 전체.
  * @returns {GatewayValidationResponse} 최종 검증 결과 구조체.
  */
-export function validateSystemIntegrity(input) {
+export function validateSystemIntegrity(input: ReportValidationInput): GatewayValidationResponse {
     const lossData = calculatePotentialLoss(input.reportDataSummary);
 
     // 1. Critical Failure Check (P3: 결제 직전의 시스템 불안감 유도)

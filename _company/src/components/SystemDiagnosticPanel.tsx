@@ -35,7 +35,7 @@ const DiagnosticPanel = () => {
         let newValue;
 
         if (name === 'dataSubjectCountN') {
-            newValue = Math.max(1, parseInt(value) || 1); // 최소 1명 보장
+            newValue = value === '' ? '' : Math.max(1, parseInt(value) || 1); // 입력 시 빈칸 허용하여 키 입력 잠김 해결
         } else {
             newValue = value;
         }
@@ -53,7 +53,11 @@ const DiagnosticPanel = () => {
         setTimeout(() => {
             try {
                 // 1. 로직 실행 및 계산 (Structural Integrity 확보)
-                const result = calculateEstimatedLoss(inputs);
+                const sanitizedInputs = {
+                    ...inputs,
+                    dataSubjectCountN: Math.max(1, parseInt(inputs.dataSubjectCountN as any) || 1)
+                };
+                const result = calculateEstimatedLoss(sanitizedInputs);
                 setEstimatedLossY({
                     y: result.estimatedLossY,
                     level: result.riskLevel,

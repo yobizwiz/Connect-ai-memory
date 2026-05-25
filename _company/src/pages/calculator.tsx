@@ -65,29 +65,31 @@ const PotentialLossCalculator: React.FC = () => {
         regulatoryChangeFrequency: 1, // Default
     });
     const [results, setResults] = useState<Results | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     // 입력 핸들러 (유효성 검사 및 상태 업데이트)
     const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        let numericValue: number;
-        if (name === 'avgReviewTimeMinutes' || name === 'regulatoryChangeFrequency') {
-             numericValue = parseFloat(value) || 0;
-        } else {
-            numericValue = parseFloat(value) || 0;
-        }
-
-        setInputs(prev => ({ ...prev, [name]: numericValue }));
+        setInputs(prev => ({ ...prev, [name]: value === '' ? '' : (parseFloat(value) || 0) }));
     }, []);
 
     // 계산 실행 핸들러 (클릭 시 로딩 상태 및 결과 출력 시뮬레이션)
     const handleCalculate = useCallback(() => {
         // 1. 로딩 시작 시뮬레이션: 비동기 처리로 시간적 압박감을 조성합니다. [근거: Self-RAG]
         setResults(null);
+        setIsLoading(true);
 
         setTimeout(() => {
-            // 2. 계산 실행
-            const calculatedResults = calculateLossAvoidance(inputs);
+            // 2. 계산 실행 (안전하게 파싱)
+            const sanitizedInputs = {
+                avgTransactionValue: parseFloat(inputs.avgTransactionValue as any) || 0,
+                annualVolume: parseFloat(inputs.annualVolume as any) || 0,
+                avgReviewTimeMinutes: parseFloat(inputs.avgReviewTimeMinutes as any) || 0,
+                regulatoryChangeFrequency: parseFloat(inputs.regulatoryChangeFrequency as any) || 0,
+            };
+            const calculatedResults = calculateLossAvoidance(sanitizedInputs);
             setResults(calculatedResults);
+            setIsLoading(false);
         }, 1500); // 1.5초 지연: '분석 중'이라는 느낌을 극대화합니다.
     }, [inputs]);
 
@@ -127,7 +129,7 @@ const PotentialLossCalculator: React.FC = () => {
                                     type="number"
                                     id={id}
                                     name={id}
-                                    value={inputs[id] || ''}
+                                    value={inputs[id] === '' ? '' : inputs[id]}
                                     onChange={handleInputChange}
                                     className="p-3 bg-gray-900 border border-red-700 focus:ring-red-500 focus:border-red-500 text-white rounded-md transition duration-150"
                                 />
@@ -149,7 +151,7 @@ const PotentialLossCalculator: React.FC = () => {
                     <h2 className="text-3xl font-bold mb-6 border-b border-red-700/50 pb-2 text-red-400">📊 Step 2: 진단 보고서</h2>
 
                     {/* 로딩 상태 시뮬레이션 */}
-                    {(!results && inputs.avgTransactionValue !== 0) && (
+                    {isLoading && (
                         <div className="p-10 bg-gray-800/50 border-4 border-dashed border-red-700 flex flex-col items-center justify-center min-h-[300px]">
                             <svg className="animate-spin h-10 w-10 text-red-500 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -159,8 +161,15 @@ const PotentialLossCalculator: React.FC = () => {
                         </div>
                     )}
 
+                    {/* 초기 대기 상태 */}
+                    {!results && !isLoading && (
+                        <div className="p-10 bg-gray-800/50 border-4 border-dashed border-red-700 flex flex-col items-center justify-center min-h-[300px]">
+                            <p className="text-xl text-gray-400">왼쪽의 핵심 데이터를 입력한 후 '리스크 진단 실행' 버튼을 누르면 실시간 진단 결과 보고서가 출력됩니다.</p>
+                        </div>
+                    )}
+
                     {/* 결과 표시 영역 */}
-                    {results && (
+                    {results && !isLoading && (
                         <div className={`p-8 rounded-lg shadow-2xl border-t-4 ${getRiskStyle(results.riskScore)} transition duration-500`}>
                             <h3 className="text-2xl font-bold mb-6 uppercase tracking-widest">Diagnosis Complete</h3>
 

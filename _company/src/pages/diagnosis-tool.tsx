@@ -65,7 +65,10 @@ const DiagnosisTool: React.FC = () => {
     /**
      * 최종적으로 위협 지수를 계산하고 UI를 업데이트합니다.
      */
-    const handleSubmit = useCallback(async () => {
+    const handleSubmit = useCallback(async (e?: React.FormEvent) => {
+        if (e) {
+            e.preventDefault();
+        }
         if (Object.keys(answers).length === 0) {
             alert("진단에 응답할 항목을 선택해 주세요.");
             return;
@@ -154,8 +157,8 @@ const DiagnosisTool: React.FC = () => {
                 {/* 3. 제출 버튼 */}
                 <div className="pt-8 border-t mt-10 flex justify-center">
                     <button
-                        type="submit"
-                        onClick={handleSubmit}
+                        type="button"
+                        onClick={(e) => handleSubmit(e)}
                         disabled={isLoading}
                         className={`px-12 py-3 text-lg font-bold rounded-full transition duration-300 ${isLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-700 hover:bg-red-800 shadow-xl transform hover:scale-[1.02]'} text-white`}
                     >
