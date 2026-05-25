@@ -1,69 +1,78 @@
 import React from 'react';
-import { useQLossSimulation } from '../hooks/useQLossSimulation';
-import RedZoneDisplay from '../components/RedZoneDisplay';
+import QLossGatekeeper from '../components/QLossGatekeeper';
+import { FaCreditCard, FaStore } from 'react-icons/fa'; // 필요한 아이콘만 임포트
 
-const GatekeepingPage: React.FC = () => {
-    // 초기 QLoss 값은 10으로 설정하고, useEffect에서 자동 증가 로직이 작동하게 합니다.
-    const { state, simulateQLossIncrease, mitigateQLoss } = useQLossSimulation(10);
+// 부모 컴포넌트 (실제 Landing Page 역할을 수행)
+const HomePage: React.FC = () => {
+    const [lastReportResult, setLastReportResult] = React.useState<any>(null);
+
+    /**
+     * QLossGatekeeper로부터 최종 리스크 결과를 받아 처리하는 콜백입니다.
+     * 이 함수가 실제 유료 결제 플로우를 트리거합니다.
+     */
+    const handlePurchaseCompletion = useCallback((result: any) => {
+        setLastReportResult(result);
+        // TODO: 여기서 /pay?risk=CRITICAL 로 강제 리다이렉션 로직을 구현해야 합니다.
+        console.log("✅ 최종 구매 흐름 시작:", result);
+    }, []);
 
     return (
-        <div className="min-h-screen bg-gray-900 text-white p-8">
-            <header className="text-center mb-12 border-b border-red-900 pb-6">
-                <h1 className="text-5xl font-extrabold tracking-tighter text-red-400">
-                    yobizwiz: 구조적 무결성 진단 시스템
+        <div className="min-h-screen bg-[#121212] text-white py-12">
+            {/* ----------------- HERO SECTION ----------------- */}
+            <header className="text-center mb-20 pt-10">
+                <h1 className="text-6xl font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-yellow-400">
+                    당신의 비즈니스는 안전합니까? (QLoss 진단)
                 </h1>
-                <p className="mt-3 text-xl text-gray-400/80">
-                    귀하의 데이터는 현재 분석 중입니다. 예상치 못한 리스크가 발생할 수 있습니다.
+                <p className="mt-6 text-xl text-slate-300 max-w-2xl mx-auto">
+                    단순한 컨설팅이 아닙니다. 저희는 당신의 시스템에 내재된 **구조적 생존 위협(Structural Survival Threat)**을 찾아냅니다.
                 </p>
             </header>
 
-            {/* 1. QLoss 시각화 (핵심) */}
-            <div className="max-w-4xl mx-auto mb-12">
-                <RedZoneDisplay state={state} />
-            </div>
-
-            {/* 2. 사용자 상호작용 및 테스트 영역 */}
-            <div className="max-w-3xl mx-auto bg-gray-800/60 p-8 rounded-lg shadow-inner border border-red-900">
-                <h2 className="text-3xl font-bold text-white mb-6 border-b border-red-700 pb-2">
-                    진단 프로세스 상호작용 (MVP 테스트)
-                </h2>
-
-                {/* 강제 결제 CTA가 활성화되었을 때만 버튼을 강조 */}
-                <div className={`p-4 rounded-lg mb-8 transition duration-500 ${state.ctaForced ? 'bg-red-900/70 border-2 border-red-500 animate-pulse' : 'bg-gray-700/50'}`}>
-                    <h3 className="text-xl font-bold text-yellow-300 mb-3">
-                        진단 결과를 바탕으로 한 필수 조치
-                    </h3>
-                    <p className="text-gray-300 mb-4">시스템이 경고하는 리스크를 해소하려면, 추가적인 분석과 전문 프로토콜 적용이 필요합니다.</p>
-                    
-                    {/* 강제 CTA 버튼 */}
-                    <button 
-                        onClick={() => alert("🔒 [Payment Gateway]: Advanced Mitigation Protocol ($1,999/월) 결제가 시작됩니다. (테스트 완료)")}
-                        disabled={!state.ctaForced}
-                        className={`w-full py-4 text-xl font-bold rounded transition duration-300 ${state.ctaForced ? 'bg-red-600 hover:bg-red-700 shadow-lg' : 'bg-gray-500 cursor-not-allowed'}`}
-                    >
-                        지금 바로 전문가 진단 신청 (Advanced Protocol)
-                    </button>
+            {/* ----------------- DIAGNOSIS & PURCHASE SECTION ----------------- */}
+            <main className="max-w-3xl mx-auto">
+                <div className='text-center mb-12'>
+                    <h2 className='text-3xl font-bold text-slate-200 flex items-center justify-center'>
+                        {/* QLossGatekeeper 컴포넌트를 사용하고, 결제 버튼 클릭 이벤트를 가로채는 역할을 합니다. */}
+                         진단 결과 보고서 받기 <FaStore className='ml-3 text-red-500' />
+                    </h2>
                 </div>
 
-                {/* QLoss 수동 조작 버튼 */}
-                <div className="flex justify-around gap-4">
-                    <button 
-                        onClick={() => mitigateQLoss(15)}
-                        className="flex-1 py-3 bg-blue-600/80 hover:bg-blue-700 rounded transition text-sm"
-                    >
-                        [시뮬레이션] 데이터 입력 (QLoss -15)
-                    </button>
-                    <button 
-                        onClick={() => simulateQLossIncrease(1)}
-                        className="flex-1 py-3 bg-green-600/80 hover:bg-green-700 rounded transition text-sm"
-                    >
-                        [시뮬레이션] 추가 데이터 입력 (QLoss +1)
-                    </button>
-                </div>
+                {/* 핵심: 게이트키퍼 컴포넌트 삽입 (가상의 결제 버튼 클릭을 유도) */}
+                <QLossGatekeeper onPurchaseAttempt={handlePurchaseCompletion} />
 
-            </div>
+                {lastReportResult && (
+                    <div className="mt-16 p-8 bg-[#220a0a] border-l-4 border-red-500/70 rounded-lg shadow-xl">
+                        <h3 className='text-2xl font-bold text-red-400 mb-2'>[진단 결과 보고서 요약]</h3>
+                        <p className={`text-lg ${lastReportResult.status === 'FAILED' ? 'text-red-300' : 'text-green-300'}`}>
+                            상태: {lastReportResult.status} | 위험 레벨: <span className='font-extrabold'>{lastReportResult.risk_level || 'N/A'}</span>
+                        </p>
+                        <p className="mt-2 text-slate-400">
+                            다음 단계로 진행하여 구체적인 해결책을 확인하십시오. (강제 CTA)
+                        </p>
+                    </div>
+                )}
+
+                 {/* 일반 정보 섹션 */}
+                 <section className='mt-20 p-8 bg-[#1e1e1e] rounded-xl'>
+                     <h3 className='text-2xl font-bold text-slate-200 mb-4'>왜 QLoss인가요?</h3>
+                     <p className='text-slate-300 mb-6'>우리는 당신이 "문제가 있다"고 느끼기 전에, 시스템 자체가 위험 신호를 보내도록 설계했습니다. 이 경험은 단순한 마케팅을 넘어, **재무적 손실 방지 보험**의 첫 단계입니다.</p>
+                     <div className='flex justify-around'>
+                         <div>
+                             <FaShieldAlt className='text-4xl text-red-500 mb-2'/>
+                             <p className='font-semibold'>위협 시나리오</p>
+                             <p className='text-sm text-slate-400'>($X Million 손실 예측)</p>
+                         </div>
+                         <div>
+                             <FaCreditCard className='text-4xl text-blue-500 mb-2'/>
+                             <p className='font-semibold'>솔루션 제공</p>
+                             <p className='text-sm text-slate-400'></p>
+                         </div>
+                     </div>
+                 </section>
+
+            </main>
         </div>
     );
 };
 
-export default GatekeepingPage;
+export default HomePage;
