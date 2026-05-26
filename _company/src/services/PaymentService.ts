@@ -104,3 +104,7 @@ export class PaymentError extends Error {
 
 /** @type {PaymentGateway} */
 export type PaymentGateways = PaymentGateway;
+
+export async function executePaymentTransaction(data: { amount: number }): Promise<{ success: boolean; transactionId: string }> {
+    return processMinimumPremiumPayment(100000, data.amount);
+}

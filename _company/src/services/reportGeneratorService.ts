@@ -5,7 +5,12 @@
  * ⚠️ 주의: 실제 금융/법규 로직이 아닌, '구조적 불안감' 체험을 위한 시뮬레이션입니다.
  */
 
-import { ReportInput } from '../types/reportTypes'; // 가정된 타입 파일
+export interface ReportInput {
+    complianceLevel?: number;
+    financialMetrics?: {
+        cashReserve?: number;
+    };
+}
 
 /**
  * Mock API 응답 구조체 정의

@@ -52,3 +52,13 @@ export const analyzeRisk = async (input: RiskDataInput): Promise<AnalysisResult>
 
     return result;
 };
+
+export const fetchRiskReport = async (credentials: { userId: string; apiToken: string }): Promise<{ riskScore: number; reportId: string; details: string; dateGenerated: string }> => {
+    console.log(`[API Call] Fetching risk report for user: ${credentials.userId}`);
+    return {
+        riskScore: 75,
+        reportId: 'SUCCESS_REPORT_123',
+        details: 'Low risk found.',
+        dateGenerated: new Date().toISOString()
+    };
+};

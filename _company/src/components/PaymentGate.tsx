@@ -21,9 +21,9 @@ interface PaymentGateProps {
 
 const getRedZoneStyles = (level: RiskLevel) => {
     switch (level) {
-        case 'Critical':
+        case 'CRITICAL':
             return "bg-red-900/80 border-red-600 text-red-300 animate-pulse"; // Red Zone + Glitch simulation needed here
-        case 'High':
+        case 'WARNING':
             return "bg-yellow-900/70 border-yellow-600 text-yellow-300";
         default:
             return "border-gray-700 bg-gray-800 text-white";

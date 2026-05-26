@@ -18,7 +18,7 @@ export const InputSchema = z.object({
     compliance_violation_likelihood: z.number().min(0).max(1).describe("Estimated likelihood (0-1) of a major compliance breach."),
 
     // 2. Audit/Process Risk Data (Researcher Metric 2)
-    critical_workflow_gap_count: z.integer().min(0).describe("Number of critical manual steps or missing sign-offs identified."),
+    critical_workflow_gap_count: z.number().int().min(0).describe("Number of critical manual steps or missing sign-offs identified."),
     process_failure_cost_estimate: z.number().nonnegative().describe("Estimated minimum cost ($) if a process failure occurs (e.g., contract delay)."),
 
     // 3. Knowledge/AI Risk Data (Researcher Metric 3 - Hallucination)

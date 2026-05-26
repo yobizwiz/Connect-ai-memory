@@ -6,7 +6,6 @@
 // }
 
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { PaymentService } from '@/services/PaymentService'; // 가상의 결제 서비스 임포트
 
 /**
  * @description 사용자의 입력 변수를 받아 재무적 손실액 Y를 계산하고 진단 보고서 발급 가능 여부를 판정하는 API 엔드포인트.
@@ -32,13 +31,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // 3. 보고서 발급 가능 여부 판정 및 상태 반환
         const canApplyForReport = checkEligibilityForReport(calculatedY, inputs);
 
-        return {
+        return res.status(200).json({
             success: true,
             riskScore: inputs.complianceGapScore,
             calculatedLossY: calculatedY, // Y 값을 전송하여 프론트가 사용 가능 여부를 결정하게 함
             isEligible: canApplyForReport,
             message: `진단 결과 분석 완료. 예상 손실액은 ${Math.round(calculatedY).toLocaleString()}원입니다.`
-        };
+        });
 
     } catch (error) {
         console.error("API Error in calculate-risk:", error);
@@ -56,13 +55,24 @@ async function calculateFinancialLossY(inputs: any): Promise<number> {
     // 실제로는 DB 조회, 외부 API 호출 등이 들어가는 복잡한 비동기 과정이 필요합니다.
     await new Promise(resolve => setTimeout(resolve, 800)); // 네트워크 지연 시뮬레이션
 
-    let baseLoss = inputs.dataVolumeGB * 15; // 데이터 볼륨 기반 초기 손실 (가중치)
-    let compliancePenalty = inputs.jurisdiction === 'GDPR' ? 3000 : 0; // 관할 지역별 패널티
+    let baseLoss = inputs.dataVolumeGB * 25; // 데이터 볼륨 기반 초기 손실 (가중치 상향)
+    
+    // 뉴욕 법률 기반 페널티 구조 반영 (NYDFS 및 NY SHIELD)
+    let compliancePenalty = 0;
+    if (inputs.jurisdiction === 'NYDFS') {
+        compliancePenalty = 150000; // NYDFS 23 NYCRR 500 위반 기본 페널티 (금융권 타격 최악 시나리오)
+    } else if (inputs.jurisdiction === 'NY_SHIELD') {
+        compliancePenalty = 75000; // NY SHIELD Act 위반 기본 민사 페널티 (개인정보 무단 노출)
+    } else if (inputs.jurisdiction === 'GDPR') {
+        compliancePenalty = 100000;
+    } else {
+        compliancePenalty = 50000;
+    }
     
     // 준수 격차 점수에 따른 기하급수적 리스크 증가 적용 (공포감 극대화)
     const systemicRiskFactor = Math.pow(inputs.complianceGapScore / 100, 2); 
 
-    let totalY = baseLoss + compliancePenalty + (systemicRiskFactor * 5000);
+    let totalY = baseLoss + compliancePenalty + (systemicRiskFactor * 250000);
 
     // 최소 손실액 보장 로직
     return parseFloat((totalY).toFixed(2)); 

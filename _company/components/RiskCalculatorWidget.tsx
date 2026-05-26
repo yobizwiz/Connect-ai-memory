@@ -5,10 +5,11 @@ const calculateRiskApi = async (inputs: any) => {
     // 실제로는 fetch('/api/v1/calculate-risk', { method: 'POST', body: JSON.stringify(inputs), headers: {'Content-Type': 'application/json'} })을 사용해야 합니다.
     // 여기서는 테스트를 위해 임시 지연과 더미 데이터를 반환합니다.
     await new Promise(resolve => setTimeout(resolve, 1200)); 
+    const calculatedLossY = Math.round((inputs.dataVolumeGB * 15 + (inputs.jurisdiction === 'GDPR' ? 3000 : 0) + Math.pow(inputs.complianceGapScore / 100, 2) * 5000)).toFixed(2);
     return {
         success: true,
         riskScore: inputs.complianceGapScore,
-        calculatedLossY: Math.round((inputs.dataVolumeGB * 15 + (inputs.jurisdiction === 'GDPR' ? 3000 : 0) + Math.pow(inputs.complianceGapScore / 100, 2) * 5000)).toFixed(2),
+        calculatedLossY: calculatedLossY,
         isEligible: inputs.dataVolumeGB > 5 && (inputs.jurisdiction === 'GDPR' || inputs.jurisdiction === 'CCPA'), // 임계치 만족 시 True 반환 시뮬레이션
         message: `진단 결과 분석 완료. 예상 손실액은 ${Math.round(parseFloat(calculatedLossY)).toLocaleString()}원입니다.`
     };

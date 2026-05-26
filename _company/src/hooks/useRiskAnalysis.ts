@@ -4,7 +4,7 @@ import { useState, useCallback } from 'react';
 /**
  * @typedef {Object} InputData - 사용자가 입력하는 가상의 데이터 구조체.
  */
-interface InputData {
+export interface InputData {
     revenueLoss: number; // 최근 분기 예상 손실액 (억 원 단위)
     complianceGapCount: number; // 법규 미준수 Gap 수
     marketSentimentScore: number; // 시장 심리 지수 (-100 ~ 100)
@@ -13,7 +13,7 @@ interface InputData {
 /**
  * @typedef {Object} RiskResult - 분석 결과 구조체.
  */
-interface RiskResult {
+export interface RiskResult {
     score: number; // 최종 리스크 점수 (0-100)
     level: 'Green' | 'Yellow' | 'Red'; // 경고 레벨
     message: string; // 사용자에게 보여줄 설명 메시지

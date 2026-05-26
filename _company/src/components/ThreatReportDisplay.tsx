@@ -1,5 +1,17 @@
 import React from 'react';
-import { DiagnosisResult } from '../api/types'; // API 응답 타입 정의 가정
+
+export interface ThreatDiagnosisResult {
+    threat_score: number;
+    risk_level: string;
+    suggested_tier: string;
+    summary: string;
+    is_premium_required: boolean;
+}
+
+interface ThreatReportDisplayProps {
+    result: ThreatDiagnosisResult;
+    onUpgradeClick: () => void; // 업그레이드 CTA를 처리하는 함수
+}
 
 // 재사용 가능한 Red Zone 스타일 컴포넌트 (디자이너 Mockup 기반)
 const DangerCard: React.FC<{ title: string; description: string }> = ({ title, description }) => (
@@ -8,11 +20,6 @@ const DangerCard: React.FC<{ title: string; description: string }> = ({ title, d
         <p className="text-gray-300">{description}</p>
     </div>
 );
-
-interface ThreatReportDisplayProps {
-    result: DiagnosisResult;
-    onUpgradeClick: () => void; // 업그레이드 CTA를 처리하는 함수
-}
 
 /**
  * 진단 결과를 시각화하고, Paywall을 강제하는 핵심 컴포넌트.

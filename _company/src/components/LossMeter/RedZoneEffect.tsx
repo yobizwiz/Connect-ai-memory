@@ -1,5 +1,6 @@
 import React from 'react';
 import './RedZoneEffect.css';
+import { RiskLevel } from '../../hooks/useRiskSimulation';
 
 // RedZoneEffect는 현재 리스크 레벨에 따라 시각적 경고 시스템을 제어하는 컴포넌트입니다.
 interface RedZoneEffectProps {
@@ -9,19 +10,20 @@ interface RedZoneEffectProps {
 
 const RedZoneEffect: React.FC<RedZoneEffectProps> = ({ currentLevel, isLoading }) => {
   // RedZone 효과를 적용할지 결정하는 핵심 로직
-  const isCritical = currentLevel === 'critical' && !isLoading; 
-  const isWarning = currentLevel === 'warning';
+  const levelUpper = currentLevel ? currentLevel.toUpperCase() : '';
+  const isCritical = levelUpper === 'CRITICAL' && !isLoading; 
+  const isWarning = levelUpper === 'WARNING';
 
   return (
     <div className={`red-zone-container ${isCritical ? 'active-glitch' : ''} ${isWarning ? 'warning-pulse' : ''}`}>
       {/* 배경 글리치 노이즈는 CSS를 통해 제어됩니다. */}
       <div className="glitch-overlay"></div> 
 
-      <div className={`status-card status-${currentLevel}`}>
+      <div className={`status-card status-${currentLevel ? currentLevel.toLowerCase() : ''}`}>
         <h3>[SYSTEM ALERT]</h3>
         <p>잠재적 손실액(Total Risk Exposure) 분석 결과:</p>
         {/* 리스크 등급에 따른 구체적인 메시지 */}
-        {currentLevel === 'critical' ? (
+        {levelUpper === 'CRITICAL' ? (
           <>
             <div className="metric-box">
               <span role="img" aria-label="경고">🔥</span>
@@ -29,7 +31,7 @@ const RedZoneEffect: React.FC<RedZoneEffectProps> = ({ currentLevel, isLoading }
               <p>즉각적이고 구조적인 생존 위협 감지. 즉시 행동 필요.</p>
             </div>
           </>
-        ) : currentLevel === 'warning' ? (
+        ) : levelUpper === 'WARNING' ? (
           <>
             <div className="metric-box">
               ⚠️

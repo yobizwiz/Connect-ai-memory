@@ -109,7 +109,7 @@ export const DiagnosticEngine: React.FC<{ initialRiskScore: number }> = ({ initi
 
                  <div className="mt-6 p-4 bg-red-900/50 border border-red-700 rounded text-center">
                      <p className='text-lg font-bold text-red-300'>‼️ 원인 불명 (Unknown Source) ‼️</p>
-                     <p className='text-sm text-red-400 mt-1'>-> 시스템 내부 프로세스에서 외부로의 데이터 유출이 감지되었습니다. 즉각적인 개입이 필요합니다.</p>
+                     <p className='text-sm text-red-400 mt-1'>&rarr; 시스템 내부 프로세스에서 외부로의 데이터 유출이 감지되었습니다. 즉각적인 개입이 필요합니다.</p>
                  </div>
             </div>
         );

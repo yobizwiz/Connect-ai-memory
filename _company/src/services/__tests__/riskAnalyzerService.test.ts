@@ -9,7 +9,7 @@ describe('Mini-Report LP - Structural Risk Analysis Service', () => {
     it('Should simulate successful risk analysis and generate a low score when compliant', async () => {
         const data = { processFlow: '...', complianceCheck: true };
         // Mocking the expected outcome for success case (low risk)
-        (analyzeStructuralRisk as jest.Mock).mockResolvedValue({ 
+        (analyzeStructuralRisk as any).mockResolvedValue({ 
             riskScore: 25, 
             isHighRisk: false, 
             diagnosisMessage: "Everything looks fine.", 
@@ -25,7 +25,7 @@ describe('Mini-Report LP - Structural Risk Analysis Service', () => {
     it('Should simulate high structural risk when compliance fails', async () => {
         const data = { processFlow: '...', complianceCheck: false };
         // Mocking the expected outcome for failure case (high risk)
-        (analyzeStructuralRisk as jest.Mock).mockResolvedValue({ 
+        (analyzeStructuralRisk as any).mockResolvedValue({ 
             riskScore: 95, 
             isHighRisk: true, 
             diagnosisMessage: "CRITICAL!", 
@@ -43,7 +43,7 @@ describe('Mini-Report LP - Payment Failure Handler', () => {
     it('Should simulate a successful payment and confirm the transition.', async () => {
         const paymentData = { amount: 499, cardToken: 'valid_token' };
         // Mocking success outcome
-        (handlePaymentFailure as jest.Mock).mockResolvedValue({ 
+        (handlePaymentFailure as any).mockResolvedValue({ 
             success: true, message: "Success", nextAction: "Download" 
         });
 
@@ -54,7 +54,7 @@ describe('Mini-Report LP - Payment Failure Handler', () => {
     it('Should simulate failure and convert error into a structural warning (Marketing Opportunity)', async () => {
         const paymentData = { amount: 499, cardToken: 'invalid_token' };
         // Mocking the specific failure case for marketing conversion
-        (handlePaymentFailure as jest.Mock).mockResolvedValue({ 
+        (handlePaymentFailure as any).mockResolvedValue({ 
             success: false, 
             message: "⚠️ 시스템 오류 발생: 구조적 취약성이 감지되었습니다.", // 핵심 메시지 검증
             nextAction: "지금 바로 전문가에게 문의하여 시스템 안정성을 확보하십시오." // 행동 유도 검증

@@ -181,7 +181,7 @@ const DiagnosisReport: React.FC<DiagnosisReportProps> = ({ result, onReset }) =>
             {/* 1. 요약 및 점수 */}
             <div className="mb-8 p-6 bg-gray-800 rounded-lg border-b-4 border-red-500">
                 <h2 className="text-2xl font-bold text-red-400 mb-3">📊 분석 요약</h2>
-                <p class="text-xl">측정된 총 리스크 점수: <span className="font-mono text-2xl ml-2">{totalScore}</span> / 60점</p>
+                <p className="text-xl">측정된 총 리스크 점수: <span className="font-mono text-2xl ml-2">{totalScore}</span> / 60점</p>
                 <p className="mt-3 text-gray-400">이 점수는 고객님의 조직 시스템에 존재하는 잠재적, 구조적 취약점을 정량적으로 측정합니다.</p>
             </div>
 

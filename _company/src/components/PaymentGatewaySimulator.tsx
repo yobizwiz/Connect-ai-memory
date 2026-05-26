@@ -19,7 +19,7 @@ const PaymentGatewaySimulator: React.FC<SimulatorProps> = () => {
     });
 
     // 핸들러 함수 (상태 업데이트 및 API 호출)
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;
         let updatedValue: any;
 

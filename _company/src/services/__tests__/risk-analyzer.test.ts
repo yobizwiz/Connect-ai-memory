@@ -16,7 +16,7 @@ describe('analyzeRiskAndCalculateLoss Core Logic Validation', () => {
 
         // [ASSERTION] Low Risk여야 하며, 손실액은 자산 가치의 최소 비율을 유지해야 함.
         expect(result.riskLevel).toBe('Low');
-        expect(parseFloat(result.estimatedLossUSD)).toBeLessThan(assetValue * 0.05); // $5,000보다 작아야 한다.
+        expect(result.estimatedLossUSD).toBeLessThan(assetValue * 0.05); // $5,000보다 작아야 한다.
     });
 
     test('Scenario 2: Medium Risk - 중간 점수에서 자산 가치 대비 유의미한 손실액이 나와야 한다.', () => {
@@ -30,7 +30,7 @@ describe('analyzeRiskAndCalculateLoss Core Logic Validation', () => {
 
         // [ASSERTION] Medium Risk여야 하며, 손실액이 자산 가치의 중간 범위에 있어야 함.
         expect(result.riskLevel).toBe('Medium');
-        expect(parseFloat(result.estimatedLossUSD)).toBeGreaterThanOrEqual(assetValue * 0.05); // $5,000 이상이어야 한다.
+        expect(result.estimatedLossUSD).toBeGreaterThanOrEqual(assetValue * 0.05); // $5,000 이상이어야 한다.
     });
 
     test('Scenario 3: High Risk - 높은 점수에서 구조적 공포가 극대화된 손실액이 나와야 한다.', () => {
@@ -44,7 +44,7 @@ describe('analyzeRiskAndCalculateLoss Core Logic Validation', () => {
 
         // [ASSERTION] High Risk여야 하며, 손실액은 자산 가치의 높은 비율을 차지해야 함.
         expect(result.riskLevel).toBe('High');
-        expect(parseFloat(result.estimatedLossUSD)).toBeGreaterThan(assetValue * 0.15); // $15,000보다 커야 한다.
+        expect(result.estimatedLossUSD).toBeGreaterThan(assetValue * 0.15); // $15,000보다 커야 한다.
     });
 
     test('Scenario 4: Edge Case - 자산 가치가 0일 경우 손실액은 0이어야 한다.', () => {

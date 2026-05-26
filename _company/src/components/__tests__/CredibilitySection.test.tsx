@@ -5,7 +5,7 @@ import * as apiService from '@/services/api/credibilityService';
 
 // Mock API 호출을 강제로 모킹하여 테스트 환경 제어
 jest.mock('@/services/api/credibilityService');
-const mockFetchReport = apiService.fetchCredibilityReport;
+const mockFetchReport = apiService.fetchCredibilityReport as any;
 
 
 describe('Credential Section Component Testing', () => {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 // API 호출 함수를 가정합니다. 실제로는 e2e_simulator_api.py에 연결됩니다.
 import { runE2ESimulation } from '@/utils/apiService'; 
 
-interface ReportData {
+interface PaywallReportData {
     riskScore: number; // $TRE$ 점수
     diagnosisSummary: string[];
     isCritical: boolean; // 임계점 초과 여부 (API에서 계산되어 와야 함)
@@ -20,7 +20,7 @@ const getRedZoneStyles = (criticality: 'LOW' | 'MEDIUM' | 'HIGH') => {
 
 const PaywallGateway: React.FC<{ initialFormData: any }> = ({ initialFormData }) => {
     // [State Management]
-    const [report, setReport] = useState<ReportData | null>(null);
+    const [report, setReport] = useState<PaywallReportData | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [isPaywallActive, setIsPaywallActive] = useState(false);
 
@@ -35,7 +35,7 @@ const PaywallGateway: React.FC<{ initialFormData: any }> = ({ initialFormData })
         setIsLoading(true);
         try {
             // 실제로는 이 함수가 c:\Users\jinoh\OneDrive\Desktop\Connect AI\_company\src\services\e2e_simulator_api.py를 호출합니다.
-            const data = await runE2ESimulation(formData); 
+            const data = await runE2ESimulation(formData) as PaywallReportData; 
             setReport(data);
 
             // 2. 게이트키핑 로직: $TRE$ 임계점 검사 (가정치: 점수가 높을수록 위협이 크다)

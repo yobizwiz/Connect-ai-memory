@@ -7,10 +7,11 @@ import React from 'react';
 
 interface GatekeeperAlertProps {
     riskScore: number;
-    details: string;
+    details?: string;
+    onDismiss?: () => void;
 }
 
-const GatekeeperAlert: React.FC<GatekeeperAlertProps> = ({ riskScore, details }) => {
+const GatekeeperAlert: React.FC<GatekeeperAlertProps> = ({ riskScore, details = "구조적 사각지대 리스크 감지." }) => {
     // Red Zone 색상 계산 (Red-to-Black gradient for maximum impact)
     const getRedZoneStyle = () => "bg-gradient-to-br from-[#9c1e3d] via-[#5e0f27] to-black";
 

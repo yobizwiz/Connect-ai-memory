@@ -74,8 +74,12 @@ const LossMeterGate: React.FC = () => {
   const [metrics, setMetrics] = useState<LossMetrics | null>(null);
 
   /** 사용자 입력 처리 핸들러 */
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setInput({ area: e.target.value, severityScore: parseFloat(e.target.value) || 0 });
+  const handleAreaChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(prev => ({ ...prev, area: e.target.value }));
+  }, []);
+
+  const handleSeverityChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(prev => ({ ...prev, severityScore: parseFloat(e.target.value) || 0 }));
   }, []);
 
   /** 리스크 분석 시작 로직 (State Machine Transition) */
@@ -173,7 +177,7 @@ const LossMeterGate: React.FC = () => {
                     type="text" 
                     id="area" 
                     value={input.area} 
-                    onChange={handleInputChange} 
+                    onChange={handleAreaChange} 
                     className="w-full p-3 bg-gray-700 border border-gray-600 rounded focus:border-red-500 focus:ring-red-500"
                 />
             </div>
@@ -185,7 +189,7 @@ const LossMeterGate: React.FC = () => {
                     min="0" 
                     max="10" 
                     value={input.severityScore} 
-                    onChange={handleInputChange} 
+                    onChange={handleSeverityChange} 
                     className="w-full p-3 bg-gray-700 border border-gray-600 rounded focus:border-red-500 focus:ring-red-500"
                 />
             </div>
@@ -194,12 +198,10 @@ const LossMeterGate: React.FC = () => {
         {/* 버튼 */}
         <button 
           onClick={handleRunAnalysis}
-          disabled={status === 'LOADING'}
-          className={`w-full py-3 text-xl font-bold rounded-lg transition duration-200 ${
-            status === 'LOADING' ? 'bg-gray-500 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700'
-          }`}
+          disabled={false}
+          className="w-full py-3 text-xl font-bold rounded-lg transition duration-200 bg-red-600 hover:bg-red-700"
         >
-          {status === 'LOADING' ? '분석 대기 중...' : '🚨 리스크 분석 시작'}
+          🚨 리스크 분석 시작
         </button>
       </div>
     );

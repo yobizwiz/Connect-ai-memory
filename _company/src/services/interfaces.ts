@@ -22,3 +22,10 @@ export interface TransactionResult {
     transactionId: string; // 외부 게이트웨이에서 제공하는 고유 ID
     gatewayUsed: PaymentGatewayType;
 }
+
+export interface RiskData {
+    riskLevel: 'LOW' | 'MEDIUM' | 'HIGH';
+    structuralDeficiencyScore: number;
+    suggestedPremiumAmount: number;
+    estimatedOpportunityCostUSD: number;
+}

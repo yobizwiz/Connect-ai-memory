@@ -18,7 +18,7 @@ jest.mock('../../utils/riskCalculator', () => ({
 
 describe('PaywallEngine Integration Test (Simulation Flow)', () => {
     // Mocking the API call to control asynchronous timing and results
-    const mockSimulateRiskAssessment = utils.calculateTotalRiskExposure; 
+    const mockSimulateRiskAssessment = utils.calculateTotalRiskExposure as any; 
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -32,7 +32,7 @@ describe('PaywallEngine Integration Test (Simulation Flow)', () => {
             riskLevel: 'HIGH',
             analysisDurationMs: 3000
         });
-        utils.calculateMinimumInsurancePremium.mockReturnValue(160000); // $16만으로 고정
+        (utils.calculateMinimumInsurancePremium as any).mockReturnValue(160000); // $16만으로 고정
 
         render(<PaywallEngine />);
         

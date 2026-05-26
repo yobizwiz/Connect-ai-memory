@@ -1,4 +1,5 @@
 // 핵심 비즈니스 로직: QLoss 점수 산출 (CPU Bound)
+import { RawDataPayload } from './data-ingestion-service';
 export type RiskScoreObject = { 
     qlossScore: number; // 0 - 100, 높을수록 위험
     redZoneLevel: 'SAFE' | 'WARNING' | 'CRITICAL'; 

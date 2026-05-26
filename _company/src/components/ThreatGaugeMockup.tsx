@@ -63,7 +63,7 @@ const getRiskLevel = (score: number): RiskLevelConfig => {
 const ThreatGaugeMockup: React.FC<ThreatGaugeProps> = ({ initialScore, isLoading }) => {
     // 1. 상태 관리 (Loading 상태 시뮬레이션)
     const [score, setScore] = useState(initialScore);
-    const [isProcessing, setIsProcessing] = useState(isLoading || true);
+    const [isProcessing, setIsProcessing] = useState<boolean>(isLoading !== undefined ? isLoading : true);
 
     // 2. 데이터 처리 및 애니메이션 효과 적용
     useEffect(() => {
@@ -136,7 +136,7 @@ const ThreatGaugeMockup: React.FC<ThreatGaugeProps> = ({ initialScore, isLoading
             {isProcessing && (
                  <div className="mt-6 text-center p-4 border-2 border-dashed border-gray-700 rounded-lg">
                     <div className="flex justify-center items-center space-x-3">
-                        <svg class="animate-spin h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-80" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.833 3 7.938l3-2.647z"></path></svg>
+                        <svg className="animate-spin h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-80" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.833 3 7.938l3-2.647z"></path></svg>
                         <p className="text-red-400 font-mono">API 호출 중... 시스템 무결성 검사 진행 (잠시만 기다려주십시오)</p>
                     </div>
                 </div>

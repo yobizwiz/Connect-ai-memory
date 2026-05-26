@@ -1,4 +1,5 @@
 // 보고서 포맷팅 및 클라이언트 전송용 응답 생성 (Presentation)
+import { RiskScoreObject } from './risk-scoring-engine';
 export type FinalReportPayload = { 
     success: boolean; 
     statusMessage: string; 

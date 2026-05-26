@@ -42,4 +42,12 @@ declare global {
   const afterEach: any;
   const beforeAll: any;
   const afterAll: any;
+
+  namespace jest {
+    interface Matchers<R, T = {}> {
+      toBeInTheDocument(): R;
+      toHaveAttribute(attr: string, value?: string): R;
+      toHaveClass(className: string): R;
+    }
+  }
 }

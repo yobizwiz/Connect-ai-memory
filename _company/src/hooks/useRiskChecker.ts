@@ -2,7 +2,7 @@
  * @module useRiskChecker
  * @description 리스크 스코어를 기반으로 시스템적 위협 상태(Gatekeeper Alert)가 필요한지 검사하는 커스텀 훅.
  */
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 // 임계값 설정: 구조적 위험이 감지되는 최소 스코어 (70%)
 const CRITICAL_THRESHOLD = 70;
@@ -56,7 +56,7 @@ export const useRiskChecker = (sessionId: string) => {
     }, [sessionId]);
 
     // 컴포넌트가 마운트될 때 리스크 체크를 실행합니다.
-    useState(() => {
+    useEffect(() => {
         checkRiskStatus();
     }, [checkRiskStatus]);
 

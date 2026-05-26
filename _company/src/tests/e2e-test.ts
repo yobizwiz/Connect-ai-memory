@@ -44,7 +44,7 @@ async function runE2EIntegrationTest() {
  * @param metadata - 메타데이터
 * @returns {boolean} 테스트 성공 여부
  */
-function testUIWarningDisplay(reportData: { reportId: string; totalRiskScore: number; scenarios: any[] }, metadata: { isCriticalFailure: boolean; warningLevel: 'Glitch' | 'Red'; message: string }): boolean {
+function testUIWarningDisplay(reportData: { reportId: string; totalRiskScore: number; scenarios: any[] }, metadata: { isCriticalFailure: boolean; warningLevel: 'Glitch' | 'Red' | 'None'; message: string }): boolean {
     console.log("⚙️ [Test] 단계 3/3 시작: 시각적 경고 효과(UI) 연동 테스트.");
 
     // 핵심 검증 포인트: 가장 심각한 위협에 맞춰 글리치/빨간색을 띄우는지 확인해야 함.

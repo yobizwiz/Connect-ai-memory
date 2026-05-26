@@ -68,7 +68,7 @@ const DiagnosticWidget: React.FC<WidgetProps> = ({ initialData }) => {
 
   if (isLoading) {
     return (
-        <div style={getRedZoneStyles("System Analyzing...")}>
+        <div style={getRedZoneStyles()}>
             <h3 className="text-red-500">SYSTEM ALERT: DATA STREAMING...</h3>
             <p>외부 데이터 소스 연동을 시도 중입니다. 구조적 무결성을 검증하는 과정이므로 시간이 소요됩니다.</p>
             {/* 여기에 실제 로딩 애니메이션 및 로그 스트리밍 UI가 들어갈 예정 */}

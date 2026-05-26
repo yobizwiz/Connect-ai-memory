@@ -64,8 +64,14 @@ const LossMeterComponent: React.FC = () => {
         await new Promise(resolve => setTimeout(resolve, 3000));
 
         try {
+interface ApiResponse {
+    success: boolean;
+    report: RiskResult;
+    message?: string;
+}
+
             // 실제 백엔드 API 호출 시뮬레이션
-            const response = await axios.post<RiskResult>(API_ENDPOINT, inputs);
+            const response = await axios.post(API_ENDPOINT, inputs) as { data: ApiResponse };
             
             if (response.data.success) {
                 setResult(response.data.report);

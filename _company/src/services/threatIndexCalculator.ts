@@ -1,5 +1,11 @@
 // src/services/threatIndexCalculator.ts
 
+export interface ThreatIndexPayload {
+    riskScore: number;
+    threatLevel?: 'Low' | 'Medium' | 'High' | string;
+    answers?: Record<string, 'yes' | 'no'>;
+}
+
 /**
  * @typedef {'Low' | 'Medium' | 'High'} ThreatLevel - 위협 수준 타입
  */

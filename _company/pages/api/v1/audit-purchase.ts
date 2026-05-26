@@ -1,5 +1,33 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { processPayment, PurchasePayload, TransactionError, recordPurchaseHistory, PaymentResult } from '@/services/PaymentService';
+export interface PurchasePayload {
+    userId: string;
+    amountCents: number;
+    purchaseType: 'AUDIT_RIGHT';
+}
+
+export interface PaymentResult {
+    success: boolean;
+    transactionId: string;
+    statusMessage?: string;
+}
+
+export class TransactionError extends Error {
+    code: string;
+    constructor(code: string, message: string) {
+        super(message);
+        this.code = code;
+        this.name = "TransactionError";
+    }
+}
+
+export const processPayment = async (payload: PurchasePayload): Promise<PaymentResult> => {
+    console.log(`[Mock processPayment] Processing payment of ${payload.amountCents} cents for user: ${payload.userId}`);
+    return { success: true, transactionId: `mock_txn_${Date.now()}` };
+};
+
+export const recordPurchaseHistory = async (userId: string, payload: PurchasePayload, result: PaymentResult): Promise<void> => {
+    console.log(`[Mock recordPurchaseHistory] Recording purchase for ${userId}:`, result);
+};
 
 /**
  * POST /api/v1/audit-purchase

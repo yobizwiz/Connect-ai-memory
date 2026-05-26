@@ -2,9 +2,13 @@
 import React, { useState } from 'react';
 import { useLossCalculator } from '../hooks/useLossCalculator';
 
-const InputForm = () => {
+interface InputFormProps {
+  onValidationFailure?: () => void;
+}
+
+const InputForm: React.FC<InputFormProps> = ({ onValidationFailure }) => {
   const [inputs, setInputs] = useState({ name: '', email: '' });
-  const { triggerActionFailureSpike } = useLossCalculator(); // QLoss Spike Trigger 함수 사용
+  const { triggerActionFailureSpike } = useLossCalculator(0); // QLoss Spike Trigger 함수 사용
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputs({ ...inputs, [e.target.name]: e.target.value });
@@ -16,6 +20,7 @@ const InputForm = () => {
     if (!inputs.name || !inputs.email) {
       // 🚨 유효성 검사 실패 시 QLoss 급증 트리거
       triggerActionFailureSpike(200); // 200 $Loss spike
+      onValidationFailure?.();
       alert("⚠️ 경고: 필수 정보를 모두 입력해야 리스크 분석이 가능합니다.");
     } else {
       console.log("Form Submitted Successfully. Proceeding to analysis...");

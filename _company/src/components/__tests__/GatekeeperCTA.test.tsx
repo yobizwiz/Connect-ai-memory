@@ -32,13 +32,13 @@ describe('GatekeeperCTA Component Integration Test', () => {
 
         // 데이터 입력 및 제출 시뮬레이션
         fireEvent.change(screen.getByLabelText('산업군 (Industry)'), { target: { value: 'finance' } });
-        fireEvent.click(screen.getByRole('button', /시스템 생존 위협 진단 시작/i));
+        fireEvent.click(screen.getByRole('button', { name: /시스템 생존 위협 진단 시작/i }));
 
         // 결과가 Critical Red Zone으로 변경되었는지 확인
         await waitFor(() => {
             expect(screen.getByText(/🚨 [SYSTEM 경고] CRITICAL 위험 감지/i)).toBeInTheDocument();
             expect(screen.getByText('잠재적 손실 추정액 ($Y$):')).toBeInTheDocument();
-            expect(screen.getByRole('button', /필수 안전장치 구매 \(Gatekeeper 3단계\)/i)).toBeEnabled();
+            expect(screen.getByRole('button', { name: /필수 안전장치 구매 \(Gatekeeper 3단계\)/i })).toBeEnabled();
         });
 
     });
@@ -61,11 +61,11 @@ describe('GatekeeperCTA Component Integration Test', () => {
         
         // 1단계 실행 및 대기
         fireEvent.change(screen.getByLabelText('산업군 (Industry)'), { target: { value: 'finance' } });
-        fireEvent.click(screen.getByRole('button', /시스템 생존 위협 진단 시작/i));
+        fireEvent.click(screen.getByRole('button', { name: /시스템 생존 위협 진단 시작/i }));
 
         // 2단계: 결제 버튼 클릭 시도
-        await waitFor(() => expect(screen.getByRole('button', /필수 안전장치 구매 \(Gatekeeper 3단계\)/i)).toBeInTheDocument());
-        fireEvent.click(screen.getByRole('button', /필수 안전장치 구매 \(Gatekeeper 3단계\)/i));
+        await waitFor(() => expect(screen.getByRole('button', { name: /필수 안전장치 구매 \(Gatekeeper 3단계\)/i })).toBeInTheDocument());
+        fireEvent.click(screen.getByRole('button', { name: /필수 안전장치 구매 \(Gatekeeper 3단계\)/i }));
 
         // 결과 확인: 최종 성공 메시지가 표시되었는지 검증
         await waitFor(() => {

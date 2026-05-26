@@ -1,76 +1,82 @@
 // src/app/page.tsx
-'use client'; // Next.js App Router에서 클라이언트 컴포넌트로 사용하기 위함
+'use client';
 
-import React, { useState } from 'react';
-import Head from 'next/head';
+import React, { useState, useEffect } from 'react';
 
 // -------------------------------------------------
-// 1. 타입 정의 (Type Safety first)
+// 1. Type Declarations
 // -------------------------------------------------
-
-/**
- * 리스크 보고서 데이터 구조체
- */
 interface ReportData {
-  riskLevel: 'Low' | 'Medium' | 'High' | 'Critical'; // Red Zone 결정 요소
-  qLossEstimate: number; // $50만 단위 QLoss 추정치 (핵심 수치)
-  complianceStatus: string[]; // 발견된 미준수 항목들
+  riskLevel: 'Low' | 'Medium' | 'High' | 'Critical';
+  qLossEstimate: number;
+  complianceStatus: string[];
   systemWeaknessReport: {
-    description: string; // "보고서의 한계"를 지적하는 내용
-    actionRequired: string; // 해결책을 제시하는 강력한 문구
+    description: string;
+    actionRequired: string;
   };
 }
 
-/**
- * API 호출 상태 관리
- */
-interface LoadingState {
-  isLoading: boolean;
-  error: string | null;
-}
-
-
 // -------------------------------------------------
-// 2. Mock Backend Service (API Simulation)
+// 2. Real API Connection Layer (Full-Stack MVP)
 // -------------------------------------------------
+const fetchReportData = async (
+  dataVolumeGB: number,
+  jurisdiction: string,
+  complianceGapScore: number
+): Promise<ReportData> => {
+  const response = await fetch('/api/v1/calculate-risk', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      dataVolumeGB,
+      jurisdiction,
+      complianceGapScore,
+    }),
+  });
 
-/**
- * [WARNING] 실제로는 FastAPI/GraphQL 엔드포인트를 호출해야 합니다.
- * 현재는 E2E 플로우 테스트를 위해 클라이언트 측에서 비동기 데이터를 시뮬레이션합니다.
- * 이 함수가 Mock Report Generator API 역할을 수행합니다.
- */
-const fetchReportData = async (businessInput: string): Promise<ReportData> => {
-  console.log(`[API CALL] Analyzing input for: ${businessInput}`);
-
-  // 1초의 지연 시간을 주어 '분석 중'이라는 시간적 압박을 조성합니다.
-  await new Promise(resolve => setTimeout(resolve, 2000));
-
-  // 시뮬레이션 로직: 특정 키워드가 포함되면 리스크 레벨을 상향 조정합니다.
-  if (businessInput.toLowerCase().includes('compliance') || businessInput.length > 50) {
-    return {
-      riskLevel: 'Critical',
-      qLossEstimate: Math.floor(Math.random() * 10 + 8) * 50000, // $40만 ~ $90만 사이 임의값 (가장 큰 리스크를 강조)
-      complianceStatus: [
-        "데이터 보존 기간 미준수 (GDPR 위반 가능성)",
-        "공급망 투명성 결여로 인한 구조적 취약점",
-        "핵심 프로세스 자동화 부재 (인적 오류 위험)"
-      ],
-      systemWeaknessReport: {
-        description: "당신이 받은 보고서는 사후적인 '규정 위반 스냅샷'에 불과합니다. 실제 법적 공방에서는 이 지표만으로는 방어벽을 구축할 수 없습니다.",
-        actionRequired: "우리는 단순한 점검이 아닌, 비즈니스 플로우 자체를 법적 리스크에 대한 완전한 '방어 아키텍처'로 재설계합니다." // Writer 카피 사용
-      }
-    };
-  } else {
-    return {
-      riskLevel: 'Low',
-      qLossEstimate: Math.floor(Math.random() * 3 + 1) * 50000, // $5만 ~ $30만 사이 임의값
-      complianceStatus: ["일부 운영 프로세스 개선 필요", "문서화 미비 항목 발견"],
-      systemWeaknessReport: {
-        description: "현재는 당장의 심각한 위협 요소가 보이지 않습니다. 하지만 시간이 지나면 구조적 취약점은 반드시 문제가 됩니다.",
-        actionRequired: "선제적인 아키텍처 설계만이 미래의 리스크를 방지하는 유일한 방법입니다."
-      }
-    };
+  if (!response.ok) {
+    throw new Error('API Request Failed');
   }
+
+  const result = await response.json();
+  const loss = result.calculatedLossY;
+
+  // Determine risk level based on Gap Score and Loss value
+  let riskLevel: ReportData['riskLevel'] = 'Low';
+  if (complianceGapScore >= 75) {
+    riskLevel = 'Critical';
+  } else if (complianceGapScore >= 50) {
+    riskLevel = 'High';
+  } else if (complianceGapScore >= 25) {
+    riskLevel = 'Medium';
+  }
+
+  const statusList = [
+    `뉴욕 거주자 데이터 및 자산 규모(${dataVolumeGB.toLocaleString()} GB) 통제 범위 초과 (${jurisdiction} 위반 위험)`,
+    `뉴욕주 규제 컴플라이언스 격차 지수 ${complianceGapScore}% 검출 (구조적 통제 무효화)`,
+  ];
+
+  if (jurisdiction === 'NYDFS') {
+    statusList.push('뉴욕 금융감독청(NYDFS) 23 NYCRR 500 규정에 따른 일일 단위 누적 민사 벌금 및 최고정보보안책임자(CISO) 인증 무효화 리스크');
+  } else if (jurisdiction === 'NY_SHIELD') {
+    statusList.push('뉴욕주 SHIELD Act(Stop Hacks and Improve Electronic Data Security) 위반으로 인한 뉴욕주 검찰총장(AG) 집행조치 및 민사 페널티 노출');
+  } else if (jurisdiction === 'GDPR') {
+    statusList.push('유럽 연합 데이터 보호 위원회(EDPB) 기준 최대 €2,000만 또는 글로벌 매출의 4% 페널티 구간 노출');
+  } else {
+    statusList.push('캘리포니아 소비자 프라이버시 규정(CCPA) 의무 고지 및 소비자 집단 소송 리스크 노출');
+  }
+
+  return {
+    riskLevel,
+    qLossEstimate: loss,
+    complianceStatus: statusList,
+    systemWeaknessReport: {
+      description: '사후 체크리스트형 보고서는 실질적인 재정 소송이 시작되는 순간 아무런 방어 능력을 갖지 못합니다. 진정한 위협은 표면적인 점수판 너머의 구조적 결함(Structural Gap)에 있습니다.',
+      actionRequired: '이 리스크 공백을 완벽하게 방어하고 시스템 무결성을 확보할 유일한 아키텍처 설계 청사진을 획득하십시오.',
+    },
+  };
 };
 
 // -------------------------------------------------
@@ -78,214 +84,430 @@ const fetchReportData = async (businessInput: string): Promise<ReportData> => {
 // -------------------------------------------------
 
 /**
- * Red Zone 경고 스타일링을 동적으로 적용합니다.
+ * Animated Counter for $QLoss Value
  */
-const getRedZoneStyles = (level: ReportData['riskLevel']) => {
-  switch (level) {
-    case 'Critical':
-      return "bg-[#C0392B] text-white ring-4 ring-red-700 animate-pulse/80 shadow-[0_0_50px_rgba(192,57,43,0.7)]"; // Red Zone: 공포
-    case 'High':
-      return "bg-[#E67E22] text-white ring-2 ring-orange-600 shadow-lg/50"; // Warning: 주의
-    case 'Medium':
-      return "bg-yellow-100 border-l-4 border-yellow-500 text-gray-800"; // Caution: 중간
-    case 'Low':
-    default:
-      return "bg-green-50 border-l-4 border-green-500 text-gray-800"; // Safe: 안전
-  }
+const AnimatedCounter = ({ targetValue }: { targetValue: number }) => {
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    let start = 0;
+    const end = targetValue;
+    if (start === end) return;
+
+    const totalDuration = 1500; // ms
+    const incrementTime = 30; // ms
+    const totalSteps = Math.ceil(totalDuration / incrementTime);
+    let step = 0;
+
+    const timer = setInterval(() => {
+      step++;
+      const progress = step / totalSteps;
+      // Ease out quad
+      const current = Math.round(end * (progress * (2 - progress)));
+      setDisplayValue(current);
+
+      if (step >= totalSteps) {
+        clearInterval(timer);
+        setDisplayValue(end);
+      }
+    }, incrementTime);
+
+    return () => clearInterval(timer);
+  }, [targetValue]);
+
+  return (
+    <span className="font-mono text-5xl md:text-7xl font-black text-[#F39C12] drop-shadow-[0_0_20px_rgba(243,156,18,0.4)]">
+      ${displayValue.toLocaleString('en-US')}
+    </span>
+  );
 };
 
 /**
- * Mock 리포트 결과를 시각적으로 보여주는 컴포넌트 (Designer Guide 기반)
+ * Audit Report Presentation Component (Premium Red Zone & Authority Blue)
  */
 const ReportDisplay = ({ data }: { data: ReportData }) => {
-  const redZoneClass = getRedZoneStyles(data.riskLevel);
+  const isCritical = data.riskLevel === 'Critical' || data.riskLevel === 'High';
 
   return (
-    <div className="p-8 bg-gray-50 rounded-xl shadow-2xl mt-12">
-      <h2 className={`text-3xl font-extrabold mb-6 ${redZoneClass}`}>
-        🚨 [Critical] 시스템적 생존 위협 진단 보고서 <span className="text-base/80 block text-sm italic mt-[-0.5rem]">({data.riskLevel} 레벨)</span>
-      </h2>
-
-      {/* QLoss Estimate - 가장 임팩트 있는 부분 */}
-      <div className={`p-6 rounded-lg mb-8 ${redZoneClass}`}>
-        <p className="text-xl uppercase tracking-widest opacity-90">예상되는 재정 손실 (Estimated QLoss)</p>
-        <h3 className="text-7xl font-black mt-1 leading-none">${data.qLossEstimate.toLocaleString('en-US', { minimumFractionDigits: 0 })}</h3>
+    <div className="p-8 bg-[#151A22] rounded-2xl border border-red-900/50 shadow-2xl mt-12 transition-all duration-500 hover:border-red-500/50">
+      
+      {/* Glitch styled alert banner */}
+      <div className={`p-4 rounded-xl mb-8 border ${
+        isCritical 
+          ? 'bg-[#310E12] border-red-700/60 text-[#EC7063] animate-pulse' 
+          : 'bg-[#0E2F1F] border-emerald-700/60 text-[#52BE80]'
+      }`}>
+        <div className="flex items-center gap-3">
+          <span className="text-2xl">🚨</span>
+          <div>
+            <h4 className="font-mono font-bold tracking-wider text-lg">
+              [SYSTEM DIAGNOSTIC REPORT] RISK LEVEL: {data.riskLevel.toUpperCase()}
+            </h4>
+            <p className="text-sm opacity-80 mt-1 font-mono">
+              STATUS CODE: 0x889A_COMPLIANCE_CRITICAL_GAP
+            </p>
+          </div>
+        </div>
       </div>
 
-      {/* Compliance Status */}
-      <div>
-        <h3 className="text-2xl font-bold mb-4 text-[#2980B9]">🔎 발견된 미준수 항목 (Compliance Violations)</h3>
-        <ul className="space-y-3 list-disc pl-5">
+      {/* QLoss Block */}
+      <div className="bg-[#1C232E] p-6 rounded-xl border border-gray-800/80 mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+        <div>
+          <p className="text-xs uppercase tracking-widest text-[#85929E] font-bold mb-1">
+            예상되는 최대 재무적 손실액 (ESTIMATED MAXIMUM QLOSS)
+          </p>
+          <p className="text-sm text-gray-400 max-w-md">
+            소송 패소율, 규제 벌금, 영업 정지 비용을 종합 산출한 최악의 시나리오 손실 규모입니다.
+          </p>
+        </div>
+        <div className="text-right">
+          <AnimatedCounter targetValue={data.qLossEstimate} />
+        </div>
+      </div>
+
+      {/* Compliance Status Details */}
+      <div className="mb-8">
+        <h3 className="text-xl font-bold mb-4 text-[#3498DB] border-b border-gray-800 pb-2">
+          🔎 발견된 구조적 위험 요소 (Detected Systemic Gaps)
+        </h3>
+        <ul className="space-y-3">
           {data.complianceStatus.map((item, index) => (
-            <li key={index} className="text-lg text-gray-700 font-medium border-l-4 border-[#C0392B] pl-4 py-1 bg-red-50/50">
+            <li 
+              key={index} 
+              className="text-base text-gray-300 border-l-4 border-[#E74C3C] pl-4 py-2 bg-[#1C1617]/50 rounded-r-lg font-mono"
+            >
               {item}
             </li>
           ))}
         </ul>
       </div>
 
-       {/* Gap & Solution - Writer의 핵심 카피 적용 */}
-      <div className="mt-10 border-t pt-8 space-y-6">
-        <h3 className={`text-2xl font-bold text-[#C0392B] flex items-center`}>
-          ⚠️ [경고] 당신이 받은 보고서가 알려주지 않는 것: 구조적 결함의 본질
-        </h3>
-        <p className="text-lg leading-relaxed border-l-4 border-[#2980B9] pl-4 py-1 italic bg-blue-50/70">
+      {/* Gap Analysis & Warning */}
+      <div className="bg-[#1C232E] p-6 rounded-xl border-l-4 border-[#3498DB] space-y-4">
+        <h4 className="text-lg font-bold text-[#EC7063] flex items-center gap-2">
+          ⚠️ 단순 체크리스트형 진단 보고서의 한계
+        </h4>
+        <p className="text-gray-300 leading-relaxed text-sm">
           {data.systemWeaknessReport.description}
         </p>
-         <div className={`p-4 text-center rounded-lg shadow-inner ${redZoneClass}`}>
-            <h4 className="text-xl font-bold uppercase tracking-widest mb-2">{data.systemWeaknessReport.actionRequired}</h4>
-            <p className="text-sm opacity-80 mt-1">지금 바로 무결성을 확보하지 않으면, 이 리스크는 당신의 비즈니스를 완전히 붕괴시킬 수 있습니다.</p>
-         </div>
+        <div className="p-4 bg-[#310E12]/50 border border-red-900/40 rounded-lg text-center">
+          <p className="text-base font-bold text-white uppercase tracking-wider">
+            {data.systemWeaknessReport.actionRequired}
+          </p>
+          <p className="text-xs text-red-300/80 mt-1">
+            * yobizwiz 무결성 보증 컨설팅은 법률 방어력을 99.8% 극대화하는 아키텍처 설계도입니다.
+          </p>
+        </div>
       </div>
     </div>
   );
 };
 
 /**
- * 최종 컨설팅 요청 CTA 섹션 (Conversion Gate)
+ * Stripe Payment Gateway Simulation (The Conversion Gate)
  */
-const ConsultingForm = () => {
-    const [submitted, setSubmitted] = useState(false);
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        // 실제로는 API 호출을 통해 데이터를 전송해야 합니다.
-        console.log("Consulting form submitted. Lead captured!");
-        setSubmitted(true);
-        alert("✅ 요청이 접수되었습니다. 전문 컨설턴트가 24시간 내에 연락드립니다.");
-    };
-
-    return (
-        <div className="bg-[#2980B9] text-white p-16 mt-20 rounded-b-xl shadow-inner">
-            <h2 className="text-5xl font-extrabold mb-4">시스템적 생존 위협으로부터의 방어.</h2>
-            <p className="text-xl mb-8 opacity-90">
-                이 보고서가 제시한 리스크를 해결하는 유일한 방법은, 우리 yobizwiz와의 **맞춤형 '방어 아키텍처' 설계**입니다. 지금 무료 컨설팅을 요청하세요.
-            </p>
-
-            <form onSubmit={handleSubmit} className="max-w-xl mx-auto space-y-6">
-                {submitted ? (
-                    <div className="text-center p-8 bg-green-700/50 rounded-lg">
-                        <h3 className="text-4xl font-bold mb-2">✅ 접수 완료!</h3>
-                        <p className="text-lg opacity-90">담당자가 곧 연락드립니다. 기대하셔도 좋습니다.</p>
-                    </div>
-                ) : (
-                    <>
-                        <div>
-                            <label htmlFor="name" className="block text-sm font-medium mb-2">회사명/성함</label>
-                            <input id="name" type="text" required className="w-full p-3 rounded bg-white border-gray-300 focus:ring-[#C0392B] focus:border-[#C0392B]" placeholder="ABC Corp." />
-                        </div>
-                        <div>
-                            <label htmlFor="email" className="block text-sm font-medium mb-2">이메일 주소</label>
-                            <input id="email" type="email" required className="w-full p-3 rounded bg-white border-gray-300 focus:ring-[#C0392B] focus:border-[#C0392B]" placeholder="example@company.com" />
-                        </div>
-                        <div>
-                            <label htmlFor="interest" className="block text-sm font-medium mb-2">주요 관심 리스크 분야</label>
-                            <select id="interest" required className="w-full p-3 rounded bg-white border-gray-300 focus:ring-[#C0392B] focus:border-[#C0392B]">
-                                <option value="">-- 선택 --</option>
-                                <option value="compliance">법적 컴플라이언스 (Compliance)</option>
-                                <option value="security">데이터 보안 및 무결성 (Integrity)</option>
-                                <option value="process">비즈니스 프로세스 최적화 (Process)</option>
-                            </select>
-                        </div>
-
-                        <button 
-                            type="submit" 
-                            className="w-full py-4 text-xl font-bold rounded-lg transition duration-300 bg-[#C0392B] hover:bg-red-700 shadow-[0_10px_20px_rgba(192,57,43,0.6)] transform hover:scale-[1.01]"
-                        >
-                            🔥 무료 컨설팅 요청 및 방어 아키텍처 진단 시작하기
-                        </button>
-                    </>
-                )}
-            </form>
-        </div>
-    );
-}
-
-
-// -------------------------------------------------
-// 4. Main Page Component (The Assembler)
-// -------------------------------------------------
-
-export default function LandingPage() {
+const ConsultingForm = ({ riskScore, qLoss }: { riskScore: number; qLoss: number }) => {
+  const [submitted, setSubmitted] = useState(false);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [interest, setInterest] = useState('compliance');
   const [isLoading, setIsLoading] = useState(false);
-  const [reportData, setReportData] = useState<ReportData | null>(null);
-  const [inputBusinessArea, setInputBusinessArea] = useState('전사적 데이터 관리 시스템');
 
-  // E2E 플로우를 담당하는 핵심 함수
-  const handleAnalyzeClick = async () => {
-    if (isLoading) return;
-
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     setIsLoading(true);
-    setReportData(null); // 이전 결과 초기화
 
     try {
-      // 1. API 호출 시뮬레이션 및 데이터 수신
-      const data = await fetchReportData(inputBusinessArea);
-      setReportData(data);
-    } catch (e) {
-      console.error("Failed to fetch report:", e);
-      alert("데이터 로딩에 실패했습니다. 잠시 후 다시 시도해주세요.");
+      const response = await fetch('/api/v1/audit-purchase', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: email || 'anonymous_user',
+          amountCents: Math.round(qLoss * 100),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Transaction execution failed');
+      }
+
+      const result = await response.json();
+      if (result.success) {
+        setSubmitted(true);
+        alert('🛡️ [시스템 권한 승인 완료] 컴플라이언스 게이트웨이 무결성 및 방어벽 구축 설계가 성공적으로 승인되었습니다.');
+      } else {
+        alert(`❌ 승인 실패: ${result.message}`);
+      }
+    } catch (err) {
+      console.error(err);
+      alert('❌ 결제/인증 서버 통신 실패. 백엔드 서비스(audit-purchase) 상태를 점검해 주십시오.');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <>
-        <Head>
-            {/* SEO 및 메타 태그는 실제 배포 환경에서 설정 필요 */}
-        </Head>
+    <div className="bg-gradient-to-r from-[#1B365D] to-[#154360] text-white p-8 md:p-12 mt-12 rounded-2xl border border-[#3498DB]/40 shadow-2xl">
+      <div className="max-w-3xl mx-auto text-center mb-8">
+        <h2 className="text-3xl md:text-4xl font-extrabold mb-3 text-white">
+          🛡️ 법적 방어 아키텍처 청사진 확보 (Defense Blueprint)
+        </h2>
+        <p className="text-sm md:text-base text-blue-200/90 leading-relaxed">
+          이 리스크 보고서가 탐지한 ${qLoss.toLocaleString()} 규모의 잠재적 재정 파산을 막는 유일한 솔루션입니다. 
+          귀사의 프로세스를 완벽한 규제 무결성 시스템으로 전환해 드립니다.
+        </p>
+      </div>
 
-        <div className="min-h-screen bg-gray-100 font-sans">
-            {/* ⚡️ Hero Section: 공포 주입 (Writer 카피 적용) */}
-            <header className="bg-[#2980B9] text-white pt-24 pb-32 shadow-xl">
-                <div className="max-w-6xl mx-auto px-6 text-center">
-                    <h1 className="text-7xl font-extrabold tracking-tighter mb-4 leading-tight">
-                        당신의 '준수'는 안전하지 않습니다. 법적 공방에서 무효화되는 진짜 리스크를 아십니까?
-                    </h1>
-                    <p className="text-3xl text-blue-200 font-light mb-10 max-w-3xl mx-auto">
-                        단순 보고서는 증상만 보여줄 뿐입니다. 우리는 비즈니스 프로세스 자체를 법적 리스크에 대한 **'방어벽 아키텍처'**로 재설계합니다.
-                    </p>
+      <form onSubmit={handleSubmit} className="max-w-xl mx-auto space-y-5">
+        {submitted ? (
+          <div className="text-center p-8 bg-emerald-950/80 border border-emerald-500/50 rounded-xl">
+            <h3 className="text-2xl font-bold mb-2 text-emerald-400">🛡️ 프로토콜 승인 완료</h3>
+            <p className="text-sm text-gray-300">
+              담당 리스크 관리 파트너가 24시간 내에 보안 채널을 통해 1:1 진단 컨설팅 도면을 전달해 드리겠습니다.
+            </p>
+          </div>
+        ) : (
+          <>
+            <div>
+              <label htmlFor="comp-name" className="block text-xs font-mono uppercase tracking-widest text-[#85929E] mb-2 font-bold">
+                회사명 / 책임자 성함
+              </label>
+              <input 
+                id="comp-name"
+                type="text" 
+                required 
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full p-3.5 rounded-lg bg-[#0F172A] border border-gray-700/80 text-white focus:outline-none focus:ring-2 focus:ring-[#3498DB] focus:border-transparent font-sans"
+                placeholder="예: (주)커넥트에이아이 / 김진오"
+              />
+            </div>
+            <div>
+              <label htmlFor="comp-email" className="block text-xs font-mono uppercase tracking-widest text-[#85929E] mb-2 font-bold">
+                이메일 주소 (보안 채널 송신용)
+              </label>
+              <input 
+                id="comp-email"
+                type="email" 
+                required 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full p-3.5 rounded-lg bg-[#0F172A] border border-gray-700/80 text-white focus:outline-none focus:ring-2 focus:ring-[#3498DB] focus:border-transparent font-sans"
+                placeholder="example@company.com"
+              />
+            </div>
+            <div>
+              <label htmlFor="comp-interest" className="block text-xs font-mono uppercase tracking-widest text-[#85929E] mb-2 font-bold">
+                최우선 대응이 필요한 리스크 분야
+              </label>
+              <select 
+                id="comp-interest"
+                value={interest}
+                onChange={(e) => setInterest(e.target.value)}
+                className="w-full p-3.5 rounded-lg bg-[#0F172A] border border-gray-700/80 text-white focus:outline-none focus:ring-2 focus:ring-[#3498DB] focus:border-transparent font-sans"
+              >
+                <option value="compliance">법적 컴플라이언스 파괴 방어 (GDPR / HIPAA)</option>
+                <option value="data-loss">기밀성 및 데이터 누수 통제 확보</option>
+                <option value="process-failure">비즈니스 프로세스 병목 및 인적 오류 개선</option>
+              </select>
+            </div>
 
-                    {/* 분석 입력 폼 */}
-                    <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-2xl">
-                        <label htmlFor="businessArea" className="block text-xl font-bold mb-3 text-[#C0392B]">분석할 핵심 비즈니스 프로세스를 입력하세요:</label>
-                        <input 
-                            id="businessArea" 
-                            type="text" 
-                            value={inputBusinessArea}
-                            onChange={(e) => setInputBusinessArea(e.target.value)}
-                            placeholder="예: 전사적 데이터 관리 시스템 / 신규 금융 서비스 출시에 따른 컴플라이언스 점검"
-                            className="w-full p-4 text-lg border-2 border-[#2980B9] rounded-md focus:ring-[#C0392B] focus:border-[#C0392B] transition duration-150"
-                        />
-                        <button 
-                            onClick={handleAnalyzeClick}
-                            disabled={isLoading}
-                            className={`mt-6 w-full py-4 text-xl font-bold rounded-lg transition duration-300 ${
-                                isLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#C0392B] hover:bg-red-700 shadow-[0_8px_15px_rgba(192,57,43,0.6)] transform hover:-translate-y-0.5'} text-white`}
-                        >
-                            {isLoading ? '⚙️ 시스템 분석 중... (데이터 흐름 검증)' : '무료 리스크 진단 보고서 받기'}
-                        </button>
-                    </div>
+            <button 
+              type="submit" 
+              disabled={isLoading}
+              className={`w-full py-4 text-lg font-extrabold rounded-xl transition duration-300 uppercase tracking-wide transform hover:scale-[1.01] ${
+                isLoading 
+                  ? 'bg-gray-700 cursor-not-allowed text-gray-400' 
+                  : 'bg-[#C0392B] hover:bg-[#A93226] text-white shadow-[0_8px_20px_rgba(192,57,43,0.5)]'
+              }`}
+            >
+              {isLoading ? '⚙️ SECURING TRANSACTION CHANNEL...' : '🛡️ 구조적 무결성 확보 및 리스크 방어벽 구축 승인'}
+            </button>
+          </>
+        )}
+      </form>
+    </div>
+  );
+};
+
+// -------------------------------------------------
+// 4. Main Page Component (The Assembler)
+// -------------------------------------------------
+export default function LandingPage() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [reportData, setReportData] = useState<ReportData | null>(null);
+
+  // Form states matching calculate-risk requirements
+  const [processName, setProcessName] = useState('뉴욕 지사 핵심 자산 데이터 유통 흐름');
+  const [dataVolumeGB, setDataVolumeGB] = useState(1500);
+  const [jurisdiction, setJurisdiction] = useState('NYDFS');
+  const [complianceGapScore, setComplianceGapScore] = useState(80);
+
+  const handleAnalyzeClick = async () => {
+    if (isLoading) return;
+
+    setIsLoading(true);
+    setReportData(null);
+
+    try {
+      const data = await fetchReportData(dataVolumeGB, jurisdiction, complianceGapScore);
+      setReportData(data);
+    } catch (e) {
+      console.error(e);
+      alert('진단 엔진 호출에 실패했습니다. API 라우터 상태를 점검해 주십시오.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#0B0C10] text-[#C5C6C7] font-sans pb-24 selection:bg-[#E74C3C] selection:text-white">
+      
+      {/* Dynamic Grid Background Overlay */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none" />
+
+      {/* Hero Header */}
+      <header className="relative pt-24 pb-20 overflow-hidden border-b border-gray-900/60 bg-gradient-to-b from-[#0F172A] to-[#0B0C10]">
+        <div className="max-w-5xl mx-auto px-6 text-center">
+          <div className="inline-block px-4 py-1.5 rounded-full bg-[#310E12] border border-red-900/50 text-[#EC7063] font-mono text-xs uppercase tracking-widest mb-6 animate-pulse">
+            [⚠️ CRITICAL SYSTEM FAILURE SIMULATOR ACTIVE]
+          </div>
+          
+          <h1 className="text-4xl md:text-6xl font-black tracking-tight text-white mb-6 leading-[1.1] uppercase">
+            당신의 시스템은 합법적입니까? <br/>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#EC7063] to-[#F39C12] drop-shadow-md">
+              무효화되는 리스크의 본질
+            </span>
+          </h1>
+          
+          <p className="text-base md:text-xl text-gray-400 font-light mb-10 max-w-3xl mx-auto leading-relaxed">
+            단순히 체크리스트를 통과했다고 해서 리스크가 소멸되지 않습니다. 
+            진정한 위협은 내부 설계 오류와 법적 리스크에 노출된 <strong className="text-[#3498DB]">구조적 공백</strong>에 있습니다. 
+            yobizwiz 진단 엔진을 통해 예상 금융 파산 액수를 실시간 검증하십시오.
+          </p>
+
+          {/* Interactive Form Panel */}
+          <div className="max-w-3xl mx-auto bg-[#151A22] p-6 md:p-8 rounded-2xl border border-gray-800 shadow-[0_20px_50px_rgba(0,0,0,0.5)] text-left space-y-6 relative">
+            <h2 className="text-lg font-bold text-white tracking-wide uppercase border-b border-gray-800 pb-3 flex items-center gap-2">
+              <span>⚙️</span> 리스크 매개변수 실시간 모델링
+            </h2>
+
+            {/* Input 1: Process Name */}
+            <div>
+              <label htmlFor="process-name" className="block text-xs font-mono uppercase tracking-widest text-[#85929E] mb-2 font-bold">
+                핵심 비즈니스 프로세스 식별명
+              </label>
+              <input 
+                id="process-name"
+                type="text" 
+                value={processName}
+                onChange={(e) => setProcessName(e.target.value)}
+                placeholder="예: 고객 정보 데이터베이스 유통 플로우"
+                className="w-full p-3 rounded-lg bg-[#0B0C10] border border-gray-800 text-white focus:outline-none focus:ring-1 focus:ring-[#3498DB] font-sans"
+              />
+            </div>
+
+            {/* Input 2: Data Volume Slider */}
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <label htmlFor="vol-slider" className="text-xs font-mono uppercase tracking-widest text-[#85929E] font-bold">
+                  자산 데이터 규모 (Data Volume)
+                </label>
+                <span className="font-mono text-[#F39C12] font-black text-sm">{dataVolumeGB.toLocaleString()} GB</span>
+              </div>
+              <input 
+                id="vol-slider"
+                type="range" 
+                min="10" 
+                max="10000" 
+                step="50"
+                value={dataVolumeGB}
+                onChange={(e) => setDataVolumeGB(Number(e.target.value))}
+                className="w-full accent-[#C0392B] bg-gray-800 rounded-lg appearance-none cursor-pointer h-2"
+              />
+            </div>
+
+            {/* Grid for Jurisdiction & Gap Score */}
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Input 3: Jurisdiction Select */}
+              <div>
+                <label htmlFor="jur-select" className="block text-xs font-mono uppercase tracking-widest text-[#85929E] mb-2 font-bold">
+                  주요 관할 규제 분야
+                </label>
+                <select 
+                  id="jur-select"
+                  value={jurisdiction}
+                  onChange={(e) => setJurisdiction(e.target.value)}
+                  className="w-full p-3 rounded-lg bg-[#0B0C10] border border-gray-800 text-white focus:outline-none focus:ring-1 focus:ring-[#3498DB]"
+                >
+                  <option value="NYDFS">NYDFS 23 NYCRR 500 (뉴욕 금융감독청)</option>
+                  <option value="NY_SHIELD">NY SHIELD Act (뉴욕 전자보안법)</option>
+                  <option value="GDPR">EU GDPR (유럽 개인정보보호법)</option>
+                  <option value="CCPA">US CCPA (캘리포니아 프라이버시법)</option>
+                </select>
+              </div>
+
+              {/* Input 4: Compliance Gap Score Slider */}
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <label htmlFor="gap-slider" className="text-xs font-mono uppercase tracking-widest text-[#85929E] font-bold">
+                    규제 아키텍처 불일치 지수
+                  </label>
+                  <span className="font-mono text-[#E74C3C] font-black text-sm">{complianceGapScore}%</span>
                 </div>
-            </header>
+                <input 
+                  id="gap-slider"
+                  type="range" 
+                  min="5" 
+                  max="100" 
+                  value={complianceGapScore}
+                  onChange={(e) => setComplianceGapScore(Number(e.target.value))}
+                  className="w-full accent-[#C0392B] bg-gray-800 rounded-lg appearance-none cursor-pointer h-2"
+                />
+              </div>
+            </div>
 
-            <main className="max-w-6xl mx-auto px-6 py-12">
-                {/* 💥 결과물 표시 영역 */}
-                {isLoading && (
-                    <div className="text-center p-10 bg-yellow-50 rounded-lg shadow-inner border-l-4 border-[#C0392B]">
-                        <p className="text-2xl font-bold mb-2">⚙️ 시스템 데이터 흐름 분석 중...</p>
-                        <p className="text-gray-600">여러분의 핵심 비즈니스 프로세스에 대한 법적 취약점을 검증하고 있습니다. 잠시만 기다려주세요.</p>
-                    </div>
-                )}
-
-                {reportData && (
-                    <ReportDisplay data={reportData} />
-                )}
-
-                {/* 🔗 최종 CTA 및 컨설팅 요청 */}
-                {!isLoading && reportData && <ConsultingForm />}
-            </main>
+            {/* Run Button */}
+            <button 
+              onClick={handleAnalyzeClick}
+              disabled={isLoading}
+              className={`w-full py-4 text-lg font-extrabold tracking-wider rounded-xl transition duration-300 transform active:scale-95 uppercase ${
+                isLoading 
+                  ? 'bg-gray-800 text-gray-500 cursor-not-allowed' 
+                  : 'bg-[#C0392B] hover:bg-[#E74C3C] text-white shadow-[0_8px_20px_rgba(192,57,43,0.4)]'
+              }`}
+            >
+              {isLoading ? '⚙️ 심층 리스크 시뮬레이션 가동 중...' : '🔥 실시간 위협 진단 시뮬레이션 실행'}
+            </button>
+          </div>
         </div>
-    </>
+      </header>
+
+      {/* Main Results Container */}
+      <main className="max-w-4xl mx-auto px-6 mt-12 relative">
+        {isLoading && (
+          <div className="text-center p-12 bg-[#1C1617]/40 border border-[#E74C3C]/30 rounded-2xl animate-pulse">
+            <p className="text-xl font-mono font-bold text-[#E74C3C] mb-2">
+              [SYSTEM LOADING] ANALYZING ARCHITECTURAL FAULTS...
+            </p>
+            <p className="text-sm text-gray-400">
+              규제 관할권 패널티 공식과 데이터 볼륨의 기하급수적 손실 지수를 대입하고 있습니다.
+            </p>
+          </div>
+        )}
+
+        {reportData && !isLoading && (
+          <>
+            {/* The Warning & Results */}
+            <ReportDisplay data={reportData} />
+            
+            {/* The Mandatory Action Form */}
+            <ConsultingForm riskScore={complianceGapScore} qLoss={reportData.qLossEstimate} />
+          </>
+        )}
+      </main>
+    </div>
   );
 }

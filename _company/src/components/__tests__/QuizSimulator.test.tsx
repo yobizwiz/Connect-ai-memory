@@ -7,6 +7,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import QuizSimulator from '../QuizSimulator';
 import * as mockApi from '../../services/mockApi';
+import { DiagnosisResult } from '../../types/quizTypes';
 
 // Mock API 함수를 모킹하여 테스트 환경에서 제어 가능하게 만듭니다.
 jest.mock('../../services/mockApi', () => ({
@@ -16,7 +17,7 @@ jest.mock('../../services/mockApi', () => ({
 
 describe('QuizSimulator Component Testing (Structural Integrity Check)', () => {
     beforeEach(() => {
-        (mockApi.submitQuizData as jest.Mock).mockClear();
+        (mockApi.submitQuizData as any).mockClear();
         // 테스트 시뮬레이션을 위해 초기 상태로 강제 설정
     });
 
@@ -59,7 +60,7 @@ describe('QuizSimulator Component Testing (Structural Integrity Check)', () => {
             detailedFindings: [{ category: 'A', description: "법규 변경 예측 실패", severity: 3 }]
         };
 
-        (mockApi.submitQuizData as jest.Mock).mockResolvedValue(mockResult);
+        (mockApi.submitQuizData as any).mockResolvedValue(mockResult);
 
         // 제출 버튼 클릭 시뮬레이션 (isLoading 상태 진입)
         const submitButton = screen.getByRole('button', { name: /진단 보고서 요청 \(API 호출\)/i });

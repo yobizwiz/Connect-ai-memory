@@ -2,23 +2,20 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import './RiskCalculator.css'; // 전용 CSS 파일 생성 예정
 
-/**
- * @typedef {'Normal' | 'Warning' | 'Critical'} RiskLevel
- */
+type RiskLevel = 'Normal' | 'Warning' | 'Critical';
 
-/**
- * @typedef {object} InputData
- * @property {number} piiLeakageCount - 개인 식별 정보 유출 건수 (0-10)
- * @property {number} complianceDriftScore - 규정 준수 편차 점수 (0-100, 백분율 기준)
- * @property {boolean} processAuditFailed - 프로세스 감사 실패 여부 (True/False)
- */
+interface InputData {
+    piiLeakageCount: number;
+    complianceDriftScore: number;
+    processAuditFailed: boolean;
+}
 
 /**
  * 리스크 레벨별 스타일과 경고 메시지를 관리하는 유틸리티 함수.
  * @param {RiskLevel} level 
  * @returns {{colorClass: string, title: string, description: string}}
  */
-const getRiskState = (level) => {
+const getRiskState = (level: RiskLevel) => {
     switch (level) {
         case 'Normal':
             return { colorClass: 'border-green-500', title: '✅ 리스크 정상 범위', description: '현재 시스템 구조적 결함은 발견되지 않았습니다. 하지만 경계심을 늦추지 마십시오.' };
@@ -34,7 +31,7 @@ const getRiskState = (level) => {
  * @param {InputData} data 
  * @returns {{riskLevel: RiskLevel, lossScore: number}}
  */
-const calculateRisk = (data) => {
+const calculateRisk = (data: InputData) => {
     // [근거: Loss_Meter_System_Spec_v1.0.md] - 가중치 적용 로직 구현
     let score = 0;
 
@@ -52,7 +49,7 @@ const calculateRisk = (data) => {
         score += 100; // 최대치에 가깝게 점수를 급상승시켜 Critical 유도
     }
 
-    let riskLevel = 'Normal';
+    let riskLevel: RiskLevel = 'Normal';
     let lossScore = Math.round(score);
 
     // 리스크 레벨 결정 로직 (Threshold 기반)

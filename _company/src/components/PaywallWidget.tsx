@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 // 1. API 연동을 위해 최근 작업 파일 임포트 (가정)
-import { executePaymentTransaction } from '../services/paymentService';
+import { executePaymentTransaction } from '../services/PaymentService';
 import { RiskData } from '../services/interfaces'; // 인터페이스 사용 가정
 
 // 2. 카운터 업 로직 사용
