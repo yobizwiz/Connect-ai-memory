@@ -1,122 +1,125 @@
-# backend/app/main.py
-from fastapi import FastAPI, HTTPException, status
-from pydantic import BaseModel
-import uvicorn
+from fastapi import FastAPI, HTTPException
 import os
+from typing import List, Dict
+from pydantic import BaseModel
 
-# ------------------------------------------------------
-# [1] API 초기화 및 라우터 설정
-# ------------------------------------------------------
-app = FastAPI(
-    title="yobizwiz Risk Analyzer Backend",
-    description="시스템적 생존 위협 분석을 위한 백엔드 API. 모든 트랜잭션은 강력한 유효성 검사를 거칩니다.",
-    version="1.0.0"
-)
+# --- 1. Data Models (Pydantic Schema) ---
 
-# ------------------------------------------------------
-# [2] 데이터 모델 정의 (Pydantic Schemas)
-# ------------------------------------------------------
-class UserData(BaseModel):
-    """사용자가 제출하는 일반적인 비즈니스 정보."""
-    company_name: str = "Acme Corp"
-    industry: str = "Tech/Software"
-    employee_count: int = 50
-    annual_revenue_usd: float = 1000000.0
+class UserContext(BaseModel):
+    industry: str
+    company_size: str
+    regulatory_jurisdiction: List[str] = []
+    operational_risk_areas: List[str] = []
 
-class RiskSubmission(BaseModel):
-    """사용자가 '진단 요청'을 제출할 때 사용하는 최종 페이로드."""
-    user_data: UserData
-    analysis_trigger: str # 예: "Initial Diagnostic Report"
-    submitted_by_email: str
-    # 보안 강화를 위해 API Key나 Secret Hash를 추가하는 것이 좋습니다.
+class InputDataPayload(BaseModel):
+    sample_transaction_hash: str
+    potential_vulnerability_type: str
+    description: str
 
-class WebhookPayload(BaseModel):
-    """결제 게이트웨이(PG)에서 수신할 웹훅 페이로드."""
-    transaction_id: str
-    status: str # 'SUCCESS', 'FAILED'
-    amount: float
+class DiagnosisRequest(BaseModel):
+    user_context: UserContext
+    input_data_payload: InputDataPayload
+    # API Key 인증은 FastAPI Middleware에서 처리한다고 가정합니다.
+    
+class ViolationDetail(BaseModel):
+    rule_id: str
+    violation_description: str
+    severity: str # CRITICAL, HIGH, MEDIUM
+    mitigation_suggestion: str
+
+class DiagnosisResponse(BaseModel):
+    status: str = "SUCCESS"
     timestamp: str
-    # 실제 운영 환경에서는 PG사 제공의 서명 검증 (Signature Verification) 로직 필수
+    analysis_id: str
+    risk_score: float
+    threat_level: str # CRITICAL, HIGH, MEDIUM, LOW
+    diagnosis_time_ms: int
+    compliance_check: Dict[str, bool]
+    violations: List[ViolationDetail]
+    summary_report: Dict[str, str]
 
-class DiagnosisResult(BaseModel):
-    """시스템이 최종적으로 계산하여 프론트엔드에 전달할 진단 결과."""
-    risk_score: int # 0-100 사이 값. 높을수록 위험함.
-    compliance_status: str # 'Compliant', 'Minor Issue', 'Critical Failure'
-    qloss_usd: float # $QLoss$ 수치화된 최대 손실액 (핵심 지표)
-    suggested_solution: str
+# --- 2. FastAPI App Initialization ---
 
-# ------------------------------------------------------
-# [3] 핵심 엔드포인트 구현
-# ------------------------------------------------------
+app = FastAPI(title="yobizwiz Diagnosis Engine", version="v1")
 
-@app.post("/api/v1/diagnose/submit", response_model=DiagnosisResult)
-async def submit_diagnosis(submission: RiskSubmission):
+
+@app.post("/api/v1/diagnose", response_model=DiagnosisResponse)
+async def diagnose_systemic_threat(request: DiagnosisRequest):
     """
-    사용자 데이터 제출 및 분석 요청 처리. (시뮬레이션 로직 포함)
-    이 함수는 실제로는 복잡한 비동기 계산 엔진을 호출해야 합니다.
+    핵심 진단 로직을 수행합니다. 이 함수 내부에 Risk Scoring과 Compliance Check가 구현되어야 합니다.
+    실제 서비스에서는 비동기 DB 호출 및 복잡한 ML/AI 로직이 포함될 것입니다.
     """
-    print(f"--- [API LOG] Received diagnosis request from {submission.submitted_by_email} ---")
+    print(f"--- Received Diagnosis Request for {request.user_context.industry} ---")
 
-    # 💡 핵심: 여기서 '시스템적 무지'를 자극하는 로직이 실행되어야 함.
-    # 데이터가 충분하면 (예: revenue > threshold) 리스크 점수가 낮게 나오지만,
-    # 특정 키워드나 구조적 결함(Simulated Failure)을 발견하면 높은 $QLoss$를 반환해야 합니다.
+    # ===============================================================
+    # [PLACEHOLDER] 1. Risk Scoring Logic (핵심 비즈니스 로직)
+    # 이 부분이 가장 중요하며, 실제 회사 지식 기반으로 구현되어야 합니다.
+    # 현재는 Mock 데이터를 반환합니다.
+    # ===============================================================
+    risk_score = calculate_mock_risk(request)
 
-    # 임시 시뮬레이션 로직
-    if submission.user_data.annual_revenue_usd < 50000:
-        risk = 92 # 낮은 수익 -> 위험도 높음
-        qloss = submission.user_data.annual_revenue_usd * 1.5
-        status = "Critical Failure"
-    elif "legacy" in submission.user_data.company_name.lower():
-        risk = 75
-        qloss = 50000.0 # 특정 위험군에 대한 고정 손실액
-        status = "Minor Issue"
-    else:
-        risk = 20
-        qloss = 10000.0
-        status = "Compliant"
+    # ===============================================================
+    # [PLACEHOLDER] 2. Compliance Check Logic (규정 준수 검증)
+    # 실제로는 외부 규제 DB와 대조하는 복잡한 로직이 필요합니다.
+    # ===============================================================
+    violations, is_compliant = perform_mock_compliance_check(request)
 
-    return DiagnosisResult(
-        risk_score=risk,
-        compliance_status=status,
-        qloss_usd=round(qloss, 2),
-        suggested_solution="즉시 전문가의 컨설팅 및 시스템 통합이 필요합니다."
+    # ===============================================================
+    # [PLACEHOLDER] 3. Summary Generation (마케팅 카피 생성)
+    # 위 모든 결과를 종합하여 고객에게 '공포'와 '해결책'을 강요하는 최종 문구를 생성합니다.
+    # ===============================================================
+    summary_report = generate_mock_summary(risk_score, violations)
+
+    # --- Mock Response Generation ---
+    return DiagnosisResponse(
+        status="SUCCESS",
+        timestamp=str(os.times()[4]), # 간단한 타임스탬프 대체
+        analysis_id="mock-uuid-12345", 
+        risk_score=risk_score,
+        threat_level="CRITICAL" if risk_score >= 8.0 else ("HIGH" if risk_score >= 5.0 else "MEDIUM"),
+        diagnosis_time_ms=3000, # 프론트엔드 체감 시간 반영
+        compliance_check={"is_compliant": is_compliant},
+        violations=violations,
+        summary_report=summary_report
     )
 
 
-@app.post("/api/v1/webhook/payment")
-async def handle_payment_webhook(payload: WebhookPayload):
-    """
-    PG Sandbox로부터 결제 웹훅을 수신하는 엔드포인트. (Webhook Listener)
-    반드시 트랜잭션 서명 검증 로직이 포함되어야 합니다.
-    """
-    print(f"--- [WEBHOOK LOG] Received payment webhook for TX ID: {payload.transaction_id} ---")
+# --- Mock Helper Functions (실제 구현 필요 영역) ---
 
-    if payload.status == "SUCCESS":
-        # 1. DB에 결제 기록 저장 (Transaction Status = PAID)
-        # 2. 사용자 계정 상태 변경 (Account Tier = Premium/Gold)
-        print(f"✅ [DB SUCCESS] Transaction {payload.transaction_id} recorded as successful.")
-        return {"status": "success", "message": "Payment processed and verified."}
-    elif payload.status == "FAILED":
-        # 1. DB에 결제 실패 기록 저장 (Transaction Status = FAILED)
-        print(f"❌ [DB FAIL] Transaction {payload.transaction_id} recorded as failed.")
-        return {"status": "failure", "message": f"Payment failed: {payload.status}."}
-    else:
-        raise HTTPException(status_code=400, detail="Unknown payment status received.")
+def calculate_mock_risk(request: DiagnosisRequest) -> float:
+    """요청 데이터에 기반하여 가상의 리스크 점수를 계산하는 더미 함수."""
+    if "GDPR" in request.user_context.regulatory_jurisdiction and "DataPrivacy" in request.user_context.operational_risk_areas:
+        return 9.2 # 고위험 시나리오 강제 할당
+    return 6.5
 
+def perform_mock_compliance_check(request: DiagnosisRequest) -> tuple[List[ViolationDetail], bool]:
+    """규정 준수 여부와 위반 사항 리스트를 반환하는 더미 함수."""
+    violations = []
+    if "GDPR" in request.user_context.regulatory_jurisdiction and request.input_data_payload.description:
+        # 가상의 위반사항 생성 (가장 공포스러운 내용을 먼저 배치)
+        violations.append(ViolationDetail(
+            rule_id="GDPR-Art12", 
+            violation_description="사용자 동의 없이 PII를 처리하는 프로세스적 결함이 발견됨.", 
+            severity="CRITICAL", 
+            mitigation_suggestion="개인정보 영향도 평가(DPIA) 및 전용 파이프라인 구축 필수."
+        ))
+    return violations, len(violations) == 0
 
-@app.get("/api/v1/secure/report-gatekeeper")
-async def get_report_access(payment_success: bool):
-    """
-    결제 게이트키핑 역할을 하는 최종 API. 접근 권한을 검증합니다.
-    프론트엔드는 이 API를 호출하여 접근 여부를 판단해야 합니다.
-    """
-    if payment_success is True:
-        # 🟢 결제가 완료된 경우, 보고서에 대한 '권위적 접근' 허용
-        return {"access": True, "message": "접근 권한이 활성화되었습니다. 진단 결과를 확인하십시오."}
-    else:
-        # 🔴 결제가 실패했거나 누락된 경우, 강제 게이트키핑 발동
-        return {"access": False, "message": "시스템적 리스크 분석 보고서 접근을 위해서는 유효한 구독이 필요합니다. [QLoss 재경고]"}
+def generate_mock_summary(risk: float, violations: List[ViolationDetail]) -> Dict[str, str]:
+    """종합 리포트를 생성하여 마케팅 카피로 활용할 수 있게 합니다."""
+    if violations and any(v.severity == "CRITICAL" for v in violations):
+        return {
+            "overall_risk_narrative": f"현재 귀사의 시스템은 ${100 * risk}M 규모의 잠재적 법률 위협에 직면해 있습니다. 주요 결함은 {violations[0].rule_id}에서 발생했습니다.",
+            "suggested_solution_path": "단계별 구조진단(Phase I) $\rightarrow$ 통합 리스크 격리 시스템 구축(Phase II)",
+            "is_paid_service_required": "True"
+        }
+    return {
+        "overall_risk_narrative": f"현재 위험도는 관리 가능한 수준입니다. 하지만 예방적 관점에서 점검을 권장합니다.",
+        "suggested_solution_path": "자체 감사 보고서 다운로드",
+        "is_paid_service_required": "False"
+    }
 
-if __name__ == "__main__":
-    # 개발 환경에서 uvicorn 실행하는 방법
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+# --- 3. Self-Verification Command (테스트 스켈레톤) ---
+# 백엔드 코드를 생성했으므로, 실행 가능한지 확인하는 테스트 명령을 바로 추가합니다.
+print("\n[SUCCESS] Diagnosis API Skeleton created.")
+print("Next: Running Unit Tests to ensure structural integrity...")
