@@ -1,72 +1,68 @@
-import { SystemStatusContext } from '../context/SystemStatusContext';
+/**
+ * src/services/mockApi.ts
+ * 백엔드 데이터 수집 및 리스크 보고서 생성을 시뮬레이션하는 모킹 API 레이어입니다.
+ * 실제로는 GraphQL 또는 REST API 호출이 이루어질 것입니다.
+ */
 
-// 5가지 에러 시나리오 정의 (테스트 커버리지 확보)
-export type ApiErrorType = 'INVALID_CREDENTIALS' | 'RATE_LIMIT_EXCEEDED' | 'STRUCTURAL_DEGRADATION' | 'EXTERNAL_API_FAILURE' | 'DATA_CORRUPTION';
+import { QuizState, DiagnosisResult, DiagnosisError } from '../types/quizTypes';
 
-interface AnalysisResult {
-  riskScore: number; // 0-100
-  reportData: string;
-  status: 'SUCCESS' | 'WARNING' | 'FAIL';
-}
+// ⚠️ 이 배열은 Writer가 정의한 21개 문항의 일부만 예시로 넣습니다.
+const MOCK_QUIZ_QUESTIONS: Array<QuizQuestion> = [
+  {
+    id: 'Q1', category: 'A', questionText: "회사 프로세스 중 가장 신뢰하는 리스크 검증 방법은 무엇입니까?",
+    options: [
+      { optionKey: 'a', text: "경험이 많은 선배의 경험적 판단과 직관에 의존한다.", pointValue: 2 },
+      { optionKey: 'b', text: "업계 표준 가이드라인 및 체크리스트를 기반으로 점검합니다.", pointValue: 5 },
+      { optionKey: 'c', text: "규정/법규 변경 시 발생하는 잠재적 위협을 예측하고 구조적으로 선제 대응한다.", pointValue: 18 } // 최고 리스크
+    ]
+  },
+  // ... (나머지 20개 질문은 실제 구현에서 여기에 추가됩니다)
+];
 
 /**
- * @description 가상의 QLoss 분석 API 호출을 모의합니다.
- * 이 함수는 내부적으로 시스템 상태에 영향을 주는 오류를 발생시킬 수 있습니다.
- * @param input - 사용자 입력 데이터 (예: 고객 ID)
- * @returns Promise<AnalysisResult>
+ * @description 비동기적인 API 호출 지연 및 상태 업데이트를 시뮬레이션합니다.
+ * @param state - 현재까지의 퀴즈 응답 상태
+ * @returns {Promise<DiagnosisResult>} 최종 진단 보고서 객체
  */
-export const analyzeRiskData = async (input: string): Promise<AnalysisResult> => {
-  // 전역 상태 컨텍스트 사용을 가정하여, 실제 구현에서는 Context Provider가 필요합니다.
-  const context = SystemStatusContext; // Mocking for structure definition
+export const submitQuizData = async (state: QuizState): Promise<DiagnosisResult> => {
+  console.log(`[Mock API] Received data submission for score ${state.accumulatedScore}. Simulating network delay...`);
 
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      // 1. 입력 검증 실패 (INVALID_CREDENTIALS) - 가장 낮은 레벨의 실패
-      if (!input || input.length < 5) {
-        reject({ type: 'API_ERROR', errorType: 'INVALID_CREDENTIALS', message: "유효한 데이터 세트가 아닙니다." });
-        return;
-      }
+  // 네트워크 지연 시뮬레이션 (2초)
+  await new Promise(resolve => setTimeout(resolve, 2000));
 
-      // 2. 임의의 확률적 실패 시뮬레이션 (75% 이상에서 발동)
-      const failureChance = Math.random();
-      if (failureChance > 0.8 && !context?.state.isSystemCompromised) { // 성공 시에도 가끔 오류를 유발하도록 설계
-        // 클라이맥스 실패 상태 발생! 전역 시스템 마비 트리거.
-        const failureError = "시스템적 무결성 손상(Structural Degradation): 핵심 로직이 비정상적으로 작동합니다.";
-        context?.triggerFailure(failureError); 
-        reject({ type: 'SYSTEM_ERROR', errorType: 'STRUCTURAL_DEGRADATION', message: failureError });
-        return;
-      }
+  if (Math.random() < 0.05) { // 5% 확률로 API 실패 시뮬레이션
+    throw new Error("API_FAILURE: 데이터 전송 중 서버 오류가 발생했습니다.");
+  }
 
-      // 3. 고위험 에러 시나리오 (구조적 결함) - QLoss가 급상승하는 지점
-      if (failureChance > 0.6 && context?.state.threatLevel === 'RED') {
-         const failureError = "외부 API 호출 실패: 규제 데이터 흐름이 차단되었습니다.";
-         context?.triggerFailure(failureError); 
-         reject({ type: 'API_ERROR', errorType: 'EXTERNAL_API_FAILURE', message: failureError });
-         return;
-      }
+  // --- 핵심 로직: 리스크 보고서 생성 ---
+  let totalScore = state.accumulatedScore;
+  let riskLevel: 'Low' | 'Medium' | 'High';
+  let reportTitle: string;
+  let findings: Array<{ category: 'A' | 'B' | 'C', description: string, severity: number}> = [];
 
-      // 성공 케이스 또는 경고 케이스 (Mock Success)
-      const riskScore = Math.floor(Math.random() * 100);
-      let status: AnalysisResult['status'] = 'SUCCESS';
-      if (riskScore > 70) {
-        status = 'WARNING';
-      } else if (riskScore > 90) {
-        status = 'FAIL'; // 최대 위험 상태
-      }
+  // 점수 기반으로 리스크 레벨 및 제목 결정 (Writer의 가중치 적용)
+  if (totalScore >= 25) {
+    riskLevel = 'High';
+    reportTitle = "🚨 시스템적 생존 위협 경고: 즉각적인 전면 재점검이 필수입니다.";
+    findings.push({ category: 'A', description: "법규 변경을 예측하지 못하고 사후 대응에 의존하는 구조적 허점이 발견되었습니다.", severity: 3 });
+  } else if (totalScore >= 10) {
+    riskLevel = 'Medium';
+    reportTitle = "⚠️ 주의 단계: 일부 핵심 프로세스의 통제 메커니즘을 강화해야 합니다.";
+    findings.push({ category: 'B', description: "내부 프로세스가 특정 팀이나 시스템에만 의존하는 사각지대가 존재합니다.", severity: 2 });
+  } else {
+    riskLevel = 'Low';
+    reportTitle = "✅ 안정 단계: 현재의 리스크 관리 체계는 기본적으로 건전합니다.";
+    findings.push({ category: 'C', description: "리스크를 비용 관점만으로 바라보는 경향이 있습니다. 장기적 가치와 연결하는 사고가 필요합니다.", severity: 1 });
+  }
 
-      resolve({
-        riskScore: riskScore,
-        reportData: `분석 성공. 당신의 데이터는 ${riskScore}%의 구조적 결함 잠재성을 보입니다.`,
-        status: status,
-      });
-    }, 1500); // 1.5초 지연 (시간적 압박)
-  });
+  // 최종 결과 객체 반환
+  const result: DiagnosisResult = {
+    totalScore: totalScore,
+    riskLevel: riskLevel,
+    reportTitle: reportTitle,
+    detailedFindings: findings,
+  };
+
+  console.log("[Mock API] Report successfully generated.");
+  return result;
 };
-
-export const getErrorDescriptions = () => ({
-    'INVALID_CREDENTIALS': '입력 데이터 자체의 오류로 분석이 불가능합니다.',
-    'RATE_LIMIT_EXCEEDED': 'API 호출 제한에 걸렸습니다. 잠시 후 다시 시도해주세요.',
-    'STRUCTURAL_DEGRADATION': '시스템 핵심 로직에 구조적 결함이 발생했습니다. 즉각적인 조치가 필요합니다.',
-    'EXTERNAL_API_FAILURE': '외부 규제 데이터 소스와의 연결이 끊겼습니다. 법적 무효화 위험이 높습니다.',
-    'DATA_CORRUPTION': '데이터 패킷이 손상되었습니다. 신뢰할 수 없습니다.'
-});
