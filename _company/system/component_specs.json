@@ -1,0 +1,51 @@
+{
+  "RedZoneAlertBox": {
+    "priority": "Critical",
+    "colors": {
+      "background_flash": "#C0392B",
+      "text_primary": "#FFFFFF",
+      "shadow_red": "rgba(255, 0, 0, 0.8)",
+      "shadow_blue": "rgba(0, 0, 255, 0.8)"
+    },
+    "fonts": {
+      "title": "Roboto Mono",
+      "body": "Inter"
+    },
+    "animation": {
+      "flash_duration": "200ms (Opacity 0 -> 1 -> 0)",
+      "glitch_effect_css": "text-shadow: 1px 0 #FF0000, -1px 0 #0000FF;",
+      "trigger_method": "JS Intersection Observer & Global Class Toggle (is-critical-error)"
+    }
+  },
+  "DataOverloadLoading": {
+    "priority": "High",
+    "colors": {
+      "base_bg": "#1A1A1A",
+      "overlay_color": "rgba(20, 20, 30, 0.5)"
+    },
+    "fonts": {
+      "code_block": "Roboto Mono"
+    },
+    "animation": {
+      "noise_filter": "CSS Filter (Noise/Chromatic Aberration)",
+      "loading_bar_style": "Sine Wave Motion",
+      "trigger_method": "Background Fixed & JS Timing Control"
+    }
+  },
+  "CTAButton_DiagnosisRequest": {
+    "priority": "Maximum",
+    "colors": {
+      "default_bg": "#2980B9",
+      "hover_glow": "rgba(41, 128, 185, 0.9)"
+    },
+    "fonts": {
+      "text": "Inter",
+      "size": "1.5rem",
+      "weight": "700"
+    },
+    "animation": {
+      "hover_effect": "Pulse Power Flow Animation (Subtle, repeating wave)",
+      "transition_duration": "0.3s ease-out"
+    }
+  }
+}
