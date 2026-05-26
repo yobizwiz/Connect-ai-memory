@@ -355,6 +355,40 @@
       "sessionDir": "2026-05-26T16-57",
       "evidence": "완료: sessions/2026-05-26T16-57/_report.md\n- Researcher: NY SHIELD Act(New York State's data security law)를 위반한 대표적 클라우드 데이터 유출 사례 3~5개를 \n\nCEO 종합 요점: 🔍 Researcher: 작업 시작합니다.\n\nCEO님의 지시는 서비스의 핵심 마케팅 자료이자 가장 강력한 신뢰 기반(Trust Anchor)이 될 **'법적 위협 경고'** 콘텐츠입니다. NY SHIELD Act는 미국 시장을 타겟하는 우리에게 필수적인 리스크 데이터이므로, 이 브리핑 보고서는 단순한 정보 나열이 아닌, 잠재적 '총 위험 노출액(Total",
       "completedAt": "2026-05-26T16:58:16.319Z"
+    },
+    {
+      "id": "20260526200115-uwas",
+      "title": "모든 시나리오에서 AQRS 점수 계산이 정확히 수행되는가? (개발팀)",
+      "description": "자동 등록 (Researcher 산출물에서 추출)",
+      "owner": "agent",
+      "agentIds": [
+        "researcher"
+      ],
+      "createdAt": "2026-05-26T20:01:15.385Z",
+      "status": "done",
+      "sessionDir": "2026-05-26T19-59",
+      "nudges": 0,
+      "priority": "normal",
+      "preAlarmsSent": [],
+      "evidence": "완료: sessions/2026-05-26T19-59/_report.md\n- 코다리: Designer가 정의한 UI/UX 가이드라인을 바탕으로, 랜딩 페이지의 핵심 기능인 '리스크 점수 자가 계산 엔진(Mock API)'의 최소 \n- Researcher: Developer가 구축할 리스크 점수 계산 엔진에 필요한 핵심 입력 변수(Input Variables) 및 가중치 기준을 확정하십시오. '총 \n\nCEO 종합 요점: ## 🗂 작업 라운드 — 누가 뭐 했나\n\n### 💻 코다리 _(시니어 풀스택 엔지니어)_\n> 📋 **지시**: Designer가 정의한 UI/UX 가이드라인을 바탕으로, 랜딩 페이지의 핵심 기능인 '리스크 점수 자가 계산 엔진(Mock API)'의 최소 기능 제품(MVP) 코드를 작성하십시오. 이 코드는 사용자 입력 값에 따라 임시 리스크 레벨과 총 ",
+      "completedAt": "2026-05-26T20:01:36.801Z"
+    },
+    {
+      "id": "20260526200115-2nv2",
+      "title": "최고 위험 시나리오(T-01, T-03) 발생 시, 사용자 경험 흐름이 위기감을 극대화하도록 설계되었는가? (디자인팀/작가)",
+      "description": "자동 등록 (Researcher 산출물에서 추출)",
+      "owner": "agent",
+      "agentIds": [
+        "researcher"
+      ],
+      "createdAt": "2026-05-26T20:01:15.391Z",
+      "status": "done",
+      "sessionDir": "2026-05-26T19-59",
+      "nudges": 0,
+      "priority": "normal",
+      "preAlarmsSent": [],
+      "evidence": "완료: sessions/2026-05-26T19-59/_report.md\n- 코다리: Designer가 정의한 UI/UX 가이드라인을 바탕으로, 랜딩 페이지의 핵심 기능인 '리스크 점수 자가 계산 엔진(Mock API)'의 최소 \n- Researcher: Developer가 구축할 리스크 점수 계산 엔진에 필요한 핵심 입력 변수(Input Variables) 및 가중치 기준을 확정하십시오. '총 \n\nCEO 종합 요점: ## 🗂 작업 라운드 — 누가 뭐 했나\n\n### 💻 코다리 _(시니어 풀스택 엔지니어)_\n> 📋 **지시**: Designer가 정의한 UI/UX 가이드라인을 바탕으로, 랜딩 페이지의 핵심 기능인 '리스크 점수 자가 계산 엔진(Mock API)'의 최소 기능 제품(MVP) 코드를 작성하십시오. 이 코드는 사용자 입력 값에 따라 임시 리스크 레벨과 총 ",
+      "completedAt": "2026-05-26T20:01:36.807Z"
     }
   ]
 }
