@@ -327,6 +327,20 @@
       "preAlarmsSent": [],
       "evidence": "완료: sessions/2026-05-25T19-54/_report.md\n- 코다리: Designer와 Writer가 확정한 'QLoss Gateway Flow' 스펙(Red Zone/Timer, API 게이트웨이)을 기반으로 프\n- Designer: Developer에게 핸드오프할 'QLoss Gateway' 관련 모든 비주얼 자산(Red Zone 오버레이, 글리치 애니메이션 스펙, 타이머 \n- 루나: 개발자가 구현할 'QLoss Gateway'의 모든 단계(위험 경고 발생 시, 타이머 감소 시, 오류 메시지 출력 시)에 맞는 구체적인 사운드 \n\nCEO 종합 요점: ## 🗂 작업 라운드 — 누가 뭐 했나\n\n### 💻 코다리 _(시니어 풀스택 엔지니어)_\n> 📋 **지시**: Designer와 Writer가 확정한 'QLoss Gateway Flow' 스펙(Red Zone/Timer, API 게이트웨이)을 기반으로 프론트엔드 프로토타입 개발을 즉시 시작하십시오. 특히 결제 직전 단계에서 구조적 위험(Structur",
       "completedAt": "2026-05-25T20:09:07.411Z"
+    },
+    {
+      "id": "20260526163528-xhx4",
+      "title": "프랑스 스타트업 노션 유출 판례 브리핑",
+      "description": "영숙아 우리가 프랑스 스타트업 노션 유출 판례에 대해 새로 배운 지식 있잖아. 그거 벌금 얼마였고 구체적으로 왜 벌금 맞았는지 나한테 브리핑 해봐",
+      "owner": "agent",
+      "createdAt": "2026-05-26T16:35:28.906Z",
+      "status": "done",
+      "nudges": 0,
+      "priority": "normal",
+      "preAlarmsSent": [],
+      "sessionDir": "2026-05-26T16-34",
+      "evidence": "완료: sessions/2026-05-26T16-34/_report.md\n- 현빈: 최종 B2B 영업 제안서(Pitch Deck)를 작성하십시오. 주요 청중은 규제 대응에 취약하지만 예산이 부족한 10~50인 규모의 미국 IT \n- Writer: Business가 작성한 Pitch Deck 전체를 검토하고, 모든 텍스트가 미국 비즈니스 영어(US Business English)의 권위적이\n\nCEO 종합 요점: ## 🗂 작업 라운드 — 누가 뭐 했나\n\n### 💼 현빈 _(비즈니스 전략가 · Head of Business)_\n> 📋 **지시**: 최종 B2B 영업 제안서(Pitch Deck)를 작성하십시오. 주요 청중은 규제 대응에 취약하지만 예산이 부족한 10~50인 규모의 미국 IT 스타트업 임원입니다. Pitch Deck는 다음 구조와 내용을 반드시 포함",
+      "completedAt": "2026-05-26T16:36:11.582Z"
     }
   ]
 }
