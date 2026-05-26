@@ -1,78 +1,86 @@
-import React, { useCallback } from 'react';
-import QLossGatekeeper from '../components/QLossGatekeeper';
-import { FaCreditCard, FaStore, FaShieldAlt } from 'react-icons/fa'; // 필요한 아이콘만 임포트
+import React, { useState } from 'react';
+// 커스텀 훅 임포트
+import { useRedZone } from '../hooks/useRedZone';
+// 컴포넌트 임포트 (나중에 생성)
+import HeroSection from '../components/sections/HeroSection';
+import LossMeter from '../components/sections/LossMeter';
 
-// 부모 컴포넌트 (실제 Landing Page 역할을 수행)
-const HomePage: React.FC = () => {
-    const [lastReportResult, setLastReportResult] = React.useState<any>(null);
+/**
+ * @component yobizwiz Landing Page Main Container.
+ * 사용자의 리스크 공포를 유도하고 '진단 요청'을 강제하는 메인 페이지 구조입니다.
+ */
+const YobizwizLandingPage: React.FC = () => {
+  // 초기 상태 설정 (가정: 방문 시점의 낮은 위험 레벨)
+  const [initialRisk, setInitialRisk] = useState<'LOW' | 'MEDIUM'>('LOW');
+  const { riskLevel, isCritical, getStyles } = useRedZone(initialRisk);
 
-    /**
-     * QLossGatekeeper로부터 최종 리스크 결과를 받아 처리하는 콜백입니다.
-     * 이 함수가 실제 유료 결제 플로우를 트리거합니다.
-     */
-    const handlePurchaseCompletion = useCallback((result: any) => {
-        setLastReportResult(result);
-        // TODO: 여기서 /pay?risk=CRITICAL 로 강제 리다이렉션 로직을 구현해야 합니다.
-        console.log("✅ 최종 구매 흐름 시작:", result);
-    }, []);
+  /**
+   * 핵심 API 호출 지점: 사용자가 CTA를 클릭했을 때 실행되는 로직.
+   * A/B 테스트 및 트래킹이 이곳에 집중되어야 합니다. [근거: 💻 코다리 개인 메모리]
+   */
+  const handleSubmitAuditRequest = async (data: any) => {
+    console.log("Attempting to submit audit request...");
+    // 1. 클라이언트 측 유효성 검사 및 데이터 구조화
+    if (!data || !data.riskScore) {
+      alert('유효하지 않은 데이터를 받았습니다.');
+      return;
+    }
 
-    return (
-        <div className="min-h-screen bg-[#121212] text-white py-12">
-            {/* ----------------- HERO SECTION ----------------- */}
-            <header className="text-center mb-20 pt-10">
-                <h1 className="text-6xl font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-yellow-400">
-                    당신의 비즈니스는 안전합니까? (QLoss 진단)
-                </h1>
-                <p className="mt-6 text-xl text-slate-300 max-w-2xl mx-auto">
-                    단순한 컨설팅이 아닙니다. 저희는 당신의 시스템에 내재된 **구조적 생존 위협(Structural Survival Threat)**을 찾아냅니다.
-                </p>
-            </header>
+    try {
+      // 2. API 호출 시뮬레이션 (실제 백엔드 엔드포인트 필요: /api/v1/audit-request)
+      const response = await fetch('/api/v1/audit-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...data,
+          source_risk_level: riskLevel, // 현재 페이지의 리스크 상태 전파
+          timestamp: new Date().toISOString(),
+          // A/B 테스트 그룹 ID를 요청 시점에 받아와야 함 (예: cookie 또는 query param)
+        }),
+      });
 
-            {/* ----------------- DIAGNOSIS & PURCHASE SECTION ----------------- */}
-            <main className="max-w-3xl mx-auto">
-                <div className='text-center mb-12'>
-                    <h2 className='text-3xl font-bold text-slate-200 flex items-center justify-center'>
-                        {/* QLossGatekeeper 컴포넌트를 사용하고, 결제 버튼 클릭 이벤트를 가로채는 역할을 합니다. */}
-                         진단 결과 보고서 받기 <FaStore className='ml-3 text-red-500' />
-                    </h2>
-                </div>
+      if (!response.ok) {
+        throw new Error(`API Call failed with status ${response.status}`);
+      }
 
-                {/* 핵심: 게이트키퍼 컴포넌트 삽입 (가상의 결제 버튼 클릭을 유도) */}
-                <QLossGatekeeper onPurchaseAttempt={handlePurchaseCompletion} />
+      const result = await response.json();
+      console.log("Audit Request Success:", result);
+      // 3. 성공 후 다음 액션 (예: 문의 양식으로 리다이렉트)
+    } catch (error) {
+      console.error("System Error during Audit Submission:", error);
+      alert('시스템 오류 발생! 다시 시도해 주세요.');
+    }
+  };
 
-                {lastReportResult && (
-                    <div className="mt-16 p-8 bg-[#220a0a] border-l-4 border-red-500/70 rounded-lg shadow-xl">
-                        <h3 className='text-2xl font-bold text-red-400 mb-2'>[진단 결과 보고서 요약]</h3>
-                        <p className={`text-lg ${lastReportResult.status === 'FAILED' ? 'text-red-300' : 'text-green-300'}`}>
-                            상태: {lastReportResult.status} | 위험 레벨: <span className='font-extrabold'>{lastReportResult.risk_level || 'N/A'}</span>
-                        </p>
-                        <p className="mt-2 text-slate-400">
-                            다음 단계로 진행하여 구체적인 해결책을 확인하십시오. (강제 CTA)
-                        </p>
-                    </div>
-                )}
+  const containerStyle = getStyles(); // Red Zone 스타일 적용
+  
+  return (
+    <div style={{ 
+        minHeight: '100vh', 
+        fontFamily: 'Arial, sans-serif', 
+        background: `repeating-linear-gradient(45deg, #333 0px, #333 1px, transparent 1px, transparent 20px)`, // 기본 노이즈 배경
+        transition: 'all 0.8s ease',
+        ...containerStyle // Red Zone 스타일 오버레이 적용
+    }}>
+      <main className="max-w-7xl mx-auto py-16">
+        {/* 섹션들을 순차적으로 배치하여 리스크가 점진적으로 높아지는 경험을 유도 */}
+        <HeroSection 
+          riskLevel={riskLevel} 
+          onSubmitRequest={handleSubmitAuditRequest} 
+        />
 
-                 {/* 일반 정보 섹션 */}
-                 <section className='mt-20 p-8 bg-[#1e1e1e] rounded-xl'>
-                     <h3 className='text-2xl font-bold text-slate-200 mb-4'>왜 QLoss인가요?</h3>
-                     <p className='text-slate-300 mb-6'>우리는 당신이 "문제가 있다"고 느끼기 전에, 시스템 자체가 위험 신호를 보내도록 설계했습니다. 이 경험은 단순한 마케팅을 넘어, **재무적 손실 방지 보험**의 첫 단계입니다.</p>
-                     <div className='flex justify-around'>
-                         <div>
-                             <FaShieldAlt className='text-4xl text-red-500 mb-2'/>
-                             <p className='font-semibold'>위협 시나리오</p>
-                             <p className='text-sm text-slate-400'>($X Million 손실 예측)</p>
-                         </div>
-                         <div>
-                             <FaCreditCard className='text-4xl text-blue-500 mb-2'/>
-                             <p className='font-semibold'>솔루션 제공</p>
-                             <p className='text-sm text-slate-400'></p>
-                         </div>
-                     </div>
-                 </section>
+        <div className="my-24 border-t border-gray-700/50"></div>
 
-            </main>
+        <LossMeter /> {/* 이 컴포넌트가 리스크를 높이는 역할을 수행해야 함 */}
+
+        {/* 최종 CTA 섹션 (여기에 handleSubmitAuditRequest 함수를 다시 바인딩) */}
+        <div className="text-center py-20 bg-[#1a0000]"> 
+            <h2 className="text-4xl font-bold text-red-500">시스템적 생존 위협을 체감하셨습니까?</h2>
+            {/* 최종 CTA 버튼 (실제 사용 시 여기에서 handleSubmitAuditRequest 호출) */}
         </div>
-    );
+      </main>
+    </div>
+  );
 };
 
-export default HomePage;
+export default YobizwizLandingPage;
