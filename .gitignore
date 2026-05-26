@@ -7,3 +7,14 @@ node_modules/
 *.log
 .cache/
 Thumbs.db
+
+# Connect AI Agent Runtime & State files (automatically updated in background)
+company_state.json
+**/00_Raw/
+**/sessions/
+**/_agents/*/memory.md
+**/_agents/*/verified.md
+**/_agents/*/memory_backup*
+**/_shared/
+**/_agents/*/tools/trend_sniper_report.md
+
