@@ -4,7 +4,7 @@
  * 실제로는 GraphQL 또는 REST API 호출이 이루어질 것입니다.
  */
 
-import { QuizState, DiagnosisResult, DiagnosisError } from '../types/quizTypes';
+import { QuizState, DiagnosisResult, DiagnosisError, QuizQuestion } from '../types/quizTypes';
 
 // ⚠️ 이 배열은 Writer가 정의한 21개 문항의 일부만 예시로 넣습니다.
 const MOCK_QUIZ_QUESTIONS: Array<QuizQuestion> = [

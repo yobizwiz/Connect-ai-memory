@@ -30,7 +30,7 @@ const GlitchBox: React.FC<{ children: React.ReactNode; riskLevel: 'LOW' | 'MEDIU
     const baseClasses = "relative p-8 border-2 transition duration-500";
     const glitchClass = `animate-glitch-noise ${riskLevel === 'HIGH' ? 'duration-[1s] opacity-90' : 'opacity-70'}`;
 
-    return <div className={`${baseClasses} ${glitchClass`}`}>{children}</div>;
+    return <div className={`${baseClasses} ${glitchClass}`}>{children}</div>;
 };
 
 
@@ -111,7 +111,7 @@ const PaywallWidget: React.FC = () => {
             </div>
             <div className='flex flex-col items-end'>
                  <p className="text-sm uppercase text-red-400">최소 보험료 필요액</p>
-                 <span className="text-3xl font-bold">$ {riskData?.suggestedPremiumAmount.toLocaleString() || 'N/A'}</span>
+                 <span className="text-3xl font-bold">$ {riskData?.suggestedPremiumAmount?.toLocaleString() || 'N/A'}</span>
             </div>
         </div>
 
@@ -146,7 +146,7 @@ const PaywallWidget: React.FC = () => {
                         redZoneStyles.className.includes('border-red') ? 'bg-red-700 hover:bg-red-600' : 'bg-gray-600 cursor-not-allowed'
                       } ${isLoading ? 'opacity-50 pointer-events-none' : ''}`}
                     >
-                        {isLoading ? '🚨 분석 중... (결제 진행)' : `Gold Tier Pre-Audit 신청 (${riskData?.suggestedPremiumAmount.toLocaleString()} USD)`}
+                        {isLoading ? '🚨 분석 중... (결제 진행)' : `Gold Tier Pre-Audit 신청 (${riskData?.suggestedPremiumAmount?.toLocaleString() || '0'} USD)`}
                     </button>
                 </>
             ) : (

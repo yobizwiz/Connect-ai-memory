@@ -48,7 +48,7 @@ export class ReportGeneratorService {
     /**
      * 보고서의 구조적 무결성을 판단하고, 프론트엔드에 전달할 메타 정보를 제공합니다.
      */
-    public getReportMetadata(reportData: { totalRiskScore: number }): { isCriticalFailure: boolean; warningLevel: 'Glitch' | 'Red'; message: string } {
+    public getReportMetadata(reportData: { totalRiskScore: number }): { isCriticalFailure: boolean; warningLevel: 'Glitch' | 'Red' | 'None'; message: string } {
         if (reportData.totalRiskScore >= 800) { // 임계값 설정: Critical + High 이상이면 최고 경고 발동
             return {
                 isCriticalFailure: true,

@@ -120,7 +120,7 @@ const DiagnosticWidget: React.FC<WidgetProps> = ({ initialData }) => {
           disabled={isLoading || !input}
           className={`w-full py-2 px-4 rounded-md text-white ${
             isCriticalFailure ? 'bg-red-700 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
-        '} transition duration-150 disabled:opacity-50`}
+          } transition duration-150 disabled:opacity-50`}
       >
         {isLoading ? "분석 중..." : "진단 엔진 가동 및 리스크 분석 실행"}
       </button>
@@ -129,7 +129,7 @@ const DiagnosticWidget: React.FC<WidgetProps> = ({ initialData }) => {
       <div className="mt-6 p-4 border-t pt-4">
           {isCriticalFailure && result !== null ? (
               // Red Zone 경고가 뜨면서 동시에 결과 카드가 나오는 경우 (극도의 불안감)
-             <div className={`p-3 rounded ${getRedZoneStyles("WARNING")}`}>
+             <div className="p-3 rounded" style={getRedZoneStyles()}>
                 <h4 className="text-lg font-bold">경고: 구조적 결함이 발견되었습니다.</h4>
                 <p>{displayResult.message}</p>
             </div>

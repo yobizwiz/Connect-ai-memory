@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 interface UpgradeState {
   isDiagnosisComplete: boolean; // 1차 진단 완료 여부
   upgradeRequired: boolean;    // 시스템이 강제로 업그레이드를 요구하는지 여부 (Red Zone 발동)
-  suggestedProtocolTier: 'Bronze' | 'Silver' | 'Gold'; // 현재 가장 적합한 유료 등급
+  suggestedProtocolTier: 'Bronze' | 'Silver' | 'Gold' | 'None'; // 현재 가장 적합한 유료 등급
 }
 
 const initialUpgradeState: UpgradeState = {

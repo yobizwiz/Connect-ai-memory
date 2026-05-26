@@ -5,10 +5,10 @@ import { useState, useCallback } from 'react';
  * 시스템의 구조적 무결성(Structural Integrity)을 위협하는 모든 에러 타입을 포괄합니다.
  */
 export type ApiFailureType = 
-  | { code: 'RATE_LIMIT' } // Rate Limit 초과: 가장 흔한 상업적 실패 시나리오
-  | { code: 'NETWORK_FAILURE' } // 네트워크 연결 끊김: 기본적인 시스템 불안정성
-  | { code: 'AUTH_ERROR' } // 인증/인가 오류: 권한 구조의 결함 (401, 403)
-  | { code: 'API_CONTRACT_VIOLATION' } // API 스펙 불일치: 가장 전문적이고 깊은 위협
+  | { code: 'RATE_LIMIT', details?: string } // Rate Limit 초과: 가장 흔한 상업적 실패 시나리오
+  | { code: 'NETWORK_FAILURE', details?: string } // 네트워크 연결 끊김: 기본적인 시스템 불안정성
+  | { code: 'AUTH_ERROR', details?: string } // 인증/인가 오류: 권한 구조의 결함 (401, 403)
+  | { code: 'API_CONTRACT_VIOLATION', details?: string } // API 스펙 불일치: 가장 전문적이고 깊은 위협
   | { code: 'UNKNOWN_SYSTEM_ERROR', details?: string }; // 기타 예측 불가능한 시스템 에러
 
 /**

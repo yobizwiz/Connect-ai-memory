@@ -34,7 +34,7 @@ const LossMeter: React.FC<LossMeterProps> = ({ score }) => {
             <div className="relative pt-4">
                 <div className="flex items-center justify-between mb-2">
                     <span className="text-xl font-bold tracking-widest">{score.toFixed(1)}%</span>
-                    <span className={`text-sm uppercase px-3 py-1 rounded ${severity === 'critical' ? 'bg-[#C0392B]/50 text-[#C0392B]' : severity === 'warning' ? 'bg-[#F39C12]/50 text-[#F39C12]' : 'bg-[#2ECC71]/50 text-[#2ECC71]']}`}>
+                    <span className={`text-sm uppercase px-3 py-1 rounded ${severity === 'critical' ? 'bg-[#C0392B]/50 text-[#C0392B]' : severity === 'warning' ? 'bg-[#F39C12]/50 text-[#F39C12]' : 'bg-[#2ECC71]/50 text-[#2ECC71]'}`}>
                         {label}
                     </span>
                 </div>

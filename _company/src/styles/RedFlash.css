@@ -134,3 +134,70 @@
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+/* ------------------------------------------ */
+/* 4. 추가 고도화 애니메이션 및 특수 효과 */
+/* ------------------------------------------ */
+.jitter-active {
+    animation: jitter 0.08s infinite alternate;
+}
+
+@keyframes jitter {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    100% { transform: translate(-1px, -1px) rotate(0.2deg); }
+}
+
+.red-flash-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(192, 57, 43, 0.85);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transition: opacity 0.15s ease-out;
+}
+
+.red-flash-active {
+    animation: trigger-flash 0.4s ease-out forwards;
+}
+
+@keyframes trigger-flash {
+    0% { opacity: 0; }
+    20% { opacity: 1; filter: blur(5px); }
+    100% { opacity: 0; }
+}
+
+.flow-line {
+    background: repeating-linear-gradient(
+        90deg,
+        #C0392B,
+        #C0392B 6px,
+        transparent 6px,
+        transparent 12px
+    );
+    background-size: 24px 100%;
+    animation: dash 15s linear infinite;
+}
+
+.flow-line-secure {
+    background: repeating-linear-gradient(
+        90deg,
+        #2980B9,
+        #2980B9 6px,
+        transparent 6px,
+        transparent 12px
+    );
+    background-size: 24px 100%;
+    animation: dash-reverse 15s linear infinite;
+}
+
+@keyframes dash {
+    to { background-position: 1000px 0; }
+}
+
+@keyframes dash-reverse {
+    to { background-position: -1000px 0; }
+}

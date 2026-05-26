@@ -1,4 +1,4 @@
-import { DiagnosisRequest, RiskDiagnosisResult } from '../types/threat-score.d';
+import { DiagnosisRequest, RiskDiagnosisResult } from '../types/threat-score';
 
 /**
  * [코다리 검증] 핵심 비즈니스 로직: ThreatScore를 재무적 손실액으로 변환합니다.
@@ -45,7 +45,7 @@ export const analyzeRiskAndCalculateLoss = (request: DiagnosisRequest): RiskDiag
     return {
         threatScore: threatData,
         riskLevel: riskLevel,
-        estimatedLossUSD: parseFloat(Math.min(estimatedLossUSD, userContext.assetValueUSD * 0.8)).toFixed(2), // 손실액이 자산가치를 넘지 않도록 상한선 설정 및 소수점 처리
+        estimatedLossUSD: parseFloat(Math.min(estimatedLossUSD, userContext.assetValueUSD * 0.8).toFixed(2)), // 손실액이 자산가치를 넘지 않도록 상한선 설정 및 소수점 처리
         summaryMessage: summaryMessage,
     };
 };

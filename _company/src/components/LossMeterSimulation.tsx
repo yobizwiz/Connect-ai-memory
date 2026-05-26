@@ -134,8 +134,8 @@ const LossMeterSimulation: React.FC = () => {
             {/* 핵심 결과 지표: 재무적 손실액 */}
             <div className="bg-black/50 p-4 rounded-lg border-l-4 border-red-500 mb-6">
                 <p className="text-sm text-gray-300 uppercase tracking-widest">추정 재무적 손실액 (Estimated Loss)</p>
-                <p className={`text-5xl font-extrabold ${riskData.risk_level === 'CRITICAL' ? 'text-red-400 animate-ping' : 'text-white'} transition duration-500`}>
-                    ${riskData.loss_detected_usd.toLocaleString()} USD 💸
+                <p className={`text-5xl font-extrabold ${riskData?.risk_level === 'CRITICAL' ? 'text-red-400 animate-ping' : 'text-white'} transition duration-500`}>
+                    ${riskData?.loss_detected_usd?.toLocaleString() || '0'} USD 💸
                 </p>
             </div>
 
@@ -143,9 +143,9 @@ const LossMeterSimulation: React.FC = () => {
             <div>
                 <h4 className="text-xl font-semibold text-gray-200 mb-3">✅ 감지된 주요 취약점:</h4>
                 <ul className="space-y-2 list-none pl-0">
-                    {riskData.details.map((detail, index) => (
+                    {riskData?.details?.map((detail, index) => (
                         <li key={index} className="flex items-start text-sm text-gray-200">
-                            <span className={`mr-3 mt-1 inline-block ${riskData.risk_level === 'CRITICAL' ? 'text-red-400' : 'text-yellow-400'} transform translate-y-[-5px]'>•</span> 
+                            <span className={`mr-3 mt-1 inline-block ${riskData?.risk_level === 'CRITICAL' ? 'text-red-400' : 'text-yellow-400'} transform translate-y-[-5px]`}>•</span> 
                             {detail}
                         </li>
                     ))}

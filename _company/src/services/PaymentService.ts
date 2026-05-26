@@ -1,5 +1,5 @@
 // paymentService.ts: 결제 및 위험 평가 통합 비즈니스 로직 처리
-import { PaymentGateway, PaymentError } from './interfaces';
+import { PaymentGatewayType } from './interfaces';
 
 /**
  * @description 외부 API 호출의 안정성을 위한 재시도 횟수 제한 (Exponential Backoff)
