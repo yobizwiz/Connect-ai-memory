@@ -24,7 +24,7 @@ class DiagnosisResult(BaseModel):
     """진단 결과를 담는 표준화된 응답 스키마."""
     status: str = Field("Success", description="API 호출 상태 (Success/Error).")
     risk_level: str = Field(..., description="산출된 리스크 레벨 (Critical, High, Medium, Low).")
-    risk_score: float = Field(..., ge=0.0, le=10.0, description="정량화된 위험 점수 (0.0~10.0).").
+    risk_score: float = Field(..., ge=0.0, le=10.0, description="정량화된 위험 점수 (0.0~10.0).")
     compliance_status: str = Field(..., description="최신 법규 준수 상태 (Compliant/Non-Compliant).")
     recommendation: Dict[str, Any] = Field(..., description="필요한 해결책 및 다음 단계 가이드.")
 
