@@ -397,6 +397,78 @@
             </div>
         </section>
 
+        <!-- SECTION 2: Competitive Risk & Penalty Comparison Dashboard -->
+        <section id="comparison-section" class="glass-card rounded-2xl p-6 md:p-10 mb-10 relative overflow-hidden transition-all duration-500">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-yellow-500/5 to-transparent rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="flex items-center space-x-3 mb-6 border-b border-gray-800 pb-5">
+                <span class="text-2xl">⚔️</span>
+                <h2 class="text-xl md:text-2xl font-outfit font-bold uppercase text-yellow-500 tracking-wider">
+                    경쟁사 규제 준수 & 재정 리스크(Penalties) 1:1 비교 매트릭스
+                </h2>
+            </div>
+            
+            <p class="text-xs text-gray-400 leading-relaxed mb-6 font-light">
+                글로벌 규제 가이드라인(GDPR, CCPA, EU AI Act)에 기반하여 경쟁 3사와 귀사의 실시간 리스크 및 노출 과징금($QLoss) 규모를 직접 대조해 보십시오.
+            </p>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left font-mono-data text-xs border-collapse">
+                    <thead>
+                        <tr class="border-b border-gray-800 text-gray-400 text-[10px] uppercase tracking-wider">
+                            <th class="py-4 px-4">분석 대상 (Entity)</th>
+                            <th class="py-4 px-4 text-center">보안 무결성 등급</th>
+                            <th class="py-4 px-4 text-center">GDPR 위험 지수</th>
+                            <th class="py-4 px-4 text-center">CCPA 위험 지수</th>
+                            <th class="py-4 px-4 text-center">EU AI Act 리스크</th>
+                            <th class="py-4 px-4 text-right text-red-500 font-bold">잠재적 패널티 ($QLoss)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-800">
+                        <!-- 귀사 (Your Organization) - Dynamically Linked -->
+                        <tr id="comp-row-mine" class="bg-blue-950/15 border-l-4 border-[var(--auth-blue)] transition-all duration-300">
+                            <td class="py-4 px-4 font-bold text-white">⭐ 귀사 (Your Org)</td>
+                            <td class="py-4 px-4 text-center font-bold text-blue-400" id="comp-grade-mine">B (안정권 진입)</td>
+                            <td class="py-4 px-4 text-center text-gray-300" id="comp-gdpr-mine">30%</td>
+                            <td class="py-4 px-4 text-center text-gray-300" id="comp-ccpa-mine">30%</td>
+                            <td class="py-4 px-4 text-center text-gray-300" id="comp-ai-mine">24%</td>
+                            <td class="py-4 px-4 text-right font-bold text-yellow-400 text-sm" id="comp-loss-mine">$15,000,000</td>
+                        </tr>
+
+                        <!-- Competitor A -->
+                        <tr class="hover:bg-white/5 transition">
+                            <td class="py-4 px-4 text-gray-300">경쟁사 A (핀테크 레거시)</td>
+                            <td class="py-4 px-4 text-center text-yellow-500 font-bold">C- (위험 노출)</td>
+                            <td class="py-4 px-4 text-center">68%</td>
+                            <td class="py-4 px-4 text-center">45%</td>
+                            <td class="py-4 px-4 text-center">40%</td>
+                            <td class="py-4 px-4 text-right text-red-400">$35,000,000</td>
+                        </tr>
+
+                        <!-- Competitor B -->
+                        <tr class="hover:bg-white/5 transition">
+                            <td class="py-4 px-4 text-gray-300">경쟁사 B (B2B 의료 솔루션)</td>
+                            <td class="py-4 px-4 text-center text-orange-500 font-bold">D (Willful 방치)</td>
+                            <td class="py-4 px-4 text-center">85%</td>
+                            <td class="py-4 px-4 text-center">70%</td>
+                            <td class="py-4 px-4 text-center">65%</td>
+                            <td class="py-4 px-4 text-right text-red-400">$78,000,000</td>
+                        </tr>
+
+                        <!-- Competitor C -->
+                        <tr class="hover:bg-white/5 transition">
+                            <td class="py-4 px-4 text-gray-300">경쟁사 C (미규제 신흥 인프라)</td>
+                            <td class="py-4 px-4 text-center text-red-500 font-bold">F (법적 무방비)</td>
+                            <td class="py-4 px-4 text-center">92%</td>
+                            <td class="py-4 px-4 text-center">88%</td>
+                            <td class="py-4 px-4 text-center">90%</td>
+                            <td class="py-4 px-4 text-right text-red-500 font-bold">$120,000,000</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
         <!-- ======================================================= -->
         <!-- THE MANDATORY COMPLIANCE GATEWAY (3-STAGE DYNAMIC PORTAL) -->
         <!-- ======================================================= -->
@@ -765,26 +837,85 @@
             }).format(value);
         }
 
-        // Live calculation logic
+        // Dynamic UI Updates based on telemetry response
+        function updateUI(qLoss, riskLevel, recommendation, isLive) {
+            const formatted = formatUSD(qLoss);
+            calcQLossDisplay.textContent = formatted;
+            gatewayQLossDisplay.textContent = formatted + "+";
+            
+            // Update Floating Audio Banner Status to reflect real-time telemetry mode
+            if (isLive) {
+                statusText.textContent = isAudioPlaying ? "LIVE BACKEND API CONNECTED" : "LIVE BACKEND DISCONNECTED (MUTED)";
+                if (isAudioPlaying) {
+                    statusText.className = "text-green-400";
+                    audioIndicator.className = "w-3.5 h-3.5 rounded-full bg-green-500 shadow-[0_0_12px_rgba(34,197,94,0.6)] animate-pulse";
+                }
+            } else {
+                statusText.textContent = isAudioPlaying ? "OFFLINE LOCAL SIMULATOR OPERATIONAL" : "OFFLINE SIMULATOR INACTIVE";
+                if (isAudioPlaying) {
+                    statusText.className = "text-yellow-500";
+                    audioIndicator.className = "w-3.5 h-3.5 rounded-full bg-yellow-500 shadow-[0_0_12px_rgba(234,179,8,0.6)] animate-pulse";
+                }
+            }
+
+            const gap = parseInt(complianceGapSlider.value);
+            const flow = parseInt(dataFlowSlider.value);
+            const reviewFactor = parseFloat(manualReviewSelect.value);
+
+            // Update Comparison Dashboard values dynamically
+            const compRowMine = document.getElementById('comp-row-mine');
+            const compGradeMine = document.getElementById('comp-grade-mine');
+            const compLossMine = document.getElementById('comp-loss-mine');
+            
+            document.getElementById('comp-gdpr-mine').textContent = `${Math.min(100, Math.floor(gap * 0.8))}%`;
+            document.getElementById('comp-ccpa-mine').textContent = `${Math.min(100, Math.floor(flow * 10))}%`;
+            document.getElementById('comp-ai-mine').textContent = `${Math.min(100, Math.floor(reviewFactor * 30))}%`;
+            compLossMine.textContent = formatted;
+
+            // Shift theme elements based on computed risk level
+            if (riskLevel === "CRITICAL") {
+                riskBadge.textContent = "[🚨 CRITICAL THREAT LEVEL]";
+                riskBadge.className = "px-3 py-1.5 rounded border text-xs font-mono-data font-bold text-center uppercase tracking-wider bg-red-950/45 border-red-700 text-red-500 shadow-[0_0_15px_var(--red-glow)] animate-pulse";
+                calcTriggerBtn.textContent = "[위험] 필수 게이트웨이 승인 대기";
+                calcTriggerBtn.className = "cyber-btn-red px-8 py-3 rounded text-sm tracking-wider font-bold uppercase transition-all duration-300 shadow-[0_0_15px_var(--red-glow)] bg-red-700 hover:bg-red-800";
+                calcCtaBox.className = "flex flex-col md:flex-row items-center justify-between bg-red-950/10 p-6 rounded-xl border border-red-900/60 gap-4 mt-8";
+                
+                // Dashboard Grade adjustments
+                compGradeMine.textContent = "F (즉각 붕괴 위기)";
+                compGradeMine.className = "py-4 px-4 text-center font-bold text-red-500 animate-pulse";
+                compRowMine.className = "bg-red-950/20 border-l-4 border-red-600 transition-all duration-300";
+            } else if (riskLevel === "HIGH") {
+                riskBadge.textContent = "[⚠️ MEDIUM AUDIT WARNING]";
+                riskBadge.className = "px-3 py-1.5 rounded border text-xs font-mono-data font-bold text-center uppercase tracking-wider bg-yellow-950/20 border-yellow-700 text-yellow-500";
+                calcTriggerBtn.textContent = "[경고] 컴플라이언스 보강 검토";
+                calcTriggerBtn.className = "px-8 py-3 rounded text-sm tracking-wider font-bold uppercase transition-all duration-300 bg-yellow-600 hover:bg-yellow-700 text-black";
+                calcCtaBox.className = "flex flex-col md:flex-row items-center justify-between bg-gray-900/50 p-6 rounded-xl border border-gray-800 gap-4 mt-8";
+                
+                // Dashboard Grade adjustments
+                compGradeMine.textContent = "C- (무인증 방치)";
+                compGradeMine.className = "py-4 px-4 text-center font-bold text-yellow-500";
+                compRowMine.className = "bg-yellow-950/15 border-l-4 border-yellow-600 transition-all duration-300";
+            } else {
+                riskBadge.textContent = "[🟢 SAFE ARCHITECTURE]";
+                riskBadge.className = "px-3 py-1.5 rounded border text-xs font-mono-data font-bold text-center uppercase tracking-wider bg-green-950/20 border-green-800 text-green-400";
+                calcTriggerBtn.textContent = "[진단 완료] 무료 요약 리포트";
+                calcTriggerBtn.className = "px-8 py-3 rounded text-sm tracking-wider font-bold uppercase transition-all duration-300 bg-blue-600 hover:bg-blue-700 text-white shadow-[0_0_15px_rgba(41,128,185,0.4)]";
+                calcCtaBox.className = "flex flex-col md:flex-row items-center justify-between bg-gray-900/50 p-6 rounded-xl border border-gray-800 gap-4 mt-8";
+                
+                // Dashboard Grade adjustments
+                compGradeMine.textContent = "B (안정권 진입)";
+                compGradeMine.className = "py-4 px-4 text-center font-bold text-blue-400";
+                compRowMine.className = "bg-blue-950/15 border-l-4 border-[var(--auth-blue)] transition-all duration-300";
+            }
+        }
+
+        // Live calculation logic connecting to FastAPI or local JS engine
         function runSimulation() {
             const gap = parseInt(complianceGapSlider.value);
             const flow = parseInt(dataFlowSlider.value);
             const reviewFactor = parseFloat(manualReviewSelect.value);
 
-            // Risk Assessment algorithm
-            const riskScore = (gap * 0.4) + (flow * 12) + (reviewFactor * 8);
-            
-            // QLoss conversion logic
-            let qLoss = Math.floor(riskScore * 850000);
-            
-            // Enforce realistic bounds
-            if (qLoss < 15000000) qLoss = 15000000;
-            
-            const formatted = formatUSD(qLoss);
-            calcQLossDisplay.textContent = formatted;
-            gatewayQLossDisplay.textContent = formatted + "+";
-            
-            // Slider color dynamically shift to red in severe danger zones
+            // Update local value labels immediately
             complianceValText.textContent = `${gap}%`;
             dataFlowValText.textContent = `${flow} 건`;
 
@@ -804,29 +935,35 @@
                 dataFlowSlider.classList.remove('red-thumb');
             }
 
-            // Adjust threat indicators
-            if (gap >= 75 || flow >= 8) {
-                // Severe danger (Critical Gate Activated)
-                riskBadge.textContent = "[🚨 CRITICAL THREAT LEVEL]";
-                riskBadge.className = "px-3 py-1.5 rounded border text-xs font-mono-data font-bold text-center uppercase tracking-wider bg-red-950/45 border-red-700 text-red-500 shadow-[0_0_15px_var(--red-glow)] animate-pulse";
-                calcTriggerBtn.textContent = "[위험] 필수 게이트웨이 승인 대기";
-                calcTriggerBtn.className = "cyber-btn-red px-8 py-3 rounded text-sm tracking-wider font-bold uppercase transition-all duration-300 shadow-[0_0_15px_var(--red-glow)] bg-red-700 hover:bg-red-800";
-                calcCtaBox.classList.add('border-red-900/60', 'bg-red-950/10');
-            } else if (gap >= 40 || flow >= 4) {
-                // Moderate Warning
-                riskBadge.textContent = "[⚠️ MEDIUM AUDIT WARNING]";
-                riskBadge.className = "px-3 py-1.5 rounded border text-xs font-mono-data font-bold text-center uppercase tracking-wider bg-yellow-950/20 border-yellow-700 text-yellow-500";
-                calcTriggerBtn.textContent = "[경고] 컴플라이언스 보강 검토";
-                calcTriggerBtn.className = "px-8 py-3 rounded text-sm tracking-wider font-bold uppercase transition-all duration-300 bg-yellow-600 hover:bg-yellow-700 text-black";
-                calcCtaBox.classList.remove('border-red-900/60', 'bg-red-950/10');
-            } else {
-                // Safe
-                riskBadge.textContent = "[🟢 SAFE ARCHITECTURE]";
-                riskBadge.className = "px-3 py-1.5 rounded border text-xs font-mono-data font-bold text-center uppercase tracking-wider bg-green-950/20 border-green-800 text-green-400";
-                calcTriggerBtn.textContent = "[진단 완료] 무료 요약 리포트";
-                calcTriggerBtn.className = "px-8 py-3 rounded text-sm tracking-wider font-bold uppercase transition-all duration-300 bg-blue-600 hover:bg-blue-700 text-white shadow-[0_0_15px_rgba(41,128,185,0.4)]";
-                calcCtaBox.classList.remove('border-red-900/60', 'bg-red-950/10');
-            }
+            // 🌐 Asynchronous AJAX fetch request to FastAPI backend with local fallback
+            fetch("http://127.0.0.1:8000/api/v1/diagnose", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    compliance_gap: gap,
+                    data_flow_gap: flow,
+                    manual_review_factor: reviewFactor
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                // Update interface with real-time FastAPI calculated telemetry!
+                updateUI(data.q_loss_amount, data.risk_level, data.recommendation, true);
+            })
+            .catch(err => {
+                // Graceful degradation to local javascript math engine if uvicorn is offline
+                const riskScore = (gap * 0.4) + (flow * 12) + (reviewFactor * 8);
+                let qLoss = Math.floor(riskScore * 850000);
+                if (qLoss < 15000000) qLoss = 15000000;
+                
+                let computedRisk = "LOW";
+                if (gap >= 75 || flow >= 8) {
+                    computedRisk = "CRITICAL";
+                } else if (gap >= 40 || flow >= 4) {
+                    computedRisk = "HIGH";
+                }
+                updateUI(qLoss, computedRisk, "", false);
+            });
         }
 
         // Initialize event observers

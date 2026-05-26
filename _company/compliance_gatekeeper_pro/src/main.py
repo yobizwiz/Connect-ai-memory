@@ -69,3 +69,51 @@ async def generate_compliance_report(
     except Exception as e:
         print(f"🛑 [ERROR] Critical failure in workflow: {str(e)}")
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal processing error.")
+
+
+# --- 🚨 컴플라이언스 프로토타입 전용 실시간 진단 API ---
+
+class DiagnosticRequest(BaseModel):
+    compliance_gap: int
+    data_flow_gap: int
+    manual_review_factor: float
+
+@app.post("/api/v1/diagnose")
+async def diagnose_risk(request: DiagnosticRequest):
+    """
+    실시간 리스크 및 $QLoss$ 산정 진단 엔드포인트.
+    사용자의 입력 슬라이더 값에 대응하여, 시스템 무결성과 최적화 등급을 검증합니다.
+    """
+    gap = request.compliance_gap
+    flow = request.data_flow_gap
+    factor = request.manual_review_factor
+    
+    # ⚖️ 리스크 가중치 및 $QLoss$ 환산 알고리즘 적용
+    risk_score = (gap * 0.4) + (flow * 12) + (factor * 8)
+    q_loss = int(risk_score * 850000)
+    if q_loss < 15000000:
+        q_loss = 15000000
+        
+    # 등급 분류 및 전문가 권고안 수립
+    if gap >= 75 or flow >= 8:
+        risk_level = "CRITICAL"
+        is_systemic_threat = True
+        recommendation = "[🚨 치명적 위협] 법적 무효화 리스크 레벨 CRITICAL. 즉각적인 게이트웨이 보강 및 감사 라이선스 갱신이 필수적입니다. 지체할 경우 구조적 보호막이 상실됩니다."
+    elif gap >= 40 or flow >= 4:
+        risk_level = "HIGH"
+        is_systemic_threat = False
+        recommendation = "[⚠️ 심각 경고] 법규 준수 불일치 구역 발견. yobizwiz 무결성 보강 상태(PROTECTED)로의 전환 설계를 권장합니다."
+    else:
+        risk_level = "LOW"
+        is_systemic_threat = False
+        recommendation = "[🟢 안정 구조] 현재 상태는 비교적 양호하지만, 정기적인 예방 조치 프로토콜을 설정하는 것이 유리합니다."
+        
+    print(f"📊 [API Diagnose] Score: {risk_score:.2f} | Risk: {risk_level} | QLoss: ${q_loss:,}")
+        
+    return {
+        "status": "SUCCESS",
+        "risk_level": risk_level,
+        "q_loss_amount": q_loss,
+        "is_systemic_threat": is_systemic_threat,
+        "recommendation": recommendation
+    }
