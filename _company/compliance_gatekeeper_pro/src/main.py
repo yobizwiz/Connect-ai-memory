@@ -1,4 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 from typing import Annotated
 import os
 # 내부 서비스 임포트 (Module Path)
@@ -7,6 +9,16 @@ from services.regulatory_service import fetch_regulatory_data, generate_detailed
 from services.billing_service import check_billing_eligibility, SubscriptionStatus
 
 app = FastAPI(title="Compliance Gatekeeper Pro API")
+
+# CORS 미들웨어 등록: 모든 출처에서의 교차 요청을 허용하여 CORS 차단 에러 방지
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 # 의존성 주입 (Dependency Injection) 설정: 인증 및 결제 게이트웨이를 필수로 만듭니다.
 def get_user() -> Annotated[User]:

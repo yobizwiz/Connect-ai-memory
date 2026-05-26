@@ -395,6 +395,96 @@ def _json_dump(txs, default_currency: str = ""):
     return out
 
 
+def _generate_mock_transactions(lookback_days: int) -> list:
+    """v3: 15건의 정교한 가상 거래 데이터셋 생성 (매출/환불/다중통화/프로젝트별)."""
+    import random
+    from datetime import datetime, timedelta, timezone
+    
+    now = datetime.now(timezone.utc)
+    mock_txs = []
+    
+    # 1. yobizwiz - Silver Tier (USD 1,999.00)
+    for i in range(5):
+        days_ago = random.randint(1, min(lookback_days, 15))
+        tx_date = now - timedelta(days=days_ago, hours=random.randint(0, 23))
+        mock_txs.append({
+            "transaction_info": {
+                "transaction_id": f"TXN-SLV{100000 + i}",
+                "transaction_initiation_date": tx_date.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "transaction_status": "S",
+                "transaction_event_code": "T0000",
+                "transaction_subject": "yobizwiz — Silver Tier",
+                "transaction_note": "Automated security coverage active",
+                "transaction_amount": {"currency_code": "USD", "value": "1999.00"},
+                "fee_amount": {"currency_code": "USD", "value": "-79.96"}
+            }
+        })
+        
+    # 2. yobizwiz - Bronze Tier (USD 49.00)
+    for i in range(5):
+        days_ago = random.randint(5, min(lookback_days, 25))
+        tx_date = now - timedelta(days=days_ago, hours=random.randint(0, 23))
+        mock_txs.append({
+            "transaction_info": {
+                "transaction_id": f"TXN-BRZ{200000 + i}",
+                "transaction_initiation_date": tx_date.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "transaction_status": "S",
+                "transaction_event_code": "T0000",
+                "transaction_subject": "yobizwiz — Bronze Tier",
+                "transaction_note": "Compliance basic tracking",
+                "transaction_amount": {"currency_code": "USD", "value": "49.00"},
+                "fee_amount": {"currency_code": "USD", "value": "-1.96"}
+            }
+        })
+
+    # 3. Neon Survivor - Premium Pack (USD 99.00)
+    for i in range(3):
+        days_ago = random.randint(2, min(lookback_days, 20))
+        tx_date = now - timedelta(days=days_ago, hours=random.randint(0, 23))
+        mock_txs.append({
+            "transaction_info": {
+                "transaction_id": f"TXN-NEO{300000 + i}",
+                "transaction_initiation_date": tx_date.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "transaction_status": "S",
+                "transaction_event_code": "T0000",
+                "transaction_subject": "Neon Survivor — Premium Pack",
+                "transaction_amount": {"currency_code": "USD", "value": "99.00"},
+                "fee_amount": {"currency_code": "USD", "value": "-3.96"}
+            }
+        })
+
+    # 4. yobizwiz - Bronze Tier Refund (USD -49.00)
+    days_ago = random.randint(1, 4)
+    tx_date = now - timedelta(days=days_ago)
+    mock_txs.append({
+        "transaction_info": {
+            "transaction_id": "TXN-REF999",
+            "transaction_initiation_date": tx_date.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "transaction_status": "S",
+            "transaction_event_code": "T1106",
+            "transaction_subject": "yobizwiz — Bronze Tier refund",
+            "transaction_amount": {"currency_code": "USD", "value": "-49.00"},
+            "fee_amount": {"currency_code": "USD", "value": "1.96"}
+        }
+    })
+
+    # 5. yobizwiz - Silver Tier (KRW 2,500,000)
+    tx_date = now - timedelta(hours=2) # Purchased today
+    mock_txs.append({
+        "transaction_info": {
+            "transaction_id": "TXN-KRW777",
+            "transaction_initiation_date": tx_date.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "transaction_status": "S",
+            "transaction_event_code": "T0000",
+            "transaction_subject": "yobizwiz — Silver Tier",
+            "transaction_amount": {"currency_code": "KRW", "value": "2500000.00"},
+            "fee_amount": {"currency_code": "KRW", "value": "-100000.00"}
+        }
+    })
+    
+    return mock_txs
+
+
 def main():
     cfg = _load()
     mode = (cfg.get("MODE") or "sandbox").strip().lower()
@@ -403,6 +493,17 @@ def main():
     lookback = int(os.environ.get("LOOKBACK_DAYS", cfg.get("LOOKBACK_DAYS", 30)))
     currency = (cfg.get("CURRENCY") or "").strip().upper()
     output_mode = (os.environ.get("OUTPUT") or "markdown").strip().lower()
+
+    if mode == "mock":
+        _log("PayPal MOCK 모드 활성화 — 가상 거래 데이터를 생성합니다.", "ok")
+        txs = _generate_mock_transactions(lookback)
+        _log(f"총 {len(txs)}건 가상 거래 수집 완료", "ok")
+        if output_mode == "json":
+            print(json.dumps(_json_dump(txs, currency), ensure_ascii=False, indent=2))
+        else:
+            report = _summarize(txs, currency)
+            print(report)
+        sys.exit(0)
 
     if not client_id or not client_secret:
         _log("CLIENT_ID 또는 CLIENT_SECRET 비어있음. PayPal Developer Dashboard 에서 발급:", "err")
