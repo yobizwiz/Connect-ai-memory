@@ -1,5 +1,6 @@
 from src.utils.token_manager import TokenManager, AuthService
 import time # 시간 시뮬레이션을 위한 임포트
+from typing import Optional
 
 # Singleton 패턴을 사용하여 전역적인 토큰 관리자 인스턴스를 유지합니다.
 _auth_service = AuthService()

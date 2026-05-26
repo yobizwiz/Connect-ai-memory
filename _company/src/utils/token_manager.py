@@ -47,12 +47,13 @@ class TokenManager:
         return self.auth_service.get_access_token()
 
 # --- 예시 사용법 (진단 요청 API 호출 시뮬레이션) ---
-def call_diagnosis_api(token: str):
+def call_diagnosis_api(token: str, auth_service: Optional[AuthService] = None):
     """특정 외부 서비스(예: CRM, Regulatory DB)를 호출하는 함수."""
     print("-" * 50)
     print(f"[API CALL] 진단 요청 API 호출 시작. 사용 토큰: {token[:10]}...")
     # 실제 HTTP 요청 로직이 들어가는 부분 (requests 라이브러리 등)
-    if "dummy_access" in token and time.time() > self.auth_service._expiry_time + 5:
+    target_service = auth_service or AuthService()
+    if "dummy_access" in token and time.time() > target_service._expiry_time + 5:
         raise ConnectionError("API 호출 시점 오류 발생! 토큰이 유효하지 않습니다.")
 
     # 성공적으로 데이터가 반환되었다고 가정합니다.

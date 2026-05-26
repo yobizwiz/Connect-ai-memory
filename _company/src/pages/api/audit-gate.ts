@@ -14,7 +14,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
  * @param {RiskInput} input - 클라이언트에서 전송된 위험 요소 데이터.
  * @returns {{riskLevel: 'LOW' | 'MEDIUM' | 'HIGH'; requiredPackageId: string; qlossFactor: number}}
  */
-const determineAuditGate = (input) => {
+const determineAuditGate = (input: any) => {
     let riskLevel = 'LOW';
     let requiredPackageId = '';
     let qlossFactor = 1.0;

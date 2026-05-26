@@ -1,7 +1,7 @@
 import json
 from typing import Dict, Any
 # 최근 작업한 파일: threat_calculator.py를 사용하여 TRE 계산을 가져옵니다.
-from .threat_calculator import calculate_tre
+from .threat_calculator import calculate_tre_score
 
 # 임계점 정의 (CEO 지시 기반)
 THRESHOLD_CRITICAL = 75  # Red Zone & Forced Paywall
@@ -22,7 +22,7 @@ def generate_e2e_payload(user_data: Dict[str, Any]) -> Dict[str, Any]:
     
     # 1. 백엔드 핵심 로직 호출: $TRE$ 계산
     try:
-        risk_score = calculate_tre(user_data)
+        risk_score = calculate_tre_score(user_data)
         print(f"[System Log] Calculated Threat Index (TRE): {risk_score:.2f}")
     except Exception as e:
         # 데이터 파이프라인 실패 시 가장 안전하고 고권위적인 기본값 반환

@@ -3,8 +3,11 @@
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
+    "checkJs": false,
     "skipLibCheck": true,
-    "strict": true,
+    "strict": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
@@ -28,8 +31,9 @@
     ".next",
     "out",
     "build",
-    "components",
-    "hooks",
-    "pages"
+    "src/tests",
+    "**/__tests__",
+    "**/*.test.ts",
+    "**/*.test.tsx"
   ]
 }

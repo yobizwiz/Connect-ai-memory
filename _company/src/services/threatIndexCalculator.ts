@@ -16,7 +16,7 @@
  * @param answers - 사용자가 체크리스트 항목에 응답한 객체 (ID: Yes/No)
  * @returns {Promise<{threatLevel: ThreatLevel; score: number}>} 계산된 위협 수준과 점수
  */
-export const calculateThreatIndex = async (answers) => {
+export const calculateThreatIndex = async (answers: Record<string, 'yes' | 'no'>) => {
     // Mock API 호출 지연을 시뮬레이션하여 사용자에게 '분석 중' 경험 제공 (Time Pressure)
     await new Promise(resolve => setTimeout(resolve, 1500));
 
@@ -62,7 +62,7 @@ export const calculateThreatIndex = async (answers) => {
  * @param level - 위협 수준
  * @returns {{className: string; message: string}}
  */
-export const getThreatDisplay = (level) => {
+export const getThreatDisplay = (level: 'Low' | 'Medium' | 'High' | string) => {
     switch (level) {
         case 'High':
             return { className: 'bg-red-600 animate-pulse', message: "🚨 RED ZONE 경고: 치명적인 시스템적 위협 감지. 즉각적인 전문가 진단이 필요합니다." };

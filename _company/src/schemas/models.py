@@ -1,5 +1,5 @@
-from pydantic import BaseModel, Field, validator
-from typing import Optional, List, Dict
+from pydantic import BaseModel, Field
+from typing import Optional, List, Dict, Literal
 import datetime
 
 # --- 1. 사용자 및 리스크 데이터 스키마 ---
@@ -29,7 +29,7 @@ class PaymentRequest(BaseModel):
     """결제를 위한 필수 정보와 진단 보고서 ID를 포함하는 요청 스키마."""
     report_id: str = Field(..., description="유효한 리포트 ID (진단 완료 후 접근 가능)")
     amount_usd: float = Field(..., gt=0, description="요청 결제 금액 (달러)")
-    currency: str = Field("USD", const=True)
+    currency: Literal["USD"] = "USD"
 
 class PaymentSuccessResponse(BaseModel):
     """결제 성공 시 PG로부터 받는 응답 구조."""

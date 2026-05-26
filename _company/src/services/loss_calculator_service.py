@@ -40,9 +40,21 @@ async def calculate_financial_loss(input_data: CalculationInput) -> Dict[str, An
         
     return {
         "status": "success",
-        "calculated_risk_usd": potential_loss_loss_usd, # 오타 수정 필요: potential_loss_usd
+        "calculated_risk_usd": potential_loss_usd,
         "detail_message": f"분석 결과, 귀사는 최소 ${potential_loss_usd} 이상의 재무적 위험에 노출되어 있습니다. 즉각적인 진단이 필수입니다.",
         "risk_level_description": "CRITICAL (Red Zone)" if potential_loss_usd >= 500 else "MODERATE/LOW (Yellow/Green Zone)"
     }
+
+def calculate_financial_loss_sync(threat_score: float, user_context: dict) -> float:
+    """
+    Threat score와 user context에 기반하여 재무 손실을 간편히 계산해주는 동기식 헬퍼 함수.
+    risk_router.py에서 이 함수를 연동하여 사용합니다.
+    """
+    if threat_score > 0.9: # Critical
+        return 800.0
+    elif threat_score > 0.6: # High
+        return 600.0
+    else: # Low/Medium
+        return 75.0
 
 # --- End of API Router Definition ---

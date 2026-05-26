@@ -132,9 +132,12 @@ if __name__ == "__main__":
     # 목표: Paywall 강제 활성화 및 Critical Report 출력 검증
     high_risk_client_data = {
         "name": "김철수", 
-        "income_stability_score": 0.1, # 매우 낮음
-        "regulatory_compliance_score": 0.25, # 낮음
-        "market_volatility_exposure": 0.8 # 높음
+        "pii_exposure_count": 15.0,
+        "compliance_violation_likelihood": 0.85,
+        "critical_workflow_gap_count": 8,
+        "process_failure_cost_estimate": 5000000.0,
+        "ai_hallucination_dependency_score": 0.9,
+        "company_annual_revenue_usd": 10000000.0
     }
     run_e2e_test_scenario(high_risk_client_data, "A: Red Zone (High Risk) - Paywall 강제 유도 시나리오")
 
@@ -143,9 +146,12 @@ if __name__ == "__main__":
     # 목표: Warning 메시지 출력 및 적절한 CTA 제시 검증
     medium_risk_client_data = {
         "name": "박영희", 
-        "income_stability_score": 0.4, 
-        "regulatory_compliance_score": 0.6, 
-        "market_volatility_exposure": 0.3
+        "pii_exposure_count": 4.0,
+        "compliance_violation_likelihood": 0.45,
+        "critical_workflow_gap_count": 3,
+        "process_failure_cost_estimate": 150000.0,
+        "ai_hallucination_dependency_score": 0.4,
+        "company_annual_revenue_usd": 2000000.0
     }
     run_e2e_test_scenario(medium_risk_client_data, "B: Yellow Zone (Medium Risk) - 경고 진단 시나리오")
 
@@ -154,9 +160,12 @@ if __name__ == "__main__":
     # 목표: 시스템 안정성 확인 및 기본 보고서 출력 검증
     low_risk_client_data = {
         "name": "이민호", 
-        "income_stability_score": 0.9, # 매우 높음
-        "regulatory_compliance_score": 0.85, # 높음
-        "market_volatility_exposure": 0.1
+        "pii_exposure_count": 0.0,
+        "compliance_violation_likelihood": 0.05,
+        "critical_workflow_gap_count": 0,
+        "process_failure_cost_estimate": 0.0,
+        "ai_hallucination_dependency_score": 0.05,
+        "company_annual_revenue_usd": 500000.0
     }
     run_e2e_test_scenario(low_risk_client_data, "C: Green Zone (Low Risk) - 안정 상태 시나리오")
 

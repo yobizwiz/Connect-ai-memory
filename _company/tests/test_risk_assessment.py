@@ -1,5 +1,6 @@
 import pytest
 from fastapi import FastAPI
+from fastapi.testclient import TestClient
 # 1단계에서 만든 라우터를 임포트합니다.
 from src.api.v1.risk_router import router, RiskInput
 
@@ -55,8 +56,7 @@ def test_calculate_risk_error_handling(client):
     assert response.status_code == 422
 
 # --- Integration Test (결제 플로우 모의 연동 검증) ---
-@pytest.mark.asyncio
-async def test_payment_gateway_call(client):
+def test_payment_gateway_call(client):
     """가상의 결제 게이트웨이 API 호출 및 실패 처리 시뮬레이션."""
     payload = {"threat_score": 0.8, "user_context": {}}
     # 이 테스트는 실제 Payment Gateway와 연동되는 것을 가정하고, 성공적인 응답 구조만 검증합니다.

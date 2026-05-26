@@ -100,12 +100,12 @@ const PotentialLossCalculator: React.FC = () => {
         }, 1500); // 1.5초 지연: '분석 중'이라는 느낌을 극대화합니다.
     }, [inputs]);
 
-    // UI 스타일링 함수 (Red Zone 효과 적용)
-    const getRiskStyle = (score: number | null): React.CSSProperties => {
-        if (!score) return {};
-        if (score > 75) return { backgroundColor: '#990000', color: 'white' }; // Red Zone
-        if (score > 40) return { backgroundColor: '#ffc107', color: '#333' }; // Warning Zone
-        return { backgroundColor: '#28a745', color: 'white' }; // Safe Zone
+    // UI 스타일링 함수 (Red Zone 효과 적용 - 클래스 문자열 반환)
+    const getRiskStyle = (score: number | null): string => {
+        if (!score) return '';
+        if (score > 75) return 'bg-[#990000] text-white'; // Red Zone
+        if (score > 40) return 'bg-[#ffc107] text-[#333]'; // Warning Zone
+        return 'bg-[#28a745] text-white'; // Safe Zone
     };
 
     // --- 렌더링 로직 ---
@@ -184,7 +184,7 @@ const PotentialLossCalculator: React.FC = () => {
                             <div className="mb-8 p-6 bg-gray-900/70 border-l-4 border-red-500 rounded-md shadow-inner">
                                 <p className="text-sm uppercase text-gray-400 tracking-widest mb-1">📊 SYSTEMIC RISK SCORE</p>
                                 <div className="flex items-baseline space-x-3">
-                                    <span className={`text-7xl font-extrabold ${getRiskStyle(results.riskScore).color} transition duration-500`}>{results.riskScore}</span>
+                                    <span className={`text-7xl font-extrabold ${getRiskStyle(results.riskScore).includes('text-[#333]') ? 'text-[#333]' : 'text-white'} transition duration-500`}>{results.riskScore}</span>
                                     <span className="text-4xl text-gray-300">/ 100</span>
                                 </div>
                             </div>
@@ -201,7 +201,7 @@ const PotentialLossCalculator: React.FC = () => {
                             {/* 권장 사항 및 CTA */}
                             <div>
                                 <h4 className="text-2xl font-bold mb-3 uppercase tracking-wider border-b border-red-700 pb-1">⭐ Core Recommendation</h4>
-                                <p className={`text-lg italic p-4 rounded-md ${getRiskStyle(results.riskScore).background === '#990000' ? 'bg-[#5e0000]' : 'bg-gray-800/70'} transition duration-500`}>
+                                <p className={`text-lg italic p-4 rounded-md ${getRiskStyle(results.riskScore).includes('bg-[#990000]') ? 'bg-[#5e0000] text-white' : 'bg-gray-800/70'} transition duration-500`}>
                                     {results.recommendation}
                                 </p>
                                 <button className="mt-6 w-full py-3 text-xl font-bold uppercase tracking-wider bg-red-600 hover:bg-red-800 transition duration-200">

@@ -1,47 +1,61 @@
-import { useSystemContext } from '../context/SystemContext';
+import { useState, useEffect } from 'react';
 
-// API 호출 시뮬레이션 및 로직 실행 훅 (가장 중요한 비즈니스 로직)
-export const useRiskSimulation = () => {
-  const { setSystemState, isLoading } = useSystemContext();
+export type RiskLevel = 'LOW' | 'WARNING' | 'CRITICAL';
 
-  /**
-   * @description 사용자 입력 데이터를 받아서 백엔드 API를 호출하고 QLoss 점수를 업데이트합니다.
-   * 이 함수는 시스템의 핵심 '공포 유발' 메커니즘입니다.
-   * @param userInput - 사용자가 시뮬레이션한 데이터나 질문 목록.
-   */
-  const runSimulation = async (userInput: string[]): Promise<void> => {
-    if (isLoading) {
-      console.warn("이미 분석이 진행 중입니다. 잠시만 기다려 주세요.");
+export const getRiskStyles = (level: string): { className: string; message: string } => {
+  switch (level) {
+    case 'CRITICAL':
+      return { 
+        className: 'bg-red-950/80 border-4 border-red-700 animate-pulse', 
+        message: '🚨 CRITICAL SYSTEM THREAT: 즉각적인 아키텍처 재설계 및 생존권 확보 조치 권장.' 
+      };
+    case 'WARNING':
+      return { 
+        className: 'bg-yellow-950/80 border-4 border-yellow-600', 
+        message: '⚠️ WARNING: 일부 프로세스 규격 미준수 발생. 사각지대 리스크 점검이 필요합니다.' 
+      };
+    case 'LOW':
+    default:
+      return { 
+        className: 'bg-gray-800 border-4 border-gray-700', 
+        message: '✅ SYSTEM SAFE: 현재까지 감지된 무결성 위협 수준이 낮음. 지속적인 모니터링이 필요합니다.' 
+      };
+  }
+};
+
+export const useRiskSimulation = (isRunning: boolean) => {
+  const [riskLevel, setRiskLevel] = useState<RiskLevel>('LOW');
+  const [currentRiskScore, setCurrentRiskScore] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!isRunning) {
+      setRiskLevel('LOW');
+      setCurrentRiskScore(0);
+      setIsLoading(false);
       return;
     }
 
-    // 1. 전처리 및 유효성 검사 (Guard Clause)
-    if (!userInput || userInput.length < 3) {
-        alert("분석을 위해 최소 3가지 이상의 핵심 질문/데이터를 입력해주세요.");
-        return;
-    }
-    console.log(`[SIMULATION] Starting analysis with ${userInput.length} data points...`);
+    setIsLoading(true);
+    setCurrentRiskScore(10);
+    
+    // 점진적으로 리스크 점수를 상승시키는 애니메이션 효과 시뮬레이션
+    const timer1 = setTimeout(() => {
+      setCurrentRiskScore(45);
+      setRiskLevel('WARNING');
+    }, 800);
 
-    // **************************************************************
-    // *** 중요: 실제 프로젝트에서는 여기에 fetch('/api/v1/simulate-risk', { ... })를 구현해야 합니다. ***
-    // **************************************************************
+    const timer2 = setTimeout(() => {
+      setCurrentRiskScore(85);
+      setRiskLevel('CRITICAL');
+      setIsLoading(false);
+    }, 1800);
 
-    try {
-      // API 호출 시뮬레이션 및 성공적인 값 반환 가정
-      const simulatedScore = Math.min(0.95, 0.3 + (Math.random() * 0.6)); // 최소 0.3에서 최대 0.95 사이의 위험 점수
-      const simulatedDetails: Record<string, string> = {
-        critical_gap: `[자동 분석 결과] ${userInput[1]} 항목에 대한 법적 근거가 사각지대에 있습니다.`,
-        mitigation_required: ["구조적 면책권 계약 (Structural Immunity)"],
-        suggested_action: "Gold Tier Consultation",
-      };
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+    };
+  }, [isRunning]);
 
-      // 2. Context 업데이트 호출 (전체 UI의 변화를 유발함)
-      await setSystemState(simulatedScore, simulatedDetails);
-    } catch (error) {
-      console.error("Risk Simulation Failed:", error);
-      alert("시스템 분석 중 오류가 발생했습니다. 다시 시도해주세요.");
-    }
-  };
-
-  return { runSimulation };
+  return { riskLevel, currentRiskScore, isLoading };
 };

@@ -7,13 +7,13 @@ def test_critical_failure_detection():
     구조적 결함(Defect Flag True)과 높은 압박감이 결합될 때, 위험 점수가 임계점을 넘기는지 확인.
     [기대: Critical Status]
     """
-    user_data = {"structural_defect_flag": True, "source": "Audit Report"}
+    user_data = {"결함여부": True, "source": "Audit Report"}
     result = calculate_systemic_risk(
-        initial_threat_score=0.7, # 70% 기본 위협
+        initial_threat_score=70.0, # 70% 기본 위협 (100점 스케일)
         user_input_data=user_data,
         psychological_pressure_intensity=1.0 # 최대 압박감
     )
-    # 기대값: (0.7 * 1.0 * (1 + 0.3)) = 0.91 -> 점수 스케일링을 고려하여 임계점 테스트
+    # 기대값: (70.0 * 1.0 * (1 + 0.3)) = 91.0 -> 85점 초과로 Critical 판정
     assert result.severity_level == "Red Zone - IMMEDIATE ACTION REQUIRED"
     assert result.status == "Critical"
 
@@ -25,11 +25,11 @@ def test_high_pressure_low_defect():
     """
     user_data = {"structural_defect_flag": False}
     result = calculate_systemic_risk(
-        initial_threat_score=0.5, # 50% 기본 위협
+        initial_threat_score=50.0, # 50% 기본 위협 (100점 스케일)
         user_input_data=user_data,
-        psychological_pressure_intensity=1.0 # 최대 압박감 (가중치 2배)
+        psychological_pressure_intensity=3.0 # 높은 압박감 (가중치 1.5배)
     )
-    # 기대값: (0.5 * 2.0 * (1 + 0)) = 1.0 -> 점수 스케일링을 고려하여 임계점 테스트
+    # 기대값: (50.0 * 1.5 * (1 + 0)) = 75.0 -> 60점 이상으로 Warning 판정
     assert result.severity_level == "Yellow Zone - STRUCTURAL REVIEW RECOMMENDED"
     assert result.status == "Warning"
 
@@ -41,9 +41,9 @@ def test_safe_scenario():
     """
     user_data = {"structural_defect_flag": False}
     result = calculate_systemic_risk(
-        initial_threat_score=0.2, # 낮은 기본 위협
+        initial_threat_score=20.0, # 낮은 기본 위협 (100점 스케일)
         user_input_data=user_data,
-        psychological_pressure_intensity=0.1 # 낮은 압박감
+        psychological_pressure_intensity=0.1 # 낮은 압박감 (가중치 1배)
     )
     assert result.severity_level == "Green Zone - MONITORING OK"
     assert result.status == "Safe"

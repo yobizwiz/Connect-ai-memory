@@ -76,7 +76,6 @@ def calculate_erqm(input_data: RiskInput) -> tuple[float, RiskBreakdown]:
 
 
 from fastapi import FastAPI
-from src.api.risk_calculator import RiskInput, RiskAssessmentResponse, calculate_erqm
 
 app = FastAPI(title="Yobizwiz Risk Assessment API", version="v1")
 

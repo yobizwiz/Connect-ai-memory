@@ -1,8 +1,6 @@
 "use client"; // Next.js 클라이언트 컴포넌트임을 명시
 
 import React, { useState, useEffect } from 'react';
-import { Button } from "@/components/ui/button"; // 가정된 UI 라이브러리
-import styles from '@/styles/globals.css'; // 통합한 Red Zone 스타일 사용
 
 /**
  * 리스크 등급에 따른 시각적 경고 텍스트를 반환합니다.
@@ -131,12 +129,12 @@ export const DiagnosticEngine: React.FC<{ initialRiskScore: number }> = ({ initi
                 <h4 className="text-3xl font-extrabold text-blue-700 mb-6">
                     [해결책] 구조적 무결성 확보, 지금 바로 시작하십시오.
                 </h4>
-                <Button 
-                    className="w-full max-w-md py-3 px-8 text-lg bg-red-600 hover:bg-red-700 transition duration-200 shadow-lg"
+                <button 
+                    className="w-full max-w-md py-3 px-8 text-lg bg-red-600 hover:bg-red-700 transition duration-200 shadow-lg text-white font-bold rounded"
                     onClick={() => alert("진단 요청 페이지로 이동합니다. (CTA 성공) ✅")}
                 >
                     무료 리스크 진단 및 해결책 컨설팅 받기
-                </Button>
+                </button>
             </div>
         </div>
     );

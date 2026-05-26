@@ -83,7 +83,8 @@ const useRiskCalculation = () => {
         currentYValue: yValue, 
         isLoading, 
         error,
-        getRedZoneStyles // 외부 컴포넌트에서 사용하도록 노출
+        getRedZoneStyles, // 외부 컴포넌트에서 사용하도록 노출
+        getRiskLevel
     };
 };
 

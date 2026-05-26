@@ -28,7 +28,7 @@ const ApiTestPage: React.FC = () => {
     const { state, execute, reset } = useApiCall(mockDangerousApiCall);
 
     const handleExecute = async (initialFailure?: ApiFailureType) => {
-        await execute(() => mockDangerousApiCall()); // 실행 시도
+        await execute(initialFailure); // 실행 시도
     };
 
     return (

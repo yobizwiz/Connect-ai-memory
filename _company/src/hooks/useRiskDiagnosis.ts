@@ -12,7 +12,7 @@ interface DiagnosisInput {
     annualRevenueUSD: number;
 }
 
-interface RiskReport {
+export interface RiskReport {
     riskLevel: 'Low' | 'Medium' | 'High' | 'Critical';
     riskScore: number; // 0 - 100 (높을수록 위험)
     summary: string;

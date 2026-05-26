@@ -24,7 +24,7 @@ export interface ApiState<T> {
  * API 호출의 결과를 래핑하고, 실패 시 이를 전문적인 오류 타입으로 변환하는 커스텀 훅.
  * @param apiCall - 실제 비동기 API 호출 함수 (Promise<T>)
  */
-export const useApiCall = <T>(apiCall: () => Promise<T>): ApiState<T> => {
+export const useApiCall = <T>(apiCall: () => Promise<T>) => {
     const [state, setState] = useState<ApiState<T>>({
         data: null,
         loading: false,

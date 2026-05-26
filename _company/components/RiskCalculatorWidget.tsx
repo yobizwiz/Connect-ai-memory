@@ -16,10 +16,11 @@ const calculateRiskApi = async (inputs: any) => {
 
 interface RiskCalculatorWidgetProps {}
 
-const RedZoneButton = ({ children, disabled, className }: { children: React.ReactNode; disabled: boolean; className?: string }) => (
+const RedZoneButton = ({ children, disabled, className, onClick }: { children: React.ReactNode; disabled: boolean; className?: string; onClick?: () => void }) => (
     <button 
         className={`px-8 py-3 text-lg font-bold rounded transition duration-200 ${disabled ? 'bg-gray-600 cursor-not-allowed' : 'bg-[#C0392B] hover:bg-[#A03126]'}`}
         disabled={disabled}
+        onClick={onClick}
         style={{ minWidth: '250px' }}
     >
         {children}
@@ -33,7 +34,7 @@ const RiskCalculatorWidget: React.FC<RiskCalculatorWidgetProps> = () => {
     const [gapScore, setGapScore] = useState<number>(75);
 
     // 계산 결과를 저장하는 상태 (핵심)
-    const [result, setResult] = useState<{ y: number; eligible: boolean; message: string } | null>({
+    const [result, setResult] = useState<{ y: number | string; eligible: boolean; message: string } | null>({
         y: 0,
         eligible: false,
         message: "위험을 분석하려면 입력값을 변경해주세요."
