@@ -13,23 +13,24 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true,
-    "baseUrl": ".",
+    "baseUrl": "./_company",
     "paths": {
       "@/*": ["src/*"]
     }
   },
-  "include": ["src"],
+  "include": ["_company/src"],
   "exclude": [
     "node_modules",
-    "sessions",
     "00_Raw",
-    "dist",
-    ".next",
-    "out",
-    "build",
-    "components",
-    "hooks",
-    "pages"
+    "40_템플릿",
+    "_company/sessions",
+    "_company/00_Raw",
+    "_company/components",
+    "_company/hooks",
+    "_company/pages",
+    "_company/dist",
+    "_company/.next",
+    "_company/out",
+    "_company/build"
   ]
 }

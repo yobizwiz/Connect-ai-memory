@@ -1,3 +1,9 @@
+export interface ReportData {
+    riskScore: number;
+    diagnosisSummary: string[];
+    isCritical: boolean;
+}
+
 /**
  * Mock API Service: e2e_simulator_api.py의 핵심 로직을 시뮬레이션합니다.
  * 이 파일은 실제로는 Backend API (Python) 호출 계층이 됩니다.

@@ -2,10 +2,17 @@ import React, { useState, useCallback } from 'react';
 
 // --- 타입 정의 및 상수 설정 (유지보수성 확보) ---
 interface InputData {
-    avgTransactionValue: number; // V1: 평균 트랜잭션 규모 (USD/건)
-    annualVolume: number;        // V2: 연간 처리 거래량 (건/년)
-    avgReviewTimeMinutes: number;// V3: 컴플라이언스 검토 시간 (분/건)
-    regulatoryChangeFrequency: number; // V4: 법규 변경 빈도 (배수)
+    avgTransactionValue: number | ''; // V1: 평균 트랜잭션 규모 (USD/건)
+    annualVolume: number | '';        // V2: 연간 처리 거래량 (건/년)
+    avgReviewTimeMinutes: number | '';// V3: 컴플라이언스 검토 시간 (분/건)
+    regulatoryChangeFrequency: number | ''; // V4: 법규 변경 빈도 (배수)
+}
+
+interface SanitizedInputData {
+    avgTransactionValue: number;
+    annualVolume: number;
+    avgReviewTimeMinutes: number;
+    regulatoryChangeFrequency: number;
 }
 
 interface Results {
@@ -19,7 +26,7 @@ interface Results {
  * 입력된 데이터를 기반으로 잠재적 리스크와 예상 절감액을 계산합니다.
  * 이 함수가 yobizwiz의 지적 재산입니다. 복잡하고 비선형적인 관계를 유지해야 합니다.
  */
-const calculateLossAvoidance = (data: InputData): Results => {
+const calculateLossAvoidance = (data: SanitizedInputData): Results => {
     // 1. 초기 리스크 점수 산정 로직 (Complexity Index)
     // 트랜잭션 규모 * 거래량 * 법규 변경 빈도가 주요 위험 요소입니다.
     let riskScoreBase = data.avgTransactionValue * Math.log(data.annualVolume + 1);
@@ -81,7 +88,7 @@ const PotentialLossCalculator: React.FC = () => {
 
         setTimeout(() => {
             // 2. 계산 실행 (안전하게 파싱)
-            const sanitizedInputs = {
+            const sanitizedInputs: SanitizedInputData = {
                 avgTransactionValue: parseFloat(inputs.avgTransactionValue as any) || 0,
                 annualVolume: parseFloat(inputs.annualVolume as any) || 0,
                 avgReviewTimeMinutes: parseFloat(inputs.avgReviewTimeMinutes as any) || 0,
@@ -118,10 +125,10 @@ const PotentialLossCalculator: React.FC = () => {
                     {/* Input Form */}
                     <div className="space-y-6 p-6 bg-gray-800/50 rounded-lg shadow-xl border border-red-700/30">
                         {[
-                            { id: 'avgTransactionValue', label: '평균 트랜잭션 규모 (V1)', unit: 'USD / 건' },
-                            { id: 'annualVolume', label: '연간 총 거래량 (V2)', unit: '건/년' },
-                            { id: 'avgReviewTimeMinutes', label: '내부 검토 시간 (V3)', unit: '분/건' },
-                            { id: 'regulatoryChangeFrequency', label: '업계 법규 변경 빈도 (V4)', unit: '배수' },
+                            { id: 'avgTransactionValue' as keyof InputData, label: '평균 트랜잭션 규모 (V1)', unit: 'USD / 건' },
+                            { id: 'annualVolume' as keyof InputData, label: '연간 총 거래량 (V2)', unit: '건/년' },
+                            { id: 'avgReviewTimeMinutes' as keyof InputData, label: '내부 검토 시간 (V3)', unit: '분/건' },
+                            { id: 'regulatoryChangeFrequency' as keyof InputData, label: '업계 법규 변경 빈도 (V4)', unit: '배수' },
                         ].map(({ id, label, unit }) => (
                             <div key={id} className="flex flex-col">
                                 <label htmlFor={id} className="text-md font-semibold text-gray-300 mb-1">{`${label} (${unit})`}</label>

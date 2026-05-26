@@ -1,6 +1,5 @@
 import { useState, useCallback } from 'react';
 import * as api from '../api/riskApi'; // 가상의 리스크 API 모듈
-import { RiskLevel } from '@/types/commonTypes'; // 타입 정의 가정
 
 // ------------------
 // [TYPE DEFINITIONS]

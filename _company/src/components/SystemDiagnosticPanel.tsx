@@ -2,13 +2,21 @@
 import React, { useState, useCallback } from 'react';
 import { calculateEstimatedLoss } from '../utils/complianceCalculator';
 
-/** @typedef {'CRITICAL' | 'HIGH' | 'MEDIUM'} RiskLevel */
+export interface BreakdownItem {
+    sourceRule: string;
+    component: string;
+    contributionAmount: number;
+}
 
-/** @typedef {Object} InputVariables */
+export interface EstimatedLossData {
+    y: number;
+    level: 'CRITICAL' | 'HIGH' | 'MEDIUM';
+    breakdown: BreakdownItem[];
+}
 
 // --- UI Components & Styling (Designer Spec Adherence) ---
 
-const getRiskColor = (level) => {
+const getRiskColor = (level: string) => {
     switch (level) {
         case 'CRITICAL': return 'bg-red-700 border-red-500';
         case 'HIGH': return 'bg-yellow-700 border-yellow-500';
@@ -17,20 +25,18 @@ const getRiskColor = (level) => {
 };
 
 const DiagnosticPanel = () => {
-    /** @type {[InputVariables, React.Dispatch<React.SetStateAction<InputVariables>>]} */
     const [inputs, setInputs] = useState({
         jurisdictionCode: 'GDPR-EU', // Defaulting to highest risk for UX demonstration
         dataTypeClassification: 'PII',
-        dataSubjectCountN: 100,
+        dataSubjectCountN: 100 as number | '',
     });
 
-    /** @type {[number | null, React.Dispatch<React.SetStateAction<number | null>>]} */
-    const [estimatedLossY, setEstimatedLossY] = useState(null);
+    const [estimatedLossY, setEstimatedLossY] = useState<EstimatedLossData | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
 
     // 핸들러 함수: 입력값 변경 시 상태 업데이트 및 로직 호출 (실시간 피드백)
-    const handleInputChange = useCallback((e) => {
+    const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         let newValue;
 
@@ -60,11 +66,11 @@ const DiagnosticPanel = () => {
                 const result = calculateEstimatedLoss(sanitizedInputs);
                 setEstimatedLossY({
                     y: result.estimatedLossY,
-                    level: result.riskLevel,
+                    level: result.riskLevel as 'CRITICAL' | 'HIGH' | 'MEDIUM',
                     breakdown: result.breakdown
                 });
 
-            } catch (e) {
+            } catch (e: any) {
                 setError(e.message || "시스템 오류 발생.");
             } finally {
                 setIsLoading(false);
@@ -158,7 +164,7 @@ const DiagnosticPanel = () => {
                     {isLoading && (
                         <div className="w-64 h-4 bg-gray-700 relative flex items-center justify-center overflow-hidden">
                             <div className="absolute inset-0 animate-[scanline_2s_linear_infinite] opacity-50" style={{ background: 'repeating-linear-gradient(90deg, transparent 0%, rgba(255,0,0,.3) 1px, transparent 2px)' }}></div>
-                            <span className="text-sm text-red-400 flex items-center"><svg className="animate-spin -mr-1 ml-2 h-5 w-5 text-red-400" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-80" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12h12a4 4 0 01-8 0z"></path></svg> PROCESSING...</span>
+                            <span className="text-sm text-red-400 flex items-center"><svg className="animate-spin -mr-1 ml-2 h-5 w-5 text-red-400" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-80" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12h12a4 4 0 01-8 0z"></path></svg> PROCESSING...</span>
                         </div>
                     )}
                 </div>

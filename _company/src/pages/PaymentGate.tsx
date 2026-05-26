@@ -67,7 +67,7 @@ const PaymentGate: React.FC<{ initialData?: PaymentData }> = ({ initialData }) =
                     isProcessing ? 'bg-gray-500 cursor-wait' : 'bg-red-700 hover:bg-red-800 shadow-lg'
                 }`}
             >
-                {isProcessing ? '진단 시스템 연동 중...' : `즉시 진단 체험권 구매 (${initialData?.reportData.financial_impact_estimate / 1000}K USD)`}
+                {isProcessing ? '진단 시스템 연동 중...' : `즉시 진단 체험권 구매 (${(initialData?.reportData?.financial_impact_estimate || 0) / 1000}K USD)`}
             </button>
         );
     }
@@ -78,8 +78,8 @@ const PaymentGate: React.FC<{ initialData?: PaymentData }> = ({ initialData }) =
                 <h1 className="text-4xl font-extrabold text-red-500 mb-6 uppercase tracking-widest">[YOBIZWIZ] 시스템 개입 게이트웨이</h1>
                 
                 {/* 🚨 구조적 리스크 경고창 */}
-                {initialData?.reportData.structural_flaw_detected && (
-                    <GlitchWarningBox message={`구조적 결함 감지: ${initialData.reportData.severity} 등급의 시스템 생존 위협이 확인되었습니다. 즉시 조치가 필수입니다.`}/>
+                {initialData?.reportData?.structural_flaw_detected && (
+                    <GlitchWarningBox message={`구조적 결함 감지: ${initialData?.reportData?.severity || 'UNKNOWN'} 등급의 시스템 생존 위협이 확인되었습니다. 즉시 조치가 필수입니다.`}/>
                 )}
 
                 {/* 결과 메시지 */}

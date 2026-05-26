@@ -6,6 +6,7 @@ interface ReportData {
     riskScore: number; // $TRE$ 점수
     diagnosisSummary: string[];
     isCritical: boolean; // 임계점 초과 여부 (API에서 계산되어 와야 함)
+    isPaidFor?: boolean;
 }
 
 // Designer가 정의한 고권위적 경고 스타일을 위한 유틸 함수 (Tailwind + JS)
