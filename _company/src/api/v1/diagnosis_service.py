@@ -102,9 +102,10 @@ if __name__ == "__main__":
         use_external_vendor=True,  # 외부 사용
         has_encryption_policy=False # 암호화 미흡
     )
+    import json
     print("\n========== 테스트 케이스 1: Critical Failure ==========")
     result = calculate_risk_and_compliance(critical_request)
-    print(result.json(indent=2))
+    print(json.dumps(result.model_dump(), indent=2, ensure_ascii=False))
 
     # Case 2: 안전한 시나리오 (Low)
     low_request = DiagnosisRequest(
@@ -115,4 +116,4 @@ if __name__ == "__main__":
     )
     print("\n========== 테스트 케이스 2: Low Risk ==========")
     result = calculate_risk_and_compliance(low_request)
-    print(result.json(indent=2))
+    print(json.dumps(result.model_dump(), indent=2, ensure_ascii=False))
