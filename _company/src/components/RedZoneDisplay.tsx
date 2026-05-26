@@ -1,57 +1,56 @@
+/**
+ * @fileoverview RedZoneDisplay component: 위험 레벨에 따른 시각적 경고 UI를 담당합니다.
+ * 핵심 컴포넌트이며, 공포감을 극대화하는 역할을 수행해야 합니다.
+ */
+
 import React from 'react';
-import { QLossState } from '../hooks/useQLossSimulation';
+import { RiskReport } from '@/hooks/useRiskDiagnosis'; // 경로 조정 필요
 
 interface RedZoneDisplayProps {
-    state: QLossState;
+    report: RiskReport;
 }
 
-const getBackgroundColor = (riskLevel: QLossState['riskLevel']) => {
-    switch(riskLevel) {
-        case 'GREEN': return 'bg-green-900/10 border-green-500';
-        case 'YELLOW': return 'bg-yellow-900/20 border-yellow-600';
-        case 'RED': return 'bg-red-900/30 border-red-700 animate-pulse'; // Critical Flash
+const getRedZoneStyles = (level: RiskReport['riskLevel']): { bg: string, color: string, glow: string } => {
+    switch (level) {
+        case 'Critical':
+            return { bg: 'bg-red-900/70', color: 'text-red-400', glow: 'shadow-[0_0_20px_rgba(255,0,0,0.8)]' };
+        case 'High':
+            return { bg: 'bg-yellow-900/60', color: 'text-yellow-400', glow: 'shadow-[0_0_15px_rgba(255,165,0,0.7)]' };
+        case 'Medium':
+            return { bg: 'bg-blue-900/50', color: 'text-blue-300', glow: 'shadow-[0_0_10px_rgba(54,163,239,0.5)]' };
+        case 'Low':
+        default:
+            return { bg: 'bg-gray-800/70', color: 'text-green-400', glow: 'shadow-[0_0_5px_rgba(163,239,171,0.3)]' };
     }
 };
 
-const getTitle = (riskLevel: QLossState['riskLevel']) => {
-    switch(riskLevel) {
-        case 'GREEN': return "시스템 무결성 정상. 현재는 관망 단계입니다.";
-        case 'YELLOW': return "⚠️ 경고: 시스템 데이터 흐름에 이상 징후가 감지되었습니다. 즉시 점검이 필요합니다.";
-        case 'RED': return "🚨 CRITICAL SYSTEM ALERT! 구조적 결함 임계치 도달 (QLoss > 75). 즉각적인 전문가 개입 없이는 생존 불가능합니다.";
-    }
-};
-
-const RedZoneDisplay: React.FC<RedZoneDisplayProps> = ({ state }) => {
-    const bgColor = getBackgroundColor(state.riskLevel);
-    const titleText = getTitle(state.riskLevel);
-
+const RedZoneDisplay: React.FC<RedZoneDisplayProps> = ({ report }) => {
+    const styles = getRedZoneStyles(report.riskLevel);
+    
     return (
-        <div className={`p-6 border-4 ${bgColor} shadow-2xl rounded-lg transition-all duration-500 ease-in-out`}>
-            <h3 className="text-xl font-bold text-red-400 mb-2 uppercase tracking-widest">
-                [SYSTEM ALERT] - {state.riskLevel} ZONE ACTIVE
-            </h3>
-            {/* QLoss 게이지 시각화 */}
-            <div className="my-6 p-4 bg-gray-800/70 rounded-md border border-red-500 shadow-inner">
-                <p className="text-sm font-mono text-green-300 mb-1">QLoss Index: {state.level.toFixed(1)} / 100</p>
-                {/* QLoss 바를 리스크 레벨에 따라 시각적으로 구현 */}
-                <div className={`w-full h-8 rounded-full transition-all duration-1000 ${state.riskLevel === 'RED' ? 'bg-red-600 shadow-[0_0_20px_rgba(255,0,0,0.9)]' : state.riskLevel === 'YELLOW' ? 'bg-yellow-600' : 'bg-green-600'}`}>
-                    <div 
-                        className={`h-full rounded-full transition-all duration-1000 ${state.riskLevel === 'RED' ? 'animate-pulse' : ''}`} 
-                        style={{ width: `${state.level}%` }}
-                    ></div>
-                </div>
+        <div className={`p-8 rounded-xl border-4 ${styles.glow} ${styles.bg} transition duration-500 ease-in-out`}>
+            <div className="flex justify-between items-center mb-6">
+                <h2 className={`text-3xl font-bold uppercase tracking-wider text-red-500`}>
+                    🚨 DIAGNOSTIC ALERT: {report.riskLevel} Threat Level Detected
+                </h2>
+                <span className={`text-4xl font-mono p-2 rounded ${styles.color} bg-black/30 border border-current`}>
+                    SCORE: {report.riskScore}/100
+                </span>
+            </div>
+            
+            <div className="mb-6">
+                <h3 className="text-xl font-semibold mb-2 text-white flex items-center"><span className="mr-2 text-red-400">⚠️</span> 핵심 진단 요약</h3>
+                <p className={`text-lg italic ${styles.color}`}>{report.summary}</p>
             </div>
 
-            {/* 경고 메시지 */}
-            <p className="text-lg font-semibold text-gray-200 mb-4">{titleText}</p>
-            
-            {/* 강제 CTA 표시 로직 */}
-            {(state.ctaForced || state.riskLevel === 'RED') && (
-                <div className="bg-red-800/90 p-3 text-center border-2 border-red-500 shadow-xl">
-                    <p className="text-sm uppercase font-mono text-yellow-200 mb-1">[ACTION REQUIRED] 시스템이 위험 상태를 감지했습니다.</p>
-                    <h4 className="text-2xl font-extrabold text-red-300">지금 바로 전문가 진단이 필요합니다.</h4>
-                </div>
-            )}
+            <div>
+                <h3 className="text-xl font-semibold mb-3 border-b border-gray-700 pb-1">추가 권고 사항 (Action Items)</h3>
+                <ul className="space-y-2 list-disc pl-5 text-sm ${styles.color}">
+                    {report.recommendedAction.map((action, index) => (
+                        <li key={index}>{action}</li>
+                    ))}
+                </ul>
+            </div>
         </div>
     );
 };
