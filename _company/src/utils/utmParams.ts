@@ -23,13 +23,13 @@ export const getUtmParams = (): UtmParameters | null => {
 
     // Check for specific, required parameters first
     if (urlParams.has('utm_source')) {
-      params.source = urlParams.get('utm_source') || null;
+      params.source = urlParams.get('utm_source') || undefined;
     }
     if (urlParams.has('utm_medium')) {
-      params.medium = urlParams.get('utm_medium') || null;
+      params.medium = urlParams.get('utm_medium') || undefined;
     }
     if (urlParams.has('utm_campaign')) {
-      params.campaign = urlParams.get('utm_campaign') || null;
+      params.campaign = urlParams.get('utm_campaign') || undefined;
     }
     // Add other necessary parameters if required later (e.g., utm_content)
 
