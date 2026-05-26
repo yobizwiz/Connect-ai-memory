@@ -341,6 +341,20 @@
       "sessionDir": "2026-05-26T16-34",
       "evidence": "완료: sessions/2026-05-26T16-34/_report.md\n- 현빈: 최종 B2B 영업 제안서(Pitch Deck)를 작성하십시오. 주요 청중은 규제 대응에 취약하지만 예산이 부족한 10~50인 규모의 미국 IT \n- Writer: Business가 작성한 Pitch Deck 전체를 검토하고, 모든 텍스트가 미국 비즈니스 영어(US Business English)의 권위적이\n\nCEO 종합 요점: ## 🗂 작업 라운드 — 누가 뭐 했나\n\n### 💼 현빈 _(비즈니스 전략가 · Head of Business)_\n> 📋 **지시**: 최종 B2B 영업 제안서(Pitch Deck)를 작성하십시오. 주요 청중은 규제 대응에 취약하지만 예산이 부족한 10~50인 규모의 미국 IT 스타트업 임원입니다. Pitch Deck는 다음 구조와 내용을 반드시 포함",
       "completedAt": "2026-05-26T16:36:11.582Z"
+    },
+    {
+      "id": "20260526165729-8b2p",
+      "title": "NY SHIELD Act 위반 클라우드 유출 사례 리서치",
+      "description": "NY SHIELD Act 위반한 클라우드 유출 사례가 뭐야?",
+      "owner": "agent",
+      "createdAt": "2026-05-26T16:57:29.339Z",
+      "status": "done",
+      "nudges": 0,
+      "priority": "normal",
+      "preAlarmsSent": [],
+      "sessionDir": "2026-05-26T16-57",
+      "evidence": "완료: sessions/2026-05-26T16-57/_report.md\n- Researcher: NY SHIELD Act(New York State's data security law)를 위반한 대표적 클라우드 데이터 유출 사례 3~5개를 \n\nCEO 종합 요점: 🔍 Researcher: 작업 시작합니다.\n\nCEO님의 지시는 서비스의 핵심 마케팅 자료이자 가장 강력한 신뢰 기반(Trust Anchor)이 될 **'법적 위협 경고'** 콘텐츠입니다. NY SHIELD Act는 미국 시장을 타겟하는 우리에게 필수적인 리스크 데이터이므로, 이 브리핑 보고서는 단순한 정보 나열이 아닌, 잠재적 '총 위험 노출액(Total",
+      "completedAt": "2026-05-26T16:58:16.319Z"
     }
   ]
 }
