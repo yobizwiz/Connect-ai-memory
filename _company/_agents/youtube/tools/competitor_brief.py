@@ -100,17 +100,29 @@ def main():
     data_text = "\n".join(f"[{r['channel']}] {r['views']:,}회 · {r['published']} · {r['title']}"
                            for r in snapshot[:25])
 
+    is_lm_studio = ('1234' in ollama_url) or ('/v1' in ollama_url)
+    print(f"🧠 [LLM 분석 중... 엔진: {'LM Studio' if is_lm_studio else 'Ollama'}]")
+
     if not model:
         try:
-            r = requests.get(f"{ollama_url}/api/tags", timeout=5)
-            r.raise_for_status()
-            models = [m["name"] for m in r.json().get("models", [])]
+            if is_lm_studio:
+                base = ollama_url.rstrip('/')
+                if not base.endswith('/v1'):
+                    base = base + '/v1'
+                r = requests.get(f"{base}/models", timeout=5)
+                r.raise_for_status()
+                models = [m["id"] for m in r.json().get("data", [])]
+            else:
+                r = requests.get(f"{ollama_url}/api/tags", timeout=5)
+                r.raise_for_status()
+                models = [m["name"] for m in r.json().get("models", [])]
             if not models:
-                print("❌ 로컬 LLM에 모델이 없어요.")
+                print(f"❌ 로컬 LLM에 모델이 없어요. {'LM Studio' if is_lm_studio else 'Ollama'} 에서 모델 로드/풀하세요.")
                 sys.exit(1)
             model = models[0]
+            print(f"   자동 선택 모델: {model}")
         except Exception as e:
-            print(f"❌ LLM 연결 실패: {e}")
+            print(f"❌ 로컬 LLM 연결 실패 ({ollama_url}): {e}")
             sys.exit(1)
 
     prompt = f"""당신은 유튜브 알고리즘 전략가입니다. 아래는 경쟁 채널들의 최근 {lookback}일간 상위 영상 데이터입니다.
@@ -132,13 +144,29 @@ def main():
 ## 4) 한 줄 요약
 - 다음 영상의 핵심 컨셉을 한 문장으로
 """
-    print("🧠 [LLM 분석 중...]")
     try:
-        r = requests.post(f"{ollama_url}/api/generate",
-                          json={"model": model, "prompt": prompt, "stream": False},
-                          timeout=240)
-        r.raise_for_status()
-        brief = r.json().get("response", "").strip()
+        if is_lm_studio:
+            base = ollama_url.rstrip('/')
+            if not base.endswith('/v1'):
+                base = base + '/v1'
+            r = requests.post(
+                f"{base}/chat/completions",
+                json={
+                    "model": model,
+                    "messages": [{"role": "user", "content": prompt}],
+                    "stream": False,
+                    "max_tokens": 2048,
+                },
+                timeout=240,
+            )
+            r.raise_for_status()
+            brief = r.json().get("choices", [{}])[0].get("message", {}).get("content", "").strip()
+        else:
+            r = requests.post(f"{ollama_url}/api/generate",
+                              json={"model": model, "prompt": prompt, "stream": False},
+                              timeout=240)
+            r.raise_for_status()
+            brief = r.json().get("response", "").strip()
     except Exception as e:
         print(f"❌ LLM 실패: {e}")
         sys.exit(1)
