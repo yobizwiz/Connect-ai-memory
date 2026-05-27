@@ -18,3 +18,5 @@ company_state.json
 **/_shared/
 **/_agents/*/tools/trend_sniper_report.md
 
+# Local secret files containing API keys or client secrets
+Connect AI.txt
