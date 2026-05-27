@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[🚨 필수] 컴플라이언스 게이트웨이 구축 설계 - Yobizwiz Audit</title>
+    
+    <!-- Premium Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;800;900&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        /* Modern Design System & CSS Variables */
+        :root {
+            --red-zone: #C0392B;
+            --red-glow: rgba(192, 57, 43, 0.6);
+            --auth-blue: #2980B9;
+            --blue-glow: rgba(41, 128, 185, 0.6);
+            --bg-dark: #0A0A0C;
+            --card-bg: rgba(22, 22, 26, 0.7);
+            --border-glow: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #EAEAEA;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .font-outfit {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .font-mono-data {
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        /* Ambient Cybersecurity Grid Background */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Red Flash Overlay */
+        #flash-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(192, 57, 43, 0.85);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 999;
+            transition: opacity 0.15s ease-out;
+        }
+
+        .red-flash-active {
+            animation: trigger-flash 0.4s ease-out forwards;
+        }
+
+        @keyframes trigger-flash {
+            0% { opacity: 0; }
+            20% { opacity: 1; filter: blur(5px); }
+            100% { opacity: 0; }
+        }
+
+        /* Glassmorphic Container */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        /* Chromatic Aberration & Glitch Filter Effects */
+        .glitch-text {
+            position: relative;
+            animation: glitch-skew 1s infinite linear alternate-reverse;
+        }
+
+        .glitch-text::before {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: -2px;
+            text-shadow: -1px 0 #ff00c1;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 5s infinite linear alternate-reverse;
+        }
+
+        .glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 2px;
+            text-shadow: -1px 0 #00fff9, 0 1px #00fff9;
+            clip: rect(85px, 450px, 140px, 0);
+            animation: glitch-anim2 5s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim {
+            0% { clip: rect(15px, 9999px, 66px, 0); transform: skew(0.3deg); }
+            10% { clip: rect(85px, 9999px, 5px, 0); transform: skew(-0.5deg); }
+            20% { clip: rect(43px, 9999px, 88px, 0); transform: skew(0.8deg); }
+            30% { clip: rect(95px, 9999px, 120px, 0); transform: skew(-0.2deg); }
+            40% { clip: rect(12px, 9999px, 34px, 0); transform: skew(0.4deg); }
+            50% { clip: rect(76px, 9999px, 50px, 0); transform: skew(-0.6deg); }
+            60% { clip: rect(4px, 9999px, 98px, 0); transform: skew(0.2deg); }
+            70% { clip: rect(61px, 9999px, 10px, 0); transform: skew(-0.4deg); }
+            80% { clip: rect(89px, 9999px, 145px, 0); transform: skew(0.5deg); }
+            90% { clip: rect(33px, 9999px, 72px, 0); transform: skew(-0.1deg); }
+            100% { clip: rect(102px, 9999px, 5px, 0); transform: skew(0.3deg); }
+        }
+
+        @keyframes glitch-anim2 {
+            0% { clip: rect(76px, 9999px, 5px, 0); transform: skew(-0.3deg); }
+            10% { clip: rect(22px, 9999px, 105px, 0); transform: skew(0.4deg); }
+            20% { clip: rect(67px, 9999px, 20px, 0); transform: skew(-0.7deg); }
+            30% { clip: rect(110px, 9999px, 5px, 0); transform: skew(0.1deg); }
+            40% { clip: rect(55px, 9999px, 92px, 0); transform: skew(-0.4deg); }
+            50% { clip: rect(98px, 9999px, 15px, 0); transform: skew(0.6deg); }
+            60% { clip: rect(14px, 9999px, 83px, 0); transform: skew(-0.2deg); }
+            70% { clip: rect(47px, 9999px, 120px, 0); transform: skew(0.3deg); }
+            80% { clip: rect(81px, 9999px, 35px, 0); transform: skew(-0.5deg); }
+            90% { clip: rect(125px, 9999px, 60px, 0); transform: skew(0.1deg); }
+            100% { clip: rect(3px, 9999px, 115px, 0); transform: skew(-0.3deg); }
+        }
+
+        /* Pulsing Glow Animations */
+        .glow-red {
+            box-shadow: 0 0 25px var(--red-glow);
+            border-color: var(--red-zone) !important;
+        }
+
+        .glow-blue {
+            box-shadow: 0 0 25px var(--blue-glow);
+            border-color: var(--auth-blue) !important;
+        }
+
+        /* Text Jittering effect */
+        .jitter-active {
+            animation: jitter 0.08s infinite alternate;
+        }
+
+        @keyframes jitter {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            100% { transform: translate(-1px, -1px) rotate(0.2deg); }
+        }
+
+        /* Glowing button hover transitions */
+        .cyber-btn-red {
+            background-color: var(--red-zone);
+            box-shadow: 0 4px 15px var(--red-glow);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .cyber-btn-red::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+            transition: all 0.6s ease;
+        }
+
+        .cyber-btn-red:hover::before {
+            left: 100%;
+        }
+
+        .cyber-btn-red:hover {
+            box-shadow: 0 0 25px rgba(192, 57, 43, 0.9);
+            transform: scale(1.02);
+        }
+
+        /* Scanline Overlay Effect */
+        .scanlines {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scanlines::after {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2;
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none;
+        }
+
+        /* Glassmorphism custom slider track */
+        input[type="range"]::-webkit-slider-runnable-track {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 9999px;
+            height: 6px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--auth-blue);
+            cursor: pointer;
+            box-shadow: 0 0 8px var(--blue-glow);
+            margin-top: -5px;
+            transition: all 0.15s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            background: #fff;
+        }
+
+        .red-thumb::-webkit-slider-thumb {
+            background: var(--red-zone) !important;
+            box-shadow: 0 0 8px var(--red-glow) !important;
+        }
+
+        /* Flowchart Node Lines */
+        .flow-line {
+            background: repeating-linear-gradient(
+                90deg,
+                var(--red-zone),
+                var(--red-zone) 6px,
+                transparent 6px,
+                transparent 12px
+            );
+            animation: dash 15s linear infinite;
+        }
+
+        .flow-line-secure {
+            background: repeating-linear-gradient(
+                90deg,
+                var(--auth-blue),
+                var(--auth-blue) 6px,
+                transparent 6px,
+                transparent 12px
+            );
+            animation: dash-reverse 15s linear infinite;
+        }
+
+        @keyframes dash {
+            to { background-position: 1000px 0; }
+        }
+
+        @keyframes dash-reverse {
+            to { background-position: -1000px 0; }
+        }
+    </style>
+</head>
+<body class="py-4 px-2 md:px-8">
+    <div id="flash-overlay"></div>
+
+    <!-- 🌐 SVG Glitch filter definition for chromatic distortion -->
+    <svg class="hidden">
+        <defs>
+            <filter id="glitch-effect">
+                <feGaussianBlur stdDeviation="0" result="coloredBlur"/>
+                <feOffset dx="2" dy="2" result="offset1"/>
+                <feOffset dx="-2" dy="-2" result="offset2"/>
+                <feColorMatrix type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" in="offset1" result="red"/>
+                <feColorMatrix type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0" in="offset2" result="cyan"/>
+                <feMerge>
+                    <feMergeNode in="red"/>
+                    <feMergeNode in="cyan"/>
+                    <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- 🎧 Web Audio System Controller (Floating Premium Banner) -->
+    <div class="max-w-6xl mx-auto mb-6">
+        <div class="glass-card rounded-lg p-3 px-6 flex items-center justify-between border-gray-800">
+            <div class="flex items-center space-x-3">
+                <span id="audio-indicator" class="w-3.5 h-3.5 rounded-full bg-gray-600 shadow-[0_0_10px_rgba(255,255,255,0.2)] animate-pulse"></span>
+                <p class="text-xs md:text-sm font-mono-data text-gray-400">
+                    STATUS: <span id="status-text" class="text-gray-300">AUDIO ENGINE INACTIVE</span>
+                </p>
+            </div>
+            <button id="toggle-audio-btn" class="text-xs font-mono-data border border-gray-700 bg-gray-900/80 hover:bg-gray-800 text-gray-300 rounded px-4 py-1.5 transition-all shadow-[0_0_8px_rgba(0,0,0,0.5)]">
+                🔊 ACTIVATE SYSTEM AUDIO DIAGNOSTIC
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Header (Existential Threat Styling) -->
+    <header class="text-center max-w-6xl mx-auto mb-10 mt-6 relative z-10">
+        <div class="inline-block px-3 py-1 mb-3 text-xs tracking-widest font-mono-data border border-[var(--red-zone)] bg-[rgba(192,57,43,0.1)] text-red-500 rounded-full font-bold uppercase animate-pulse">
+            [⚠️ CRITICAL AUDIT REQUIRED]
+        </div>
+        <h1 class="text-3xl md:text-6xl font-outfit font-extrabold tracking-tight mb-4 uppercase">
+            컴플라이언스 게이트웨이 구축 설계 <span class="text-red-600 select-none">| Yobizwiz</span>
+        </h1>
+        <p class="text-sm md:text-lg text-gray-400 max-w-3xl mx-auto font-light">
+            경고: 현재의 미인증 레거시 프로세스는 법적 무효화 리스크에 직면해 있습니다.<br>
+            귀사의 시스템적 취약점을 진단하고 구조적 안전 장치를 구축하십시오.
+        </p>
+    </header>
+
+    <main class="max-w-6xl mx-auto relative z-10 px-2">
+        
+        <!-- SECTION 1: Dynamic QLoss Calculator Panel -->
+        <section id="calculator-section" class="glass-card rounded-2xl p-6 md:p-10 mb-10 relative overflow-hidden transition-all duration-500">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[var(--auth-blue)]/5 to-transparent rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="flex items-center space-x-3 mb-8 border-b border-gray-800 pb-5">
+                <span class="text-2xl">📊</span>
+                <h2 class="text-xl md:text-2xl font-outfit font-bold uppercase text-[var(--auth-blue)] tracking-wider">
+                    실시간 잠재적 재정 손실액 ($QLoss$) 시뮬레이터
+                </h2>
+            </div>
+
+            <!-- Main Interactive Controls Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                <!-- Sliders & Inputs -->
+                <div class="lg:col-span-2 space-y-6">
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label for="compliance-gap" class="text-sm font-medium text-gray-400">1. 내부 프로세스 컴플라이언스 결함도 (0-100)</label>
+                            <span id="compliance-val" class="font-mono-data text-red-500 font-bold bg-red-950/20 px-2 py-0.5 rounded text-sm">30%</span>
+                        </div>
+                        <input type="range" id="compliance-gap" min="0" max="100" value="30" class="w-full h-2 bg-gray-800 rounded-lg appearance-none cursor-pointer">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label for="data-flow-gap" class="text-sm font-medium text-gray-400">2. 데이터 흐름 추적 누락 구간 (0-10건)</label>
+                            <span id="data-flow-val" class="font-mono-data text-red-500 font-bold bg-red-950/20 px-2 py-0.5 rounded text-sm">3 건</span>
+                        </div>
+                        <input type="range" id="data-flow-gap" min="0" max="10" value="3" class="w-full h-2 bg-gray-800 rounded-lg appearance-none cursor-pointer">
+                    </div>
+
+                    <div>
+                        <label for="manual-review-gap" class="block text-sm font-medium text-gray-400 mb-2">3. 수동 감사 및 검토 의존도 (가중치)</label>
+                        <select id="manual-review-gap" class="w-full p-3 bg-gray-900 border border-gray-800 rounded-lg text-white font-mono-data focus:border-[var(--auth-blue)] focus:outline-none transition cursor-pointer">
+                            <option value="0.8" selected>낮음 (자동화 아키텍처 수립)</option>
+                            <option value="1.5">중간 (하이브리드 수동 분기)</option>
+                            <option value="3.0">높음 (전체 프로세스 수동 의존)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Live Results Panel -->
+                <div class="bg-black/40 rounded-xl border border-gray-800/80 p-6 flex flex-col justify-between relative">
+                    <div>
+                        <h3 class="text-xs uppercase tracking-widest font-mono-data text-gray-500 mb-1">[REAL-TIME TELEMETRY]</h3>
+                        <p class="text-sm font-bold text-gray-300">ESTIMATED $QLOSS$ POTENTIAL</p>
+                    </div>
+                    
+                    <div class="my-6">
+                        <div id="calculator-qLoss" class="text-4xl md:text-5xl font-mono-data font-bold text-[var(--auth-blue)] tracking-tight">
+                            $15,000,000
+                        </div>
+                        <p class="text-xs text-gray-500 font-mono-data mt-1">MINIMUM FINANCIAL IMPACT</p>
+                    </div>
+
+                    <div id="risk-badge" class="px-3 py-1.5 rounded border text-xs font-mono-data font-bold text-center uppercase tracking-wider bg-green-950/20 border-green-800 text-green-400 transition-all duration-300">
+                        [SAFE ARCHITECTURE]
+                    </div>
+                </div>
+            </div>
+
+            <!-- Call to Action Banner -->
+            <div id="calc-cta-box" class="flex flex-col md:flex-row items-center justify-between bg-gray-900/50 p-6 rounded-xl border border-gray-800 gap-4 mt-8">
+                <div class="text-center md:text-left">
+                    <h4 class="font-bold text-white text-md mb-1 font-outfit uppercase">컴플라이언스 취약성에 따른 구조 진단</h4>
+                    <p class="text-xs text-gray-400">데이터 손실 및 법적 리스크 방지 장치 구축을 검증하십시오.</p>
+                </div>
+                <button id="calc-trigger-btn" class="cyber-btn-red bg-blue-600 hover:bg-blue-700 px-8 py-3 rounded text-sm tracking-wider font-bold uppercase transition-all duration-300 shadow-[0_0_15px_rgba(41,128,185,0.4)]">
+                    [즉시 진단] 컴플라이언스 분석 실행
+                </button>
+            </div>
+        </section>
+
+        <!-- SECTION 2: Competitive Risk & Penalty Comparison Dashboard -->
+        <section id="comparison-section" class="glass-card rounded-2xl p-6 md:p-10 mb-10 relative overflow-hidden transition-all duration-500">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-yellow-500/5 to-transparent rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="flex items-center space-x-3 mb-6 border-b border-gray-800 pb-5">
+                <span class="text-2xl">⚔️</span>
+                <h2 class="text-xl md:text-2xl font-outfit font-bold uppercase text-yellow-500 tracking-wider">
+                    경쟁사 규제 준수 & 재정 리스크(Penalties) 1:1 비교 매트릭스
+                </h2>
+            </div>
+            
+            <p class="text-xs text-gray-400 leading-relaxed mb-6 font-light">
+                글로벌 규제 가이드라인(GDPR, CCPA, EU AI Act)에 기반하여 경쟁 3사와 귀사의 실시간 리스크 및 노출 과징금($QLoss) 규모를 직접 대조해 보십시오.
+            </p>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left font-mono-data text-xs border-collapse">
+                    <thead>
+                        <tr class="border-b border-gray-800 text-gray-400 text-[10px] uppercase tracking-wider">
+                            <th class="py-4 px-4">분석 대상 (Entity)</th>
+                            <th class="py-4 px-4 text-center">보안 무결성 등급</th>
+                            <th class="py-4 px-4 text-center">GDPR 위험 지수</th>
+                            <th class="py-4 px-4 text-center">CCPA 위험 지수</th>
+                            <th class="py-4 px-4 text-center">EU AI Act 리스크</th>
+                            <th class="py-4 px-4 text-right text-red-500 font-bold">잠재적 패널티 ($QLoss)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-800">
+                        <!-- 귀사 (Your Organization) - Dynamically Linked -->
+                        <tr id="comp-row-mine" class="bg-blue-950/15 border-l-4 border-[var(--auth-blue)] transition-all duration-300">
+                            <td class="py-4 px-4 font-bold text-white">⭐ 귀사 (Your Org)</td>
+                            <td class="py-4 px-4 text-center font-bold text-blue-400" id="comp-grade-mine">B (안정권 진입)</td>
+                            <td class="py-4 px-4 text-center text-gray-300" id="comp-gdpr-mine">30%</td>
+                            <td class="py-4 px-4 text-center text-gray-300" id="comp-ccpa-mine">30%</td>
+                            <td class="py-4 px-4 text-center text-gray-300" id="comp-ai-mine">24%</td>
+                            <td class="py-4 px-4 text-right font-bold text-yellow-400 text-sm" id="comp-loss-mine">$15,000,000</td>
+                        </tr>
+
+                        <!-- Competitor A -->
+                        <tr class="hover:bg-white/5 transition">
+                            <td class="py-4 px-4 text-gray-300">경쟁사 A (핀테크 레거시)</td>
+                            <td class="py-4 px-4 text-center text-yellow-500 font-bold">C- (위험 노출)</td>
+                            <td class="py-4 px-4 text-center">68%</td>
+                            <td class="py-4 px-4 text-center">45%</td>
+                            <td class="py-4 px-4 text-center">40%</td>
+                            <td class="py-4 px-4 text-right text-red-400">$35,000,000</td>
+                        </tr>
+
+                        <!-- Competitor B -->
+                        <tr class="hover:bg-white/5 transition">
+                            <td class="py-4 px-4 text-gray-300">경쟁사 B (B2B 의료 솔루션)</td>
+                            <td class="py-4 px-4 text-center text-orange-500 font-bold">D (Willful 방치)</td>
+                            <td class="py-4 px-4 text-center">85%</td>
+                            <td class="py-4 px-4 text-center">70%</td>
+                            <td class="py-4 px-4 text-center">65%</td>
+                            <td class="py-4 px-4 text-right text-red-400">$78,000,000</td>
+                        </tr>
+
+                        <!-- Competitor C -->
+                        <tr class="hover:bg-white/5 transition">
+                            <td class="py-4 px-4 text-gray-300">경쟁사 C (미규제 신흥 인프라)</td>
+                            <td class="py-4 px-4 text-center text-red-500 font-bold">F (법적 무방비)</td>
+                            <td class="py-4 px-4 text-center">92%</td>
+                            <td class="py-4 px-4 text-center">88%</td>
+                            <td class="py-4 px-4 text-center">90%</td>
+                            <td class="py-4 px-4 text-right text-red-500 font-bold">$120,000,000</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ======================================================= -->
+        <!-- THE MANDATORY COMPLIANCE GATEWAY (3-STAGE DYNAMIC PORTAL) -->
+        <!-- ======================================================= -->
+        <section id="gateway-portal" class="hidden mb-16 transition-all duration-500">
+            
+            <!-- STAGE 1: The Warning (Red Zone Glitch Alarm Banner) -->
+            <div id="stage1-warning" class="glass-card glow-red scanlines rounded-2xl p-6 md:p-8 mb-8 border-l-4">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div class="space-y-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="inline-block w-2.5 h-2.5 rounded-full bg-red-600 animate-ping"></span>
+                            <span class="text-xs font-mono-data font-bold text-red-500 tracking-widest uppercase">
+                                [SYSTEM BREACH WARNING - CRITICAL STATE]
+                            </span>
+                        </div>
+                        <h2 id="glitch-title" class="glitch-text text-2xl md:text-3xl font-outfit font-extrabold uppercase text-red-500 tracking-wider" data-text="법적 무효화 리스크 임계치 도달">
+                            법적 무효화 리스크 임계치 도달
+                        </h2>
+                        <p class="text-xs md:text-sm text-red-300 font-mono-data leading-relaxed max-w-3xl">
+                            ⚠️ 귀사의 현재 설계 프로세스는 법적 무효화 리스크 등급 <span class="bg-red-950 font-bold px-1.5 py-0.5 rounded text-white">[CRITICAL]</span> 에 도달했습니다. 이 취약점은 소송 시 방어가 불가한 중대한 구조적 공백(Structural Gap)을 유발합니다.
+                        </p>
+                    </div>
+                    <div class="text-left md:text-right bg-red-950/20 border border-red-900/60 rounded px-4 py-3 min-w-[200px]">
+                        <span class="text-[10px] font-mono-data text-red-400 block">[CRITICAL IMPACT]</span>
+                        <span id="gateway-qLoss" class="text-2xl md:text-3xl font-mono-data font-bold text-red-500 block">$75,000,000+</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                
+                <!-- STAGE 2: The Mandate (The Existential Solution Diagram) -->
+                <div class="lg:col-span-3 space-y-6">
+                    <div class="glass-card rounded-2xl p-6 md:p-8 border-gray-800">
+                        <h3 class="text-lg font-outfit font-bold uppercase tracking-wider text-[var(--auth-blue)] mb-3">
+                            구조적 방어벽 매칭 진단
+                        </h3>
+                        <p class="text-xs text-gray-400 leading-relaxed mb-6">
+                            단순한 기능성 구매가 아닙니다. 본 진단은 법적 패배 리스크를 완전 차단하기 위한 <strong>구조 무결성 보강 비용(Asset Insurance Cost)</strong>의 성격을 띱니다. 
+                            무효화 리스크로부터 보호받기 위한 시스템 아키텍처 비교표입니다.
+                        </p>
+
+                        <!-- Visual Before/After Diagram -->
+                        <div class="space-y-4">
+                            <!-- Before (Defenseless Red State) -->
+                            <div class="bg-black/50 border border-red-950/60 rounded-xl p-4 relative overflow-hidden">
+                                <div class="flex justify-between items-center mb-3">
+                                    <span class="text-xs font-mono-data text-red-500 font-bold bg-red-950/30 px-2 py-0.5 border border-red-900 rounded">
+                                        ❌ 리스크 무방비 상태 (DEFENSELESS)
+                                    </span>
+                                    <span class="text-xs text-red-400 font-mono-data">Security Gap: 87%</span>
+                                </div>
+                                <div class="h-2 rounded bg-gray-900 w-full relative mb-4">
+                                    <div class="absolute top-0 left-0 h-full flow-line rounded" style="width: 87%"></div>
+                                </div>
+                                <p class="text-[11px] text-gray-400">
+                                    수동 처리 의존 및 백엔드 무결성 증명 로그 상실. 외부 법무 감사 및 컴플라이언스 공백에 노출된 상태.
+                                </p>
+                            </div>
+
+                            <!-- After (Secure Blue State) -->
+                            <div class="bg-black/50 border border-blue-950/60 rounded-xl p-4 relative overflow-hidden">
+                                <div class="flex justify-between items-center mb-3">
+                                    <span class="text-xs font-mono-data text-blue-400 font-bold bg-blue-950/30 px-2 py-0.5 border border-blue-900 rounded">
+                                        🛡️ yobizwiz 무결성 보강 상태 (PROTECTED)
+                                    </span>
+                                    <span class="text-xs text-blue-300 font-mono-data">Defensive Rating: Perfect</span>
+                                </div>
+                                <div class="h-2 rounded bg-gray-900 w-full relative mb-4">
+                                    <div class="absolute top-0 left-0 h-full flow-line-secure rounded" style="width: 100%"></div>
+                                </div>
+                                <p class="text-[11px] text-gray-400 font-bold text-gray-300">
+                                    구조 무결성 인증서 발행 및 암호화 증적 보관. 자동 위협 차단 프로토콜이 가동된 법적 방어벽 확보 상태.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Core Mandatory Message Callout -->
+                        <div class="mt-6 border-l-4 border-[var(--red-zone)] bg-red-950/10 p-4 rounded text-center">
+                            <span class="text-xs md:text-sm font-bold text-red-400 font-outfit uppercase tracking-widest block mb-1">
+                                [중요 규정 고지]
+                            </span>
+                            <p class="text-xs text-gray-300 italic">
+                                "이것은 옵션이 아닙니다. 구조적 필수 보강입니다."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STAGE 3: The Gate (Glassmorphic Stripe Checkout Simulator) -->
+                <div class="lg:col-span-2">
+                    <div id="stripe-checkout-card" class="glass-card glow-red rounded-2xl p-6 md:p-8 border-gray-800 sticky top-4">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-md font-mono-data font-bold tracking-wider text-red-500 uppercase">
+                                💳 SECURE TRANS-GATEWAY
+                            </h3>
+                            <span class="text-[10px] text-gray-500 font-mono-data">STRIPE MOCK V3.0</span>
+                        </div>
+
+                        <div class="mb-5 bg-black/60 rounded-lg p-3 border border-gray-800 text-center">
+                            <p class="text-[10px] font-mono-data text-gray-500 uppercase mb-1">총 청구액 (Total Insurance Fee)</p>
+                            <p id="stripe-price" class="text-3xl font-mono-data font-bold text-yellow-400">$499.00</p>
+                        </div>
+
+                        <!-- The Payment Form Fields -->
+                        <div id="payment-form-inputs" class="space-y-4">
+                            <div>
+                                <label class="block text-[10px] font-mono-data uppercase text-gray-400 mb-1">카드가입자명 (Cardholder Name)</label>
+                                <input type="text" id="card-name" placeholder="HONG GILDONG" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded font-mono-data text-sm text-white focus:border-[var(--red-zone)] focus:outline-none transition">
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-mono-data uppercase text-gray-400 mb-1">신용카드 번호 (Credit Card Number)</label>
+                                <div class="relative">
+                                    <input type="text" id="card-number" maxlength="19" placeholder="4242 4242 4242 4242" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded font-mono-data text-sm text-white focus:border-[var(--red-zone)] focus:outline-none transition">
+                                    <span class="absolute right-2.5 top-2.5 text-xs text-gray-600 font-mono-data">VISA</span>
+                                </div>
+                                <span class="text-[9px] font-mono-data text-gray-500 mt-1 block">
+                                    💡 테스트 가이드: <span class="text-green-500 font-bold">'4242'</span> 입력 시 통과, <span class="text-red-500 font-bold">'0000'</span> 입력 시 결제 거절 시뮬레이션
+                                </span>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[10px] font-mono-data uppercase text-gray-400 mb-1">만료일 (MM/YY)</label>
+                                    <input type="text" id="card-expiry" maxlength="5" placeholder="12/29" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded font-mono-data text-sm text-white text-center focus:border-[var(--red-zone)] focus:outline-none transition">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-mono-data uppercase text-gray-400 mb-1">보안 코드 (CVC)</label>
+                                    <input type="password" id="card-cvc" maxlength="3" placeholder="***" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded font-mono-data text-sm text-white text-center focus:border-[var(--red-zone)] focus:outline-none transition">
+                                </div>
+                            </div>
+
+                            <button id="pay-submit-btn" class="w-full py-4 cyber-btn-red text-xs md:text-sm tracking-wider font-extrabold text-white rounded uppercase mt-4">
+                                구조 무결성 확보 및 리스크 방어벽 구축 승인
+                            </button>
+                        </div>
+
+                        <!-- Simulated Cybersecurity Loading Terminal -->
+                        <div id="cyber-terminal" class="hidden space-y-4">
+                            <div class="bg-black/85 rounded-xl border border-gray-800 p-4 font-mono-data text-[10px] leading-relaxed text-green-400 h-64 overflow-y-auto" id="terminal-logs">
+                                <!-- Logs dynamically printed here -->
+                            </div>
+                            
+                            <div id="terminal-progress" class="w-full h-1 bg-gray-900 rounded overflow-hidden">
+                                <div class="h-full bg-green-500 transition-all duration-300" style="width: 0%" id="terminal-progress-bar"></div>
+                            </div>
+                        </div>
+
+                        <!-- Final Transaction Result (Receipt / Decline) -->
+                        <div id="transaction-result" class="hidden text-center space-y-5 py-4">
+                            <div id="result-icon-box" class="w-16 h-16 rounded-full flex items-center justify-center mx-auto border-2">
+                                <!-- Dynamic check/error icon -->
+                            </div>
+                            
+                            <div>
+                                <h4 id="result-title" class="text-lg font-outfit font-extrabold uppercase">결제 결과 헤더</h4>
+                                <p id="result-desc" class="text-xs text-gray-400 font-mono-data mt-2 leading-relaxed">상세 결과 내용</p>
+                            </div>
+
+                            <button id="result-reset-btn" class="w-full py-3 bg-gray-900 border border-gray-800 text-xs font-mono-data hover:bg-gray-800 rounded uppercase">
+                                리턴 및 시스템 상태 재조회
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Interactive JavaScript Engine (Audio Synth & 3-Stage Core Telemetry Flow) -->
+    <script>
+        // ============================================
+        // 🎧 AUDIO WARNING SYNTHESIZER (WEB AUDIO API)
+        // ============================================
+        let audioCtx = null;
+        let ambientOsc = null;
+        let ambientGain = null;
+        let alarmOsc1 = null;
+        let alarmOsc2 = null;
+        let alarmGain = null;
+        let isAudioPlaying = false;
+        let alarmInterval = null;
+
+        function initAudio() {
+            if (audioCtx) return;
+            
+            // Create audio context
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            audioCtx = new AudioContext();
+
+            // 1. Ambient low frequency rumble (55Hz sawtooth)
+            ambientOsc = audioCtx.createOscillator();
+            ambientOsc.type = 'sawtooth';
+            ambientOsc.frequency.setValueAtTime(55, audioCtx.currentTime);
+
+            // Filter out high frequencies from rumble for deep sound
+            const lpFilter = audioCtx.createBiquadFilter();
+            lpFilter.type = 'lowpass';
+            lpFilter.frequency.setValueAtTime(120, audioCtx.currentTime);
+
+            ambientGain = audioCtx.createGain();
+            ambientGain.gain.setValueAtTime(0.08, audioCtx.currentTime); // Low baseline volume
+
+            ambientOsc.connect(lpFilter);
+            lpFilter.connect(ambientGain);
+            ambientGain.connect(audioCtx.destination);
+            ambientOsc.start();
+
+            // 2. High-tension alternating tone alarms (440Hz / 660Hz)
+            alarmOsc1 = audioCtx.createOscillator();
+            alarmOsc1.type = 'sine';
+            alarmOsc1.frequency.setValueAtTime(440, audioCtx.currentTime);
+
+            alarmOsc2 = audioCtx.createOscillator();
+            alarmOsc2.type = 'sawtooth';
+            alarmOsc2.frequency.setValueAtTime(660, audioCtx.currentTime);
+
+            alarmGain = audioCtx.createGain();
+            alarmGain.gain.setValueAtTime(0.0, audioCtx.currentTime); // Silent initially
+
+            alarmOsc1.connect(alarmGain);
+            alarmOsc2.connect(alarmGain);
+            alarmGain.connect(audioCtx.destination);
+
+            alarmOsc1.start();
+            alarmOsc2.start();
+        }
+
+        function playWarningBeep(freq, duration) {
+            if (!audioCtx) return;
+            const beepOsc = audioCtx.createOscillator();
+            const beepGain = audioCtx.createGain();
+            
+            beepOsc.type = 'sine';
+            beepOsc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            
+            beepGain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            beepGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            
+            beepOsc.connect(beepGain);
+            beepGain.connect(audioCtx.destination);
+            beepOsc.start();
+            beepOsc.stop(audioCtx.currentTime + duration);
+        }
+
+        function setAlarmActive(isActive) {
+            if (!audioCtx) return;
+            
+            if (isActive) {
+                // Raise baseline low ambient rumble to feel threat
+                ambientGain.gain.linearRampToValueAtTime(0.18, audioCtx.currentTime + 1);
+                
+                // Start dynamic pitch siren alternation
+                if (alarmInterval) clearInterval(alarmInterval);
+                let toggle = false;
+                
+                alarmGain.gain.linearRampToValueAtTime(0.03, audioCtx.currentTime + 0.5); // Bring alarm volume up softly
+                
+                alarmInterval = setInterval(() => {
+                    if (!audioCtx) return;
+                    toggle = !toggle;
+                    if (toggle) {
+                        alarmOsc1.frequency.linearRampToValueAtTime(580, audioCtx.currentTime + 0.1);
+                        alarmOsc2.frequency.linearRampToValueAtTime(880, audioCtx.currentTime + 0.1);
+                    } else {
+                        alarmOsc1.frequency.linearRampToValueAtTime(380, audioCtx.currentTime + 0.1);
+                        alarmOsc2.frequency.linearRampToValueAtTime(480, audioCtx.currentTime + 0.1);
+                    }
+                    // Tiny digital tick noise
+                    playWarningBeep(1200, 0.05);
+                }, 400);
+
+            } else {
+                // Go back to peaceful idle state
+                ambientGain.gain.linearRampToValueAtTime(0.08, audioCtx.currentTime + 1);
+                alarmGain.gain.linearRampToValueAtTime(0.0, audioCtx.currentTime + 0.5);
+                if (alarmInterval) {
+                    clearInterval(alarmInterval);
+                    alarmInterval = null;
+                }
+            }
+        }
+
+        // Toggle Audio Button Action
+        const toggleAudioBtn = document.getElementById('toggle-audio-btn');
+        const audioIndicator = document.getElementById('audio-indicator');
+        const statusText = document.getElementById('status-text');
+
+        toggleAudioBtn.addEventListener('click', () => {
+            try {
+                if (!isAudioPlaying) {
+                    initAudio();
+                    if (audioCtx.state === 'suspended') {
+                        audioCtx.resume();
+                    }
+                    isAudioPlaying = true;
+                    toggleAudioBtn.textContent = "🔇 MUTE SYSTEM AUDIO DIAGNOSTIC";
+                    toggleAudioBtn.classList.add('border-green-600', 'text-green-400');
+                    audioIndicator.classList.remove('bg-gray-600');
+                    audioIndicator.classList.add('bg-green-500', 'shadow-[0_0_12px_rgba(34,197,94,0.6)]');
+                    statusText.textContent = "AUDIO ENGINE OPERATIONAL";
+                    statusText.classList.add('text-green-400');
+                    
+                    // Trigger sound diagnostic indicator based on current state
+                    const complianceGap = parseInt(document.getElementById('compliance-gap').value);
+                    if (complianceGap >= 75) {
+                        setAlarmActive(true);
+                    } else {
+                        playWarningBeep(600, 0.3);
+                    }
+                } else {
+                    if (audioCtx) {
+                        audioCtx.suspend();
+                    }
+                    isAudioPlaying = false;
+                    toggleAudioBtn.textContent = "🔊 ACTIVATE SYSTEM AUDIO DIAGNOSTIC";
+                    toggleAudioBtn.classList.remove('border-green-600', 'text-green-400');
+                    audioIndicator.classList.remove('bg-green-500', 'shadow-[0_0_12px_rgba(34,197,94,0.6)]');
+                    audioIndicator.classList.add('bg-gray-600');
+                    statusText.textContent = "AUDIO ENGINE INACTIVE";
+                    statusText.classList.remove('text-green-400');
+                    if (alarmInterval) {
+                        clearInterval(alarmInterval);
+                        alarmInterval = null;
+                    }
+                }
+            } catch (e) {
+                console.error("Audio Initialization Blocked or Unsupported", e);
+            }
+        });
+
+
+        // ============================================
+        // 💻 INTERACTIVE REAL-TIME COMPUTATIONS & STATE
+        // ============================================
+        const complianceGapSlider = document.getElementById('compliance-gap');
+        const dataFlowSlider = document.getElementById('data-flow-gap');
+        const manualReviewSelect = document.getElementById('manual-review-gap');
+
+        const complianceValText = document.getElementById('compliance-val');
+        const dataFlowValText = document.getElementById('data-flow-val');
+
+        const calcQLossDisplay = document.getElementById('calculator-qLoss');
+        const gatewayQLossDisplay = document.getElementById('gateway-qLoss');
+        const riskBadge = document.getElementById('risk-badge');
+        const calcTriggerBtn = document.getElementById('calc-trigger-btn');
+        const calcCtaBox = document.getElementById('calc-cta-box');
+
+        const gatewayPortal = document.getElementById('gateway-portal');
+        const flashOverlay = document.getElementById('flash-overlay');
+
+        const cardNumInput = document.getElementById('card-number');
+        const stripePriceDisplay = document.getElementById('stripe-price');
+
+        // Formats numbers with commas and dollar signs
+        function formatUSD(value) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                maximumFractionDigits: 0
+            }).format(value);
+        }
+
+        // Dynamic UI Updates based on telemetry response
+        function updateUI(qLoss, riskLevel, recommendation, isLive) {
+            const formatted = formatUSD(qLoss);
+            calcQLossDisplay.textContent = formatted;
+            gatewayQLossDisplay.textContent = formatted + "+";
+            
+            // Update Floating Audio Banner Status to reflect real-time telemetry mode
+            if (isLive) {
+                statusText.textContent = isAudioPlaying ? "LIVE BACKEND API CONNECTED" : "LIVE BACKEND DISCONNECTED (MUTED)";
+                if (isAudioPlaying) {
+                    statusText.className = "text-green-400";
+                    audioIndicator.className = "w-3.5 h-3.5 rounded-full bg-green-500 shadow-[0_0_12px_rgba(34,197,94,0.6)] animate-pulse";
+                }
+            } else {
+                statusText.textContent = isAudioPlaying ? "OFFLINE LOCAL SIMULATOR OPERATIONAL" : "OFFLINE SIMULATOR INACTIVE";
+                if (isAudioPlaying) {
+                    statusText.className = "text-yellow-500";
+                    audioIndicator.className = "w-3.5 h-3.5 rounded-full bg-yellow-500 shadow-[0_0_12px_rgba(234,179,8,0.6)] animate-pulse";
+                }
+            }
+
+            const gap = parseInt(complianceGapSlider.value);
+            const flow = parseInt(dataFlowSlider.value);
+            const reviewFactor = parseFloat(manualReviewSelect.value);
+
+            // Update Comparison Dashboard values dynamically
+            const compRowMine = document.getElementById('comp-row-mine');
+            const compGradeMine = document.getElementById('comp-grade-mine');
+            const compLossMine = document.getElementById('comp-loss-mine');
+            
+            document.getElementById('comp-gdpr-mine').textContent = `${Math.min(100, Math.floor(gap * 0.8))}%`;
+            document.getElementById('comp-ccpa-mine').textContent = `${Math.min(100, Math.floor(flow * 10))}%`;
+            document.getElementById('comp-ai-mine').textContent = `${Math.min(100, Math.floor(reviewFactor * 30))}%`;
+            compLossMine.textContent = formatted;
+
+            // Shift theme elements based on computed risk level
+            if (riskLevel === "CRITICAL") {
+                riskBadge.textContent = "[🚨 CRITICAL THREAT LEVEL]";
+                riskBadge.className = "px-3 py-1.5 rounded border text-xs font-mono-data font-bold text-center uppercase tracking-wider bg-red-950/45 border-red-700 text-red-500 shadow-[0_0_15px_var(--red-glow)] animate-pulse";
+                calcTriggerBtn.textContent = "[위험] 필수 게이트웨이 승인 대기";
+                calcTriggerBtn.className = "cyber-btn-red px-8 py-3 rounded text-sm tracking-wider font-bold uppercase transition-all duration-300 shadow-[0_0_15px_var(--red-glow)] bg-red-700 hover:bg-red-800";
+                calcCtaBox.className = "flex flex-col md:flex-row items-center justify-between bg-red-950/10 p-6 rounded-xl border border-red-900/60 gap-4 mt-8";
+                
+                // Dashboard Grade adjustments
+                compGradeMine.textContent = "F (즉각 붕괴 위기)";
+                compGradeMine.className = "py-4 px-4 text-center font-bold text-red-500 animate-pulse";
+                compRowMine.className = "bg-red-950/20 border-l-4 border-red-600 transition-all duration-300";
+            } else if (riskLevel === "HIGH") {
+                riskBadge.textContent = "[⚠️ MEDIUM AUDIT WARNING]";
+                riskBadge.className = "px-3 py-1.5 rounded border text-xs font-mono-data font-bold text-center uppercase tracking-wider bg-yellow-950/20 border-yellow-700 text-yellow-500";
+                calcTriggerBtn.textContent = "[경고] 컴플라이언스 보강 검토";
+                calcTriggerBtn.className = "px-8 py-3 rounded text-sm tracking-wider font-bold uppercase transition-all duration-300 bg-yellow-600 hover:bg-yellow-700 text-black";
+                calcCtaBox.className = "flex flex-col md:flex-row items-center justify-between bg-gray-900/50 p-6 rounded-xl border border-gray-800 gap-4 mt-8";
+                
+                // Dashboard Grade adjustments
+                compGradeMine.textContent = "C- (무인증 방치)";
+                compGradeMine.className = "py-4 px-4 text-center font-bold text-yellow-500";
+                compRowMine.className = "bg-yellow-950/15 border-l-4 border-yellow-600 transition-all duration-300";
+            } else {
+                riskBadge.textContent = "[🟢 SAFE ARCHITECTURE]";
+                riskBadge.className = "px-3 py-1.5 rounded border text-xs font-mono-data font-bold text-center uppercase tracking-wider bg-green-950/20 border-green-800 text-green-400";
+                calcTriggerBtn.textContent = "[진단 완료] 무료 요약 리포트";
+                calcTriggerBtn.className = "px-8 py-3 rounded text-sm tracking-wider font-bold uppercase transition-all duration-300 bg-blue-600 hover:bg-blue-700 text-white shadow-[0_0_15px_rgba(41,128,185,0.4)]";
+                calcCtaBox.className = "flex flex-col md:flex-row items-center justify-between bg-gray-900/50 p-6 rounded-xl border border-gray-800 gap-4 mt-8";
+                
+                // Dashboard Grade adjustments
+                compGradeMine.textContent = "B (안정권 진입)";
+                compGradeMine.className = "py-4 px-4 text-center font-bold text-blue-400";
+                compRowMine.className = "bg-blue-950/15 border-l-4 border-[var(--auth-blue)] transition-all duration-300";
+            }
+        }
+
+        // Live calculation logic connecting to FastAPI or local JS engine
+        function runSimulation() {
+            const gap = parseInt(complianceGapSlider.value);
+            const flow = parseInt(dataFlowSlider.value);
+            const reviewFactor = parseFloat(manualReviewSelect.value);
+
+            // Update local value labels immediately
+            complianceValText.textContent = `${gap}%`;
+            dataFlowValText.textContent = `${flow} 건`;
+
+            if (gap >= 75) {
+                complianceValText.classList.add('text-red-500');
+                complianceGapSlider.classList.add('red-thumb');
+            } else {
+                complianceValText.classList.remove('text-red-500');
+                complianceGapSlider.classList.remove('red-thumb');
+            }
+
+            if (flow >= 7) {
+                dataFlowValText.classList.add('text-red-500');
+                dataFlowSlider.classList.add('red-thumb');
+            } else {
+                dataFlowValText.classList.remove('text-red-500');
+                dataFlowSlider.classList.remove('red-thumb');
+            }
+
+            // 🌐 Asynchronous AJAX fetch request to FastAPI backend with local fallback
+            fetch("http://127.0.0.1:8000/api/v1/diagnose", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    compliance_gap: gap,
+                    data_flow_gap: flow,
+                    manual_review_factor: reviewFactor
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                // Update interface with real-time FastAPI calculated telemetry!
+                updateUI(data.q_loss_amount, data.risk_level, data.recommendation, true);
+            })
+            .catch(err => {
+                // Graceful degradation to local javascript math engine if uvicorn is offline
+                const riskScore = (gap * 0.4) + (flow * 12) + (reviewFactor * 8);
+                let qLoss = Math.floor(riskScore * 850000);
+                if (qLoss < 15000000) qLoss = 15000000;
+                
+                let computedRisk = "LOW";
+                if (gap >= 75 || flow >= 8) {
+                    computedRisk = "CRITICAL";
+                } else if (gap >= 40 || flow >= 4) {
+                    computedRisk = "HIGH";
+                }
+                updateUI(qLoss, computedRisk, "", false);
+            });
+        }
+
+        // Initialize event observers
+        complianceGapSlider.addEventListener('input', () => {
+            runSimulation();
+            playWarningBeep(400 + parseInt(complianceGapSlider.value) * 3, 0.05);
+        });
+        dataFlowSlider.addEventListener('input', () => {
+            runSimulation();
+            playWarningBeep(500 + parseInt(dataFlowSlider.value) * 30, 0.05);
+        });
+        manualReviewSelect.addEventListener('change', () => {
+            runSimulation();
+            playWarningBeep(300, 0.15);
+        });
+
+        // ============================================
+        // 🚨 3-STAGE UX FLOW & STAGE GATEWAY ACTIVATION
+        // ============================================
+        calcTriggerBtn.addEventListener('click', () => {
+            const gap = parseInt(complianceGapSlider.value);
+            const flow = parseInt(dataFlowSlider.value);
+            
+            // Adjust Stripe checkout pricing dynamically based on severity
+            if (gap >= 75 || flow >= 8) {
+                stripePriceDisplay.textContent = "$1,499.00"; // Enterprise structural defense
+            } else if (gap >= 40 || flow >= 4) {
+                stripePriceDisplay.textContent = "$799.00"; // Premium defense pack
+            } else {
+                stripePriceDisplay.textContent = "$499.00"; // Standard compliance shield
+            }
+
+            // Trigger visual flash
+            flashOverlay.classList.add('red-flash-active');
+            setTimeout(() => {
+                flashOverlay.classList.remove('red-flash-active');
+            }, 500);
+
+            // Audio diagnostic trigger
+            if (isAudioPlaying) {
+                if (gap >= 75 || flow >= 8) {
+                    setAlarmActive(true);
+                    document.getElementById('glitch-title').classList.add('jitter-active');
+                } else {
+                    setAlarmActive(false);
+                    document.getElementById('glitch-title').classList.remove('jitter-active');
+                }
+            }
+
+            // Open the portal smoothly
+            gatewayPortal.classList.remove('hidden');
+            gatewayPortal.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            // Glitch text dynamic effects
+            playWarningBeep(880, 0.25);
+            setTimeout(() => playWarningBeep(1320, 0.15), 150);
+        });
+
+        // Card number auto-spacing formatter
+        cardNumInput.addEventListener('input', (e) => {
+            let val = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+            let matches = val.match(/\d{4,16}/g);
+            let match = matches && matches[0] || '';
+            let parts = [];
+
+            for (let i=0, len=match.length; i<len; i+=4) {
+                parts.push(match.substring(i, i+4));
+            }
+
+            if (parts.length > 0) {
+                e.target.value = parts.join(' ');
+            } else {
+                e.target.value = val;
+            }
+        });
+
+
+        // ============================================
+        // 🛡️ CYBER TRANSACTION & SHIELD DEPLOYMENT LOGS
+        // ============================================
+        const paySubmitBtn = document.getElementById('pay-submit-btn');
+        const paymentInputsDiv = document.getElementById('payment-form-inputs');
+        const cyberTerminalDiv = document.getElementById('cyber-terminal');
+        const terminalLogs = document.getElementById('terminal-logs');
+        const terminalProgressBar = document.getElementById('terminal-progress-bar');
+        const transactionResultDiv = document.getElementById('transaction-result');
+        const resultIconBox = document.getElementById('result-icon-box');
+        const resultTitle = document.getElementById('result-title');
+        const resultDesc = document.getElementById('result-desc');
+        const resultResetBtn = document.getElementById('result-reset-btn');
+        const stripeCheckoutCard = document.getElementById('stripe-checkout-card');
+
+        // Dynamic typing effect for terminal
+        async function printLog(message, delay = 350) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    const logLine = document.createElement('div');
+                    logLine.className = 'mb-1';
+                    
+                    if (message.startsWith('[ERR]')) {
+                        logLine.className = 'mb-1 text-red-500 font-bold';
+                        playWarningBeep(330, 0.15);
+                    } else if (message.startsWith('[SYS]')) {
+                        logLine.className = 'mb-1 text-blue-400';
+                        playWarningBeep(980, 0.03);
+                    } else {
+                        playWarningBeep(1150, 0.02);
+                    }
+                    
+                    logLine.textContent = message;
+                    terminalLogs.appendChild(logLine);
+                    terminalLogs.scrollTop = terminalLogs.scrollHeight;
+                    resolve();
+                }, delay);
+            });
+        }
+
+        // Action payment submit
+        paySubmitBtn.addEventListener('click', async () => {
+            const cardName = document.getElementById('card-name').value;
+            const cardNum = cardNumInput.value;
+            
+            if (!cardName || !cardNum) {
+                alert("🔒 Please fill in all credit card details to authorize structural integrity coverage.");
+                return;
+            }
+
+            // Hide entry form, show logging terminal
+            paymentInputsDiv.classList.add('hidden');
+            cyberTerminalDiv.classList.remove('hidden');
+            terminalLogs.innerHTML = '';
+            terminalProgressBar.style.width = '0%';
+
+            // Transition gateway card border glow
+            stripeCheckoutCard.className = "glass-card rounded-2xl p-6 md:p-8 border-gray-800 sticky top-4 glow-blue";
+
+            // Print sequential hacker/compliance setup scripts
+            await printLog("Initializing security tunnel via Stripe TLS 1.3...", 400);
+            terminalProgressBar.style.width = '10%';
+            await printLog(`Connected secure endpoint: tx_${Math.floor(Math.random() * 900000 + 100000)}_yobizwiz`, 300);
+            
+            await printLog("Decoding audit risk metadata payload...", 400);
+            terminalProgressBar.style.width = '25%';
+            await printLog(`Metadata: SeverityLevel=CRITICAL, QLossFactor=${complianceGapSlider.value}%`, 250);
+            
+            await printLog("Contacting bank gateway verification system...", 500);
+            terminalProgressBar.style.width = '45%';
+
+            // Trigger fail state if card begins with '0000'
+            const isFailureTest = cardNum.startsWith('0000');
+
+            if (isFailureTest) {
+                // Failure flow path
+                await printLog("[SYS] Handshake authorized with bank system.", 600);
+                terminalProgressBar.style.width = '60%';
+                await printLog("Routing standard coverage allocation values...", 300);
+                await printLog("[ERR] Stripe processing alert: CARD_DECLINED_INSUFFICIENT_ASSETS", 800);
+                terminalProgressBar.style.width = '75%';
+                await printLog("[ERR] Compliance defense funding validation failed.", 450);
+                await printLog("[ERR] Legal defense shield deployment aborted.", 300);
+                terminalProgressBar.style.width = '90%';
+                await printLog("Clearing security environment tokens...", 400);
+                terminalProgressBar.style.width = '100%';
+                await printLog("System integrity shutdown completed with exit code: 403.", 600);
+                
+                // Audio drop fail sound
+                if (isAudioPlaying) {
+                    playWarningBeep(220, 0.6);
+                }
+
+                setTimeout(() => {
+                    cyberTerminalDiv.classList.add('hidden');
+                    transactionResultDiv.classList.remove('hidden');
+                    stripeCheckoutCard.className = "glass-card rounded-2xl p-6 md:p-8 glow-red sticky top-4";
+                    
+                    // Style result declined
+                    resultIconBox.className = "w-16 h-16 rounded-full flex items-center justify-center mx-auto border-2 border-red-500 text-red-500 font-extrabold text-2xl animate-bounce";
+                    resultIconBox.textContent = "✖";
+                    resultTitle.textContent = "보강 승인 실패 (DECK DECLINED)";
+                    resultTitle.className = "text-lg font-outfit font-extrabold uppercase text-red-500";
+                    resultDesc.innerHTML = `⚠️ 계좌 리소스 한도 초과 또는 보안 규칙 위반으로 트랜잭션이 최종 거절되었습니다.<br>현재 상태로는 <strong>$QLoss$ 무효화 리스크 노출 상태</strong>가 유지됩니다. 다시 승인 요청을 진행하십시오.`;
+                }, 1000);
+
+            } else {
+                // Success flow path
+                await printLog("[SYS] Handshake authorized with bank system.", 600);
+                terminalProgressBar.style.width = '55%';
+                await printLog("Routing compliance defense shield funds... OK", 350);
+                await printLog("Generating 2048-bit RSA Legal Audit Security Keys...", 500);
+                terminalProgressBar.style.width = '70%';
+                await printLog("Injecting live auditing middleware proxy... SUCCESS", 400);
+                await printLog("Compiling defensive architecture compliance assets...", 600);
+                terminalProgressBar.style.width = '85%';
+                await printLog("Generating secure verification seal: SE-93820-AUDIT", 300);
+                await printLog("Uploading proof logs to legal vault...", 500);
+                terminalProgressBar.style.width = '95%';
+                await printLog("[SYS] Stripe payment transaction confirmed successfully.", 400);
+                terminalProgressBar.style.width = '100%';
+                await printLog("System operational. Structural Shield Active.", 600);
+
+                // Audio success win sound
+                if (isAudioPlaying) {
+                    playWarningBeep(523.25, 0.15); // C5
+                    setTimeout(() => playWarningBeep(659.25, 0.15), 100); // E5
+                    setTimeout(() => playWarningBeep(783.99, 0.3), 200); // G5
+                }
+
+                setTimeout(() => {
+                    cyberTerminalDiv.classList.add('hidden');
+                    transactionResultDiv.classList.remove('hidden');
+                    stripeCheckoutCard.className = "glass-card rounded-2xl p-6 md:p-8 border-green-600 glow-blue sticky top-4";
+                    
+                    // Style result success
+                    resultIconBox.className = "w-16 h-16 rounded-full flex items-center justify-center mx-auto border-2 border-green-500 text-green-500 font-extrabold text-2xl";
+                    resultIconBox.textContent = "✓";
+                    resultTitle.textContent = "구조 무결성 보강 완료";
+                    resultTitle.className = "text-lg font-outfit font-extrabold uppercase text-green-400";
+                    resultDesc.innerHTML = `🛡️ 축하합니다! 귀사의 컴플라이언스 안전 구조가 성공적으로 확립되었습니다.<br><strong>인증코드: SE-93820-AUDIT</strong><br>무결성 보증서 및 가이드라인 상세 내역서가 기입하신 이메일로 5분 이내에 자동 전달됩니다.`;
+                    
+                    // Toggle warning alarms off since risk has been resolved
+                    if (isAudioPlaying) {
+                        setAlarmActive(false);
+                        document.getElementById('glitch-title').classList.remove('jitter-active');
+                    }
+                }, 1000);
+            }
+        });
+
+        // Reset and restart flow
+        resultResetBtn.addEventListener('click', () => {
+            // Restore initial entry fields
+            transactionResultDiv.classList.add('hidden');
+            paymentInputsDiv.classList.remove('hidden');
+            stripeCheckoutCard.className = "glass-card rounded-2xl p-6 md:p-8 border-gray-800 sticky top-4";
+            document.getElementById('card-name').value = '';
+            cardNumInput.value = '';
+            document.getElementById('card-expiry').value = '';
+            document.getElementById('card-cvc').value = '';
+
+            // Reset alarms if threat sliders are still high
+            const gap = parseInt(complianceGapSlider.value);
+            if (isAudioPlaying && gap >= 75) {
+                setAlarmActive(true);
+                document.getElementById('glitch-title').classList.add('jitter-active');
+            }
+            playWarningBeep(600, 0.15);
+        });
+
+        // Run baseline setup
+        runSimulation();
+    </script>
+</body>
+</html>

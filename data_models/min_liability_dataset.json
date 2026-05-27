@@ -1,0 +1,27 @@
+{
+  "dataset_name": "Minimizing Liability Dataset",
+  "purpose": "AI 및 데이터 거버넌스 관련 시스템적 무지(Systemic Ignorance)로 인한 재무 손실액($)을 정량화.",
+  "target_fields": [
+    {"field": "Industry", "description": "산업 분야 (예: 금융, 의료, 법률)"},
+    {"field": "Risk_Scenario", "description": "구체적인 시스템적 오류 시나리오 (예: PII 마스킹 실패)"},
+    {"field": "Regulatory_Breach", "description": "위반된 규제/법규 명칭 (예: GDPR, HIPAA 등)"},
+    {"field": "Quantifiable_Loss_Estimate", "description": "최소 예상 벌금 또는 손해액 ($). (필수)"},
+    {"field": "Source_Citation", "description": "데이터 출처 및 연도 (필수)"}
+  ],
+  "initial_data_points": [
+    {
+      "Industry": "금융(Credit Card)",
+      "Risk_Scenario": "결제 데이터 전송 과정에서의 PII 마스킹 실패",
+      "Regulatory_Breach": "PCI DSS Violation (Payment Card Industry Data Security Standard)",
+      "Quantifiable_Loss_Estimate": "$1M - $50M+",
+      "Source_Citation": "Industry Report, 2022-2024"
+    },
+    {
+      "Industry": "헬스케어(Medical Record)",
+      "Risk_Scenario": "AI 분석 시스템에 비인가 의료 데이터 입력 및 유출",
+      "Regulatory_Breach": "HIPAA Violation (Health Insurance Portability and Accountability Act)",
+      "Quantifiable_Loss_Estimate": "$50K - $2.5M per violation",
+      "Source_Citation": "OCR/HHS Enforcement Action, 2023"
+    }
+  ]
+}

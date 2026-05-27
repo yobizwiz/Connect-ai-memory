@@ -1,0 +1,22 @@
+{
+    "connectAiLab.localBrainPath": "c:\\Users\\jinoh\\Desktop\\Connect AI",
+    "connectAiLab.companyDir": "c:\\Users\\jinoh\\Desktop\\Connect AI",
+    "python.analysis.exclude": [
+        "**/backend/**",
+        "**/node_modules/**",
+        "**/.next/**",
+        "**/sessions/**",
+        "C:/_pyrefly_virtual_/**",
+        "_pyrefly_virtual_/**"
+    ],
+    "python.analysis.ignore": [
+        "**/backend/**",
+        "C:/_pyrefly_virtual_/**",
+        "_pyrefly_virtual_/**"
+    ],
+    "files.exclude": {
+        "C:/_pyrefly_virtual_/**": true,
+        "_pyrefly_virtual_/**": true
+    },
+    "typescript.tsc.autoDetect": "off"
+}
