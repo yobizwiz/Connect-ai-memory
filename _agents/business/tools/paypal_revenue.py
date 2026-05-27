@@ -34,13 +34,15 @@ CONFIG = os.path.join(HERE, "paypal_revenue.json")
 
 def _log(msg, kind="info"):
     prefix = {"info": "💰", "ok": "✅", "warn": "⚠️ ", "err": "❌", "step": "▸"}.get(kind, "•")
-    # v3.2: JSON 모드에서는 모든 로그를 stderr로 → stdout은 순수 JSON만 유지
-    #       마크다운 모드에서는 err/warn만 stderr, 나머지는 stdout
+    # v3.3: JSON 모드 — 정상 로그 억제, 에러만 stderr → Connect AI 앱 호환
+    #       마크다운 모드 — err/warn은 stderr, 나머지는 stdout
     output_mode = (os.environ.get("OUTPUT") or "").strip().lower()
     if output_mode == "json":
-        dest = sys.stderr
-    else:
-        dest = sys.stderr if kind in ("err", "warn") else sys.stdout
+        if kind in ("err", "warn"):
+            print(f"{prefix} {msg}", file=sys.stderr, flush=True)
+        # info/ok/step 은 JSON 파싱 방해하므로 억제
+        return
+    dest = sys.stderr if kind in ("err", "warn") else sys.stdout
     print(f"{prefix} {msg}", file=dest, flush=True)
 
 

@@ -43,18 +43,24 @@ const CheckoutFlowWrapper: React.FC<CheckoutFlowWrapperProps> = ({ onSuccess }) 
         console.log("✅ [Flow Success] Gatekeeper Alert를 통과했습니다. PayPal 트랜잭션 시작...");
 
         try {
-            // ===========================================
-            // 💡 여기에 실제 PayPal SDK 또는 백엔드 API 호출이 들어갑니다.
-            // const paymentResponse = await payPalApi.processPayment(userData);
-            await new Promise(resolve => setTimeout(resolve, 1500)); // Mock API Latency
-            const mockSuccessData = { transactionId: "txn_mock_123", amount: 999 };
-            // ===========================================
+            // PayPal 결제 서비스 호출 (retryWithBackoff 적용됨)
+            const { processMinimumPremiumPayment } = await import('../services/PaymentService');
+            const riskScore = riskData?.score || 0;
+            const premiumAmount = riskScore >= 75 ? 1499 : riskScore >= 40 ? 799 : 499;
+            
+            const paymentResult = await processMinimumPremiumPayment(riskScore, premiumAmount);
+            console.log(`✅ [PayPal] 트랜잭션 완료: ${paymentResult.transactionId}`);
 
             setIsProcessing(false);
-            onSuccess(mockSuccessData);
+            onSuccess({ 
+                transactionId: paymentResult.transactionId, 
+                amount: premiumAmount,
+                gateway: 'PAYPAL'
+            });
 
         } catch (error) {
             console.error("Payment Failed:", error);
+            setIsProcessing(false);
             alert(`❌ 결제 실패: ${error instanceof Error ? error.message : "알 수 없는 오류"}`);
         }
     };

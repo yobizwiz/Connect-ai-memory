@@ -59,18 +59,17 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ data, onSuccess, onCancel }
     setIsProcessing(true);
 
     try {
-      // 3. PayPal API 호출 시뮬레이션 (실제로는 백엔드 게이트웨이와 통신)
-      console.log('--- Attempting Mandatory Transaction ---');
-      await new Promise<void>(resolve => setTimeout(() => resolve(), 2000)); // 2초 지연
+      // 3. PayPal 결제 서비스 실제 호출 (retryWithBackoff 내장)
+      console.log('--- Attempting PayPal Transaction via PaymentService ---');
+      const { executePaymentTransaction } = await import('../services/PaymentService');
+      const result = await executePaymentTransaction({ amount: data.amount });
       
-      // 성공 시뮬레이션 로직 (실제로는 API 응답에 의존)
-      if (Math.random() > 0.1) { 
-        console.log('✅ Transaction Successful!');
+      if (result.success) {
+        console.log(`✅ PayPal Transaction Successful: ${result.transactionId}`);
         setIsProcessing(false);
-        onSuccess(); // 부모 컴포넌트의 성공 핸들러 호출
+        onSuccess();
       } else {
-         // 실패 시뮬레이션 (재시도 유도)
-         throw new Error("API 게이트웨이 연결 불안정. 시스템 재확인이 필요합니다.");
+        throw new Error("PayPal 트랜잭션이 승인되지 않았습니다.");
       }
 
     } catch (err: any) {

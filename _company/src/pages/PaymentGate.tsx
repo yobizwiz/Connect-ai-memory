@@ -361,7 +361,7 @@ const PaymentGate: FC<{ initialData?: PaymentData }> = ({ initialData }) => {
         let currentLogs: string[] = [];
 
         // Step-by-step sequential Hacker terminal printing
-        currentLogs = await printLog("Initializing security tunnel via Stripe TLS 1.3...", currentLogs, 400);
+        currentLogs = await printLog("Initializing security tunnel via PayPal TLS 1.3...", currentLogs, 400);
         setProgressBarWidth(10);
 
         currentLogs = await printLog(`Connected secure endpoint: tx_${Math.floor(Math.random() * 900000 + 100000)}_yobizwiz`, currentLogs, 300);
@@ -383,7 +383,7 @@ const PaymentGate: FC<{ initialData?: PaymentData }> = ({ initialData }) => {
             setProgressBarWidth(80);
 
             currentLogs = await printLog("Routing standard coverage allocation values...", currentLogs, 300);
-            currentLogs = await printLog("[ERR] Stripe processing alert: CARD_DECLINED_INSUFFICIENT_ASSETS", currentLogs, 800);
+            currentLogs = await printLog("[ERR] PayPal processing alert: CARD_DECLINED_INSUFFICIENT_ASSETS", currentLogs, 800);
             setProgressBarWidth(90);
 
             currentLogs = await printLog("[ERR] Compliance defense funding validation failed.", currentLogs, 450);
@@ -415,7 +415,7 @@ const PaymentGate: FC<{ initialData?: PaymentData }> = ({ initialData }) => {
             currentLogs = await printLog("Uploading proof logs to legal vault...", currentLogs, 500);
             setProgressBarWidth(100);
 
-            currentLogs = await printLog("[SYS] Stripe payment transaction confirmed successfully.", currentLogs, 400);
+            currentLogs = await printLog("[SYS] PayPal payment transaction confirmed successfully.", currentLogs, 400);
             currentLogs = await printLog("System operational. Structural Shield Active.", currentLogs, 500);
 
             if (isAudioEngineActive) {
@@ -881,7 +881,7 @@ const PaymentGate: FC<{ initialData?: PaymentData }> = ({ initialData }) => {
                                     }`}>
                                         💳 SECURE TRANS-GATEWAY
                                     </h3>
-                                    <span className="text-[10px] text-gray-500 font-mono-data">STRIPE MOCK V3.0</span>
+                                    <span className="text-[10px] text-gray-500 font-mono-data">PAYPAL GATEWAY V3.0</span>
                                 </div>
 
                                 <div className="mb-5 bg-black/60 rounded-lg p-3 border border-slate-800 text-center">

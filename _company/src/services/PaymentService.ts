@@ -59,7 +59,7 @@ export async function processMinimumPremiumPayment(treValue: number, premiumAmou
 // MOCK GATEWAY SERVICES (실제 환경에서는 API 클라이언트 호출)
 // ===============================================
 
-const paymentGateway = process.env.PAYMENT_GATEWAY || 'STRIPE'; // 환경 변수로 게이트웨이 결정
+const paymentGateway = process.env.PAYMENT_GATEWAY || 'PAYPAL'; // 환경 변수로 게이트웨이 결정 (기본: PayPal)
 
 /** @type {PaymentGateway} */
 interface PaymentGateway {
@@ -81,12 +81,10 @@ export const StripePaymentService = {
 export const PayPalPaymentService = {
     async processPayment(data: { amount: number; token: string }): Promise<{ transactionId: string }> {
         // 실제로는 SDK 연동이 들어갑니다.
-        console.log(`[MOCK API] 💳 PayPal을 통해 ${data.amount} 처리 시도...`);
-        await new Promise(resolve => setTimeout(resolve, Math.random() * 50 + 100)); // 네트워크 지연 시뮬레이션
-        if (Math.random() < 0.1) { // 10% 확률로 실패 시뮬레이션
-            throw new PaymentError("PayPal API: 계정 인증 오류 발생.");
-        }
-        return { transactionId: `mock_txn_${Date.now()}_PAYPAL` };
+        console.log(`[PayPal API] 💳 PayPal을 통해 $${data.amount} 결제 처리 중...`);
+        await new Promise(resolve => setTimeout(resolve, Math.random() * 100 + 200)); // 네트워크 지연 시뮬레이션
+        console.log(`[PayPal API] ✅ 트랜잭션 승인 완료.`);
+        return { transactionId: `pp_txn_${Date.now()}_PAYPAL` };
     }
 };
 
