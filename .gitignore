@@ -28,3 +28,6 @@ _agents/*/config.md
 _agents/*/tools/*.json
 _agents/*/tools/youtube_account.json
 
+# OAuth local files
+**/oauth.local.json
+**/*.local.json
