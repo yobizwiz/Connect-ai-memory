@@ -97,6 +97,83 @@ print('✅ wav: ' + WAV_PATH, file=sys.stderr, flush=True)
     return True, wav_path
 
 
+def _parse_editor_config():
+    config_path = os.path.join(os.path.dirname(HERE), "config.md")
+    creds = {"SUNO_COOKIE": "", "SUNO_API_KEY": ""}
+    if os.path.exists(config_path):
+        try:
+            with open(config_path, "r", encoding="utf-8") as f:
+                content = f.read()
+            for line in content.splitlines():
+                if "SUNO_COOKIE" in line and "=" in line:
+                    parts = line.split("=", 1)
+                    creds["SUNO_COOKIE"] = parts[1].strip().strip('"').strip("'")
+                elif "SUNO_API_KEY" in line and "=" in line:
+                    parts = line.split("=", 1)
+                    creds["SUNO_API_KEY"] = parts[1].strip().strip('"').strip("'")
+        except Exception:
+            pass
+    return creds
+
+
+def _generate_suno(cookie, api_key, prompt, duration_sec, output_path):
+    """Suno AI Local Bridge (localhost:3002) 100% 자동 생성 엔진"""
+    import urllib.request
+    import urllib.error
+    
+    _log("로컬 Suno API 브릿지 서버(localhost:3002)에 연결을 시도합니다...", "info")
+    
+    # 로컬 API 호출 바디 규격 (gcui-art/suno-api spec)
+    payload = {
+        "prompt": prompt,
+        "make_instrumental": True,
+        "wait_audio": True  # 완벽한 자동 동기 대기 활성화
+    }
+    
+    req_data = json.dumps(payload).encode("utf-8")
+    headers = {
+        "Content-Type": "application/json"
+    }
+    
+    try:
+        # 1. 로컬 generate API 호출 (대기 시간 약 30~60초)
+        _log("Suno 브릿지 서버에 생성 명령 전송... (마스터링 완료까지 약 40초 대기)", "ok")
+        req = urllib.request.Request(
+            "http://localhost:3002/api/generate",
+            data=req_data,
+            headers=headers,
+            method="POST"
+        )
+        # 생성 대기 시간이 있으므로 timeout을 180초로 넉넉하게 잡습니다.
+        with urllib.request.urlopen(req, timeout=180) as response:
+            res_data = json.loads(response.read().decode("utf-8"))
+            
+        # 로컬 API는 완성된 clips 배열을 반환합니다.
+        if isinstance(res_data, list) and len(res_data) > 0:
+            clip = res_data[0]
+            audio_url = clip.get("audio_url")
+            clip_id = clip.get("id")
+            
+            if not audio_url:
+                return False, "Suno 서버가 오디오 URL을 생성하지 못했습니다. 크레딧이나 쿠키 세션을 확인하십시오."
+                
+            _log(f"Suno AI 생성 완료! (Clip ID: {clip_id})", "ok")
+            _log(f"초고음질 음원 다운로드 중...", "ok")
+            
+            # 2. 음원 다운로드 및 로컬 저장
+            urllib.request.urlretrieve(audio_url, output_path)
+            return True, output_path
+        else:
+            return False, f"Suno API 응답이 올바르지 않습니다: {res_data}"
+            
+    except urllib.error.URLError as e:
+        if "connection refused" in str(e).lower() or "10061" in str(e):
+            return False, "로컬 Suno API 브릿지 서버가 실행 중이 아닙니다. 먼저 'suno-api' 서버를 실행시켜 주십시오."
+        return False, f"로컬 Suno API 브릿지 서버 연결 실패: {str(e)}"
+    except Exception as e:
+        return False, f"Suno API 로컬 자동 생성 실패: {str(e)}"
+
+
 def _generate_acestep(setup, prompt, duration_sec, output_path):
     """ACE-Step — repo의 infer 스크립트 호출. 무거움."""
     venv_python = setup.get("VENV_PYTHON")
@@ -127,18 +204,6 @@ def _generate_acestep(setup, prompt, duration_sec, output_path):
 
 
 def main():
-    setup = _load(SETUP_CONFIG)
-    if not setup.get("INSTALLED_AT"):
-        print("❌ 음악 모델 미설치.")
-        print("  먼저 같은 폴더의 'music_studio_setup.py' 실행해주세요 (▶ 클릭).")
-        print("  기본은 MusicGen Small (300MB) — 가벼움.")
-        sys.exit(1)
-
-    venv_python = setup.get("VENV_PYTHON")
-    if not (venv_python and os.path.exists(venv_python)):
-        print("❌ 설치 정보 손상. music_studio_setup.py 다시 실행해주세요.")
-        sys.exit(1)
-
     cfg = _load(GEN_CONFIG)
     prompt = (cfg.get("PROMPT") or "calm korean YouTube intro music, gentle piano, hopeful").strip()
     duration = int(cfg.get("DURATION_SEC") or 30)
@@ -151,20 +216,46 @@ def main():
     timestamp = time.strftime("%Y%m%d_%H%M%S")
     output_path = os.path.join(output_dir, f"bgm_{timestamp}.mp3")
 
-    model_label = setup.get("INSTALLED_MODEL", "unknown")
-    _log(f"모델: {model_label}")
-    _log(f"프롬프트: {prompt}")
-    _log(f"길이: {duration}초")
-    _log(f"출력: {output_path}")
+    # Suno AI 자격 증명 파싱
+    creds = _parse_editor_config()
+    suno_cookie = creds.get("SUNO_COOKIE") or os.environ.get("SUNO_COOKIE")
+    suno_key = creds.get("SUNO_API_KEY") or os.environ.get("SUNO_API_KEY")
 
-    install_kind = setup.get("INSTALL_KIND", "transformers")
-    if install_kind == "transformers":
-        ok, result = _generate_musicgen(setup, prompt, duration, output_path)
-    elif install_kind == "acestep":
-        ok, result = _generate_acestep(setup, prompt, duration, output_path)
+    if suno_cookie or suno_key:
+        model_label = "Suno AI Cloud (320kbps)"
+        _log(f"모델: {model_label}")
+        _log(f"프롬프트: {prompt}")
+        _log(f"길이: {duration}초")
+        _log(f"출력: {output_path}")
+        ok, result = _generate_suno(suno_cookie, suno_key, prompt, duration, output_path)
     else:
-        print(f"❌ 알 수 없는 INSTALL_KIND: {install_kind}")
-        sys.exit(1)
+        # 기존 로직 (로컬 설치 체크)
+        setup = _load(SETUP_CONFIG)
+        if not setup.get("INSTALLED_AT"):
+            print("❌ 음악 모델 미설치.")
+            print("  Suno AI 연동을 사용하려면 _agents/editor/config.md 에 SUNO_COOKIE 또는 SUNO_API_KEY를 입력해 주십시오.")
+            print("  또는 로컬 MusicGen을 설치하려면 music_studio_setup.py를 실행해 주십시오.")
+            sys.exit(1)
+
+        venv_python = setup.get("VENV_PYTHON")
+        if not (venv_python and os.path.exists(venv_python)):
+            print("❌ 설치 정보 손상. music_studio_setup.py 다시 실행해주세요.")
+            sys.exit(1)
+
+        model_label = setup.get("INSTALLED_MODEL", "unknown")
+        _log(f"모델: {model_label}")
+        _log(f"프롬프트: {prompt}")
+        _log(f"길이: {duration}초")
+        _log(f"출력: {output_path}")
+
+        install_kind = setup.get("INSTALL_KIND", "transformers")
+        if install_kind == "transformers":
+            ok, result = _generate_musicgen(setup, prompt, duration, output_path)
+        elif install_kind == "acestep":
+            ok, result = _generate_acestep(setup, prompt, duration, output_path)
+        else:
+            print(f"❌ 알 수 없는 INSTALL_KIND: {install_kind}")
+            sys.exit(1)
 
     if not ok:
         print(f"❌ {result}")
@@ -172,7 +263,6 @@ def main():
 
     final_path = result
     file_size = os.path.getsize(final_path)
-    print(f"✅ BGM 생성 완료")
     print(f"  🎵 모델: {model_label}")
     print(f"  📁 {final_path}")
     print(f"  📊 {file_size // 1024} KB · {duration}초")

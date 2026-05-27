@@ -29,10 +29,10 @@ AUTONOMY_LEVEL: 2
 - `requires_credentials`: `config.md` 참조
 
 ### `music_generate`
-BGM 자동 생성 (장르·길이 지정)
+BGM 및 보컬 사운드 자동 생성 (로컬 MusicGen / ACE-Step 또는 클라우드 **Suno AI** API 모델 자동 스위칭 및 생성)
 
 - `enabled`: true
-- `requires_credentials`: `config.md` 참조
+- `requires_credentials`: `config.md` 참조 (Suno AI 사용 시 SUNO_COOKIE 또는 SUNO_API_KEY 필요)
 
 ### `music_to_video`
 생성된 BGM을 영상에 합성 (loop/fade)
