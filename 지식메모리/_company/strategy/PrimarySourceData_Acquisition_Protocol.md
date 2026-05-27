@@ -16,4 +16,4 @@
 - **전략적 역할:** 자문사를 통해 확보한 지식을 자체 시스템에 통합할 수 있는 법률 기술 검토 보고서(Legal Tech Review)를 추가로 발급받는 것을 목표로 한다.
 
 ## ⚠️ 주의 사항 (Warning)
-*   모든 데이터 요청은 항상 '규제 준수'와 '재정적 손실 방어($QLoss$)'의 관점에서 Framing 되어야 합니다. [근거: sessions/2026-05-24T05-32/]
+*   모든 데이터 요청은 항상 '규제 준수'와 '재정적 손실 방어($QLoss$)'의 관점에서 Framing 되어야 합니다. [근거: sessions/2026-05-24T05-32/](file:///C:/Users/jinoh/Desktop/Connect%20AI/sessions/2026-05-24T05-32/business.md)

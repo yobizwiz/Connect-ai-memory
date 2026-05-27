@@ -10,7 +10,7 @@
 
 ---
 
-## I. 유럽 일반 개인정보 보호법 (GDPR) - [근거: Researcher 개인 메모리, sessions/2026-05-19T04-23]
+## I. 유럽 일반 개인정보 보호법 (GDPR) - [근거: Researcher 개인 메모리, sessions/2026-05-19T04-23](file:///C:/Users/jinoh/Desktop/Connect%20AI/sessions/2026-05-19T04-23/secretary.md)
 **✅ 핵심 통제 영역:** 개인 식별 정보(PII) 처리의 투명성 및 동의 기반 데이터 활용.
 
 | 위반 유형 (Pain Point) | 규정 근거 (Article) | 재무적 손실 변수 ($) | TDR 계산 요소 및 예상 비용($) |
@@ -21,7 +21,7 @@
 
 ---
 
-## II. 캘리포니아 소비자 개인정보보호법 (CCPA) - [근거: Researcher 개인 메모리]
+## II. 캘리포니아 소비자 개인정보보호법 (CCPA) - [근거: Researcher 개인 메모리](file:///C:/Users/jinoh/.gemini/antigravity-ide/knowledge/ki_001_regulatory_compliance/artifacts/regulatory_standards_guide.md)
 **✅ 핵심 통제 영역:** 소비자의 '판매 거부권(Right to Opt-Out)' 및 데이터 주권 강화.
 
 | 위반 유형 (Pain Point) | 규정 근거 (Article) | 재무적 손실 변수 ($) | TDR 계산 요소 및 예상 비용($) |

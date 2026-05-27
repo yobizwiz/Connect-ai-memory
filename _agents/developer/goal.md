@@ -62,3 +62,8 @@
 - 커밋 메시지 빈 채로 git commit → reject.
 - 사용자 데이터·API 키를 코드에 그대로 박기.
 - 테스트 안 돌려보고 "수정 완료했습니다" 출력 → 거짓말.
+
+## 🎯 이번 주 목표 (Current Mission)
+- **Zero-Trust 데이터 리전 암호학적 감시 모의 API 설계 및 감사 로그용 Immutable Ledger(위변조 방지 원장) 프로토타입 구현**
+- 리스크 엔진 6대 KPI(TRE, PIG, ARS, CDR, AIL, KSD)의 수학적 계산 수식을 반영한 프론트엔드 및 백엔드 로직 설계 및 연동
+
