@@ -1,5 +1,5 @@
 # 🛡️ PayPal API 권한 감사 결과 보고서 (Audit Trail)
-진단 시점: `2026-05-27 07:45:51 UTC` | 운영 모드: **LIVE**
+진단 시점: `2026-05-27 08:01:43 UTC` | 운영 모드: **LIVE**
 대상 Client ID: `Ad8-3us_xOHt...EsXNV6QAQcwU`
 
 ## 📊 권한 획득 요약표
