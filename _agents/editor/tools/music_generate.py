@@ -188,7 +188,9 @@ def _generate_suno(cookie, api_key, prompt, duration_sec, output_path):
                     req = urllib.request.Request(
                         audio_url,
                         headers={
-                            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                            "Accept": "*/*",
+                            "Referer": "https://suno.com/"
                         }
                     )
                     with urllib.request.urlopen(req, timeout=60) as response, open(var_output_path, "wb") as out_file:
