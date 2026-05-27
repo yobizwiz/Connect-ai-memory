@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>yobizwiz | 리스크 진단 대시보드</title>
+    <!-- Inter 및 Roboto Mono 폰트 임포트 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- 1. Color Variables & Base Styles (Self-RAG) --- */
+        :root {
+            --color-bg: #1A1A1A; /* Neutral Black */
+            --color-red-zone: #C0392B; /* Dark Crimson */
+            --color-authority-blue: #2980B9; /* Deep Slate Blue */
+            --color-text-light: #EAEAEA;
+            --color-border: rgba(70, 70, 70, 0.5);
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* --- 2. Typography & Utility Classes (Self-RAG) --- */
+        body {
+            background-color: var(--color-bg);
+            color: var(--color-text-light);
+            padding: 40px;
+            line-height: 1.6;
+        }
+
+        /* 데이터/경고 메시지에 적용되는 고정폭 폰트 */
+        .mono {
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 700;
+        }
+
+        h1, h2 {
+            color: #FFFFFF; /* 제목은 가장 밝게 */
+            margin-bottom: 1rem;
+        }
+
+        /* --- 3. Component Styling (The System Look) --- */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* 경고 섹션의 글리치 효과 적용 */
+        .glitch-text {
+            position: relative;
+            display: inline-block;
+            animation: glitch 2s linear infinite alternate; /* 애니메이션 클래스로 처리 예정 */
+            color: var(--color-red-zone);
+            font-weight: 900;
+        }
+
+        /* Red Zone Alert Box 스타일링 (강렬한 시각적 충격) */
+        .alert-critical {
+            background: linear-gradient(90deg, transparent 0%, rgba(192, 57, 43, 0.8) 50%, transparent 100%);
+            border: 2px solid var(--color-red-zone);
+            padding: 20px;
+            margin-top: 20px;
+            animation: flash 0.2s linear infinite alternate; /* 플래시 효과 */
+        }
+
+        /* 입력 패널 (터미널 느낌) */
+        #input-panel {
+            background-color: #131313; /* 아주 약간 더 어두운 배경 */
+            border: 1px solid var(--color-border);
+            padding: 30px;
+            box-shadow: 0 0 25px rgba(192, 57, 43, 0.1); /* 경고의 그림자 */
+        }
+
+        /* 결과 시각화 섹션 (핵심) */
+        #results-container {
+            display: flex;
+            gap: 40px;
+            margin-top: 50px;
+        }
+
+        .kpi-card {
+            background-color: #1F2A3A; /* Authority Blue와 유사한 어두운 배경 */
+            border-left: 5px solid var(--color-authority-blue);
+            padding: 20px;
+            flex: 1;
+            box-shadow: 0 4px 15px rgba(41, 128, 185, 0.3); /* Blue Glow */
+        }
+
+        /* 그래프 및 차트 영역 (더 복잡한 시각화가 들어갈 자리) */
+        #visualization-chart {
+            flex: 2;
+            height: 400px;
+            background-color: #1F1F1F;
+            border: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        /* --- 4. Keyframe Animations (Glitch & Flash) --- */
+        @keyframes glitch {
+            0% { transform: translate(0); opacity: 1; }
+            20% { transform: translate(-3px, 3px); opacity: 1; text-shadow: -2px 0 #ff00ff; }
+            40% { transform: translate(3px, -2px); opacity: 1; text-shadow: 2px 0 #00ffff; }
+            60% { transform: translate(-2px, 1px); opacity: 1; }
+            80% { transform: translate(2px, -1px); opacity: 1; }
+            100% { transform: translate(0); opacity: 1; }
+        }
+
+        @keyframes flash {
+            from { box-shadow: 0 0 50px var(--color-red-zone), inset 0 0 20px var(--color-red-zone); opacity: 1; }
+            to { box-shadow: none; opacity: 0.8; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- A. 헤더 및 권위 메시지 섹션 -->
+    <header style="text-align: center; margin-bottom: 50px;">
+        <h1 class="glitch-text" style="font-size: 3rem; letter-spacing: -2px;">
+            [SYSTEM DIAGNOSTIC MODE] <span style="color: var(--color-authority-blue);">yobizwiz 리스크 엔진</span>
+        </h1>
+        <p class="mono" style="margin-top: 10px;">
+            ⚠️ 경고. 당신의 현재 프로세스는 법적/운영적 취약점을 안고 있습니다. 진단을 시작합니다...
+        </p>
+    </header>
+
+    <!-- B. 입력 및 제어 패널 -->
+    <section id="input-panel">
+        <h2 style="border-bottom: 1px solid var(--color-border); padding-bottom: 10px;">INPUT DATA STREAM</h2>
+        <p class="mono" style="margin-bottom: 20px; color: #AAA;">
+            > [COMMAND] --run_risk_diagnostic <span style="color: yellow;">--client_id=CUST-XXXX</span>
+        </p>
+
+        <div style="padding: 15px; background-color: #1A1A1A; border: 1px dashed var(--color-border);">
+            <label for="workflow-input" class="mono" style="display: block; margin-bottom: 8px;">[WORKFLOW_NAME] 입력 (예: Contract_Approval):</label>
+            <input type="text" id="workflow-input" placeholder="프로세스 이름" style="width: 90%; padding: 10px; background-color: #222; border: 1px solid var(--color-border); color: white; margin-bottom: 15px;">
+
+            <label for="steps-input" class="mono" style="display: block; margin-bottom: 8px;">[INPUT_STEPS] (규정 승인 단계를 JSON 형식으로 입력):</label>
+            <textarea id="steps-input" rows="4" placeholder='[{ "step_id": 1, "name": "법무팀 검토", "actual_date": "2026-05-01" }, { "step_id": 3, "name": "담당자 승인", "actual_date": "2026-05-02" }]' style="width: 98%; padding: 10px; background-color: #222; border: 1px solid var(--color-border); color: white;"></textarea>
+            <button onclick="runDiagnostic()" class="mono" style="background-color: var(--color-authority-blue); color: white; padding: 10px 30px; border: none; cursor: pointer; margin-top: 20px;">진단 실행 (RUN DIAGNOSTIC)</button>
+        </div>
+    </section>
+
+    <!-- C. 결과 시각화 섹션 -->
+    <section id="results-container">
+        <!-- KPI 카드 영역 -->
+        <div style="display: flex; flex-direction: column; gap: 20px; width: 60%;">
+            <!-- TRE 카드 (초기 경고 상태) -->
+            <div class="kpi-card" id="tre-card">
+                <h3 style="color: var(--color-red-zone); margin-bottom: 10px;">🚨 Total Risk Exposure (TRE)</h3>
+                <p class="mono" style="font-size: 2.5rem; color: var(--color-red-zone); margin: 0;">$8,340,000+</p>
+                <small>예상 총 노출 손실액 (Total Potential Loss)</small><br>
+                <div class="alert-critical" style="margin-top: 15px; font-size: 0.9rem;">
+                    [CRITICAL WARNING] 규정 미준수로 인한 법적 리스크가 확인되었습니다. 즉각적인 방어벽 구축이 필요합니다.
+                </div>
+            </div>
+
+            <!-- 감사 준비도 카드 (초기 경고 상태) -->
+            <div class="kpi-card" id="audit-score-card">
+                <h3 style="color: var(--color-red-zone); margin-bottom: 10px;">📉 Audit Readiness Score</h3>
+                <p class="mono" style="font-size: 2.5rem; color: var(--color-red-zone); margin: 0;">42 / 100</p>
+                <small>현재 프로세스 구조의 안정성 지수 (낮을수록 취약)</small><br>
+            </div>
+        </div>
+
+        <!-- 차트 및 분석 영역 -->
+        <div id="visualization-chart">
+            진단 대시보드 시뮬레이션: 복잡한 플로우차트를 배경으로, **핵심 결함(Red Zone)**이 팝업되는 애니메이션을 구현해야 합니다. (Visualization Placeholder)
+        </div>
+    </section>
+
+</div>
+
+<script>
+// JavaScript는 실제 백엔드 연동 로직이 필요하므로 구조만 남기고 주석 처리합니다.
+function runDiagnostic() {
+    alert("실제 진단 실행 시: 서버 API 호출 및 Red Zone -> Authority Blue 플로우 전환 애니메이션 트리거.");
+}
+</script>
+
+</body>
+</html>
