@@ -24,7 +24,7 @@ def test_validate_input_schema_success(risk_service):
     }
     assert risk_service.validate_input(valid_data) == True
 
-def test_validate_input_missing_field():
+def test_validate_input_missing_field(risk_service):
     """[Edge Case] 필드 누락 테스트 (Structural Integrity Check)."""
     invalid_data = {"compliance_score": 95, "regulatory_exposure_years": 3.5} # financial_transaction_volume 누락
     # Expected failure: Missing required key check
