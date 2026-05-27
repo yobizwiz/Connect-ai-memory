@@ -10,8 +10,8 @@ class InputStep(BaseModel):
     actual_date: date = Field(..., description="실제 완료 날짜 (YYYY-MM-DD)")
 
 class DiagnosisInput(BaseModel):
-    client_id: str = Field(..., example="CUST-001", description="고객 식별자")
-    workflow_name: str = Field(..., example="Contract_Approval", description="분석 대상 프로세스명")
+    client_id: str = Field(..., json_schema_extra={"example": "CUST-001"}, description="고객 식별자")
+    workflow_name: str = Field(..., json_schema_extra={"example": "Contract_Approval"}, description="분석 대상 프로세스명")
     input_steps: List[InputStep] = Field(..., description="고객이 수행한 실제 단계 목록.")
 
 # --- 2. 리스크 가중치 (시스템 내부 지식 Mock) ---
