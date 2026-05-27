@@ -1,5 +1,5 @@
 # 📊 YouTube 연동 정밀 진단 보고서
-_작성 일시: 2026-05-26 22:59:09_
+_작성 일시: 2026-05-27 11:23:57_
 
 유튜브 데이터 API 및 애널리틱스 OAuth 권한의 실제 서버 통신 상태를 정밀 체크한 진단서입니다.
 
@@ -16,8 +16,8 @@ _작성 일시: 2026-05-26 22:59:09_
 
 ## 🔐 2. YouTube 애널리틱스 OAuth 권한 상태
 *   **OAuth 인증 상태:** 🟢 정상 인증 (Authenticated)
-*   **보안 토큰 유효 시간:** `3346초`
-*   **승인된 권한 범위(Scopes):** `https://www.googleapis.com/auth/youtube.force-ssl https://www.googleapis.com/auth/youtube.readonly https://www.googleapis.com/auth/yt-analytics.readonly`
+*   **보안 토큰 유효 시간:** `3599초`
+*   **승인된 권한 범위(Scopes):** `유튜브 애널리틱스 및 데이터 (갱신 성공)`
 *   **진단 세부 정보:** 구글 OAuth 서버가 유저님의 로그인 인증서(AccessToken)를 정식 승인 완료했습니다.
 
 ---
