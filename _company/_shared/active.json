@@ -2,39 +2,35 @@
   "_migrated": true,
   "_migrated_v2": true,
   "secretary": {
-    "activatedAt": "2026-05-19T01:21:04.333Z",
+    "activatedAt": "2026-05-27T01:16:15.315Z",
     "seeded": true
   },
   "youtube": {
-    "activatedAt": "2026-05-19T01:21:04.333Z",
+    "activatedAt": "2026-05-27T01:16:15.315Z",
     "seeded": true
   },
   "writer": {
-    "activatedAt": "2026-05-19T01:21:04.333Z",
+    "activatedAt": "2026-05-27T01:16:15.315Z",
     "seeded": true
   },
   "designer": {
-    "activatedAt": "2026-05-19T01:21:04.333Z",
+    "activatedAt": "2026-05-27T01:16:15.315Z",
     "seeded": true
   },
   "instagram": {
-    "activatedAt": "2026-05-19T01:21:04.333Z",
+    "activatedAt": "2026-05-27T01:16:15.315Z",
     "seeded": true
   },
   "business": {
-    "activatedAt": "2026-05-19T01:21:04.333Z",
+    "activatedAt": "2026-05-27T01:16:15.315Z",
     "seeded": true
   },
   "developer": {
-    "activatedAt": "2026-05-19T01:21:04.333Z",
+    "activatedAt": "2026-05-27T01:16:15.315Z",
     "seeded": true
   },
   "researcher": {
-    "activatedAt": "2026-05-19T01:21:04.333Z",
+    "activatedAt": "2026-05-27T01:16:15.315Z",
     "seeded": true
-  },
-  "_migrated_v3": true,
-  "editor": {
-    "activatedAt": "2026-05-19T03:36:29.342Z"
   }
 }

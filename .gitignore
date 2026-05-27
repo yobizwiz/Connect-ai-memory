@@ -20,3 +20,7 @@ company_state.json
 
 # Local secret files containing API keys or client secrets
 Connect AI.txt
+
+# 도구 설정 JSON 안에 API 키·텔레그램 봇 토큰이 들어갈 수 있어 git에서 제외
+_agents/*/tools/*.json
+_agents/*/tools/youtube_account.json

@@ -1,1 +1,0 @@
-# Paywall Mockup V5.0 - Opportunity Cost Focus (Designer Lead)
