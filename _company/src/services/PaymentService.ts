@@ -42,10 +42,9 @@ export async function processMinimumPremiumPayment(treValue: number, premiumAmou
     // 2. 결제 게이트웨이 호출 (재시도 메커니즘 적용)
     const paymentResult = await retryWithBackoff(async () => {
         if (paymentGateway === 'PAYPAL') {
-            return StripePaymentService.processPayment({ amount: premiumAmount, token: "mock_token" }); // Mock API 호출
-        } else if (paymentGateway === 'STRIPE') {
-            // 실제 환경에서는 이 부분에 Stripe SDK 연동 코드가 들어갑니다.
             return PayPalPaymentService.processPayment({ amount: premiumAmount, token: "mock_token" }); 
+        } else if (paymentGateway === 'STRIPE') {
+            return StripePaymentService.processPayment({ amount: premiumAmount, token: "mock_token" }); 
         } else {
              throw new PaymentError("지원되지 않는 결제 게이트웨이입니다.");
         }
@@ -60,7 +59,7 @@ export async function processMinimumPremiumPayment(treValue: number, premiumAmou
 // MOCK GATEWAY SERVICES (실제 환경에서는 API 클라이언트 호출)
 // ===============================================
 
-const paymentGateway = process.env.PAYMENT_GATEWAY || 'STIPE'; // 환경 변수로 게이트웨이 결정
+const paymentGateway = process.env.PAYMENT_GATEWAY || 'STRIPE'; // 환경 변수로 게이트웨이 결정
 
 /** @type {PaymentGateway} */
 interface PaymentGateway {

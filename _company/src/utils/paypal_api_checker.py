@@ -1,7 +1,13 @@
-import os
+import os, sys
 import json
 from requests import post
 from typing import Optional
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8")
+
 
 # [Warning] 실제 API 호출 시에는 환경 변수 로딩 및 예외 처리가 필수입니다.
 PAYPAL_CLIENT_ID = os.environ.get("PAYPAL_CLIENT_ID")

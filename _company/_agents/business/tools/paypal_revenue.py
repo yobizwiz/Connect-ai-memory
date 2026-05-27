@@ -21,6 +21,12 @@ config (paypal_revenue.json):
 import os, sys, json, base64, urllib.request, urllib.parse, urllib.error
 from datetime import datetime, timedelta, timezone
 
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8")
+
+
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 CONFIG = os.path.join(HERE, "paypal_revenue.json")
@@ -28,7 +34,14 @@ CONFIG = os.path.join(HERE, "paypal_revenue.json")
 
 def _log(msg, kind="info"):
     prefix = {"info": "💰", "ok": "✅", "warn": "⚠️ ", "err": "❌", "step": "▸"}.get(kind, "•")
-    print(f"{prefix} {msg}", file=sys.stderr, flush=True)
+    # v3.2: JSON 모드에서는 모든 로그를 stderr로 → stdout은 순수 JSON만 유지
+    #       마크다운 모드에서는 err/warn만 stderr, 나머지는 stdout
+    output_mode = (os.environ.get("OUTPUT") or "").strip().lower()
+    if output_mode == "json":
+        dest = sys.stderr
+    else:
+        dest = sys.stderr if kind in ("err", "warn") else sys.stdout
+    print(f"{prefix} {msg}", file=dest, flush=True)
 
 
 def _load():
