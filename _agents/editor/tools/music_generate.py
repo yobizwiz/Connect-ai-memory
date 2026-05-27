@@ -102,15 +102,33 @@ def _parse_editor_config():
     creds = {"SUNO_COOKIE": "", "SUNO_API_KEY": ""}
     if os.path.exists(config_path):
         try:
+            suno_session = ""
+            suno_client = ""
+            suno_cookie = ""
             with open(config_path, "r", encoding="utf-8") as f:
                 content = f.read()
             for line in content.splitlines():
-                if "SUNO_COOKIE" in line and "=" in line:
-                    parts = line.split("=", 1)
-                    creds["SUNO_COOKIE"] = parts[1].strip().strip('"').strip("'")
-                elif "SUNO_API_KEY" in line and "=" in line:
-                    parts = line.split("=", 1)
-                    creds["SUNO_API_KEY"] = parts[1].strip().strip('"').strip("'")
+                if "=" in line:
+                    if "SUNO_COOKIE" in line:
+                        parts = line.split("=", 1)
+                        suno_cookie = parts[1].strip().strip('"').strip("'")
+                    elif "SUNO_SESSION" in line:
+                        parts = line.split("=", 1)
+                        suno_session = parts[1].strip().strip('"').strip("'")
+                    elif "SUNO_CLIENT" in line:
+                        parts = line.split("=", 1)
+                        suno_client = parts[1].strip().strip('"').strip("'")
+                    elif "SUNO_API_KEY" in line:
+                        parts = line.split("=", 1)
+                        creds["SUNO_API_KEY"] = parts[1].strip().strip('"').strip("'")
+            
+            if not suno_cookie:
+                if suno_session and suno_client:
+                    suno_cookie = f"__session={suno_session}; __client={suno_client}"
+                elif suno_session:
+                    suno_cookie = f"__session={suno_session}"
+            
+            creds["SUNO_COOKIE"] = suno_cookie
         except Exception:
             pass
     return creds
