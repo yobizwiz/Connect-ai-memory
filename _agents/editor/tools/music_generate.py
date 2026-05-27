@@ -86,7 +86,8 @@ print('✅ wav: ' + WAV_PATH, file=sys.stderr, flush=True)
         return False, "wav 파일 생성 안 됨"
 
     # wav → mp3 변환 (ffmpeg 있을 때)
-    if subprocess.run(["which", "ffmpeg"], capture_output=True).returncode == 0:
+    import shutil
+    if shutil.which("ffmpeg") is not None:
         subprocess.run([
             "ffmpeg", "-y", "-i", wav_path, "-codec:a", "libmp3lame", "-qscale:a", "2", output_path
         ], capture_output=True)
@@ -168,19 +169,37 @@ def _generate_suno(cookie, api_key, prompt, duration_sec, output_path):
             
         # 로컬 API는 완성된 clips 배열을 반환합니다.
         if isinstance(res_data, list) and len(res_data) > 0:
-            clip = res_data[0]
-            audio_url = clip.get("audio_url")
-            clip_id = clip.get("id")
-            
-            if not audio_url:
-                return False, "Suno 서버가 오디오 URL을 생성하지 못했습니다. 크레딧이나 쿠키 세션을 확인하십시오."
+            downloaded_paths = []
+            for idx, clip in enumerate(res_data):
+                clip_id = clip.get("id")
+                # Always download from the raw static high-quality CDN URL format (320kbps stereo master)
+                audio_url = f"https://cdn1.suno.ai/{clip_id}.mp3" if clip_id else clip.get("audio_url")
+                if not audio_url:
+                    continue
                 
-            _log(f"Suno AI 생성 완료! (Clip ID: {clip_id})", "ok")
-            _log(f"초고음질 음원 다운로드 중...", "ok")
+                # Suffix filename for variations if there are multiple clips
+                suffix = f"_{idx+1}" if len(res_data) > 1 else ""
+                var_output_path = output_path.replace(".mp3", f"{suffix}.mp3")
+                
+                _log(f"Suno AI 생성 완료! (Clip ID: {clip_id}, variation: {idx+1})", "ok")
+                _log(f"초고음질(320kbps Stereo Master) 음원 다운로드 중...", "ok")
+                
+                try:
+                    urllib.request.urlretrieve(audio_url, var_output_path)
+                    downloaded_paths.append(var_output_path)
+                except Exception as e:
+                    _log(f"다운로드 실패: {e}", "warn")
             
-            # 2. 음원 다운로드 및 로컬 저장
-            urllib.request.urlretrieve(audio_url, output_path)
-            return True, output_path
+            if downloaded_paths:
+                # Copy the first variation to the main file name for default compatibility
+                try:
+                    import shutil
+                    shutil.copyfile(downloaded_paths[0], output_path)
+                except Exception:
+                    pass
+                return True, output_path
+            else:
+                return False, "음원 다운로드 실패"
         else:
             return False, f"Suno API 응답이 올바르지 않습니다: {res_data}"
             
@@ -239,7 +258,10 @@ def main():
     suno_cookie = creds.get("SUNO_COOKIE") or os.environ.get("SUNO_COOKIE")
     suno_key = creds.get("SUNO_API_KEY") or os.environ.get("SUNO_API_KEY")
 
-    if suno_cookie or suno_key:
+    # Check if user explicitly wants to use local engine
+    use_local = cfg.get("ENGINE") == "local" or not (suno_cookie or suno_key)
+
+    if not use_local:
         model_label = "Suno AI Cloud (320kbps)"
         _log(f"모델: {model_label}")
         _log(f"프롬프트: {prompt}")
