@@ -249,6 +249,44 @@ def _generate_acestep(setup, prompt, duration_sec, output_path):
     return True, output_path
 
 
+def _cleanup_old_bgm_files(output_dir, active_path, retention_days=7):
+    """지정된 일수(retention_days)보다 오래되고, 현재 활성화되어 쓰이고 있지 않은 파일 자동 소거"""
+    now = time.time()
+    cutoff = now - (retention_days * 86400)
+    
+    active_base = os.path.splitext(os.path.basename(active_path))[0] if active_path else ""
+    if active_base and len(active_base) > 2 and active_base[-2] == "_" and active_base[-1].isdigit():
+        active_base = active_base[:-2]
+        
+    cleaned_count = 0
+    cleaned_size = 0
+    
+    for name in os.listdir(output_dir):
+        p = os.path.join(output_dir, name)
+        if not os.path.isfile(p):
+            continue
+        
+        ext = os.path.splitext(name)[1].lower()
+        if ext not in [".mp3", ".wav"]:
+            continue
+            
+        if active_base and active_base in name:
+            continue
+            
+        mtime = os.path.getmtime(p)
+        if mtime < cutoff:
+            try:
+                sz = os.path.getsize(p)
+                os.remove(p)
+                cleaned_count += 1
+                cleaned_size += sz
+            except Exception:
+                pass
+                
+    if cleaned_count > 0:
+        _log(f"보관 기한 초과(7일) 미채택 임시 오디오 파일 자동 정리 완료: {cleaned_count}개 파일 소거 ({cleaned_size // 1024} KB 절약)", "info")
+
+
 def main():
     cfg = _load(GEN_CONFIG)
     prompt = (cfg.get("PROMPT") or "calm korean YouTube intro music, gentle piano, hopeful").strip()
@@ -317,6 +355,9 @@ def main():
     print(f"  📊 {file_size // 1024} KB · {duration}초")
     print(f"  💬 프롬프트: {prompt}")
     print(f"  🎬 영상에 합치려면: 같은 폴더의 'music_to_video.py' 실행")
+
+    # 오래된 미채택 임시 오디오 파일 자동 정리 실행
+    _cleanup_old_bgm_files(output_dir, final_path, retention_days=7)
 
     # 다음 도구가 자동으로 사용
     cfg["LAST_OUTPUT"] = final_path
