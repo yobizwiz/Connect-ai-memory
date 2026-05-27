@@ -1,10 +1,32 @@
 import os
-from requests import post, json
+import json
+from requests import post
 from typing import Optional
 
 # [Warning] 실제 API 호출 시에는 환경 변수 로딩 및 예외 처리가 필수입니다.
-PAYPAL_CLIENT_ID = os.environ.get("PAYPAL_CLIENT_ID", "MOCK_CLIENT_ID")
-PAYPAL_SECRET = os.environ.get("PAYPAL_SECRET", "MOCK_SECRET")
+PAYPAL_CLIENT_ID = os.environ.get("PAYPAL_CLIENT_ID")
+PAYPAL_SECRET = os.environ.get("PAYPAL_SECRET")
+
+# Fallback: 만약 환경 변수가 없으면 _agents/business/tools/paypal_revenue.json 에서 로드합니다.
+if not PAYPAL_CLIENT_ID or not PAYPAL_SECRET or PAYPAL_CLIENT_ID == "MOCK_CLIENT_ID":
+    try:
+        HERE = os.path.dirname(os.path.abspath(__file__))
+        # _company/src/utils -> _company -> Connect AI (root)
+        ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
+        CONFIG_PATH = os.path.join(ROOT, "_agents", "business", "tools", "paypal_revenue.json")
+        if os.path.exists(CONFIG_PATH):
+            with open(CONFIG_PATH, "r", encoding="utf-8") as f:
+                cfg = json.load(f)
+                PAYPAL_CLIENT_ID = cfg.get("CLIENT_ID", PAYPAL_CLIENT_ID)
+                PAYPAL_SECRET = cfg.get("CLIENT_SECRET", PAYPAL_SECRET)
+    except Exception as e:
+        print(f"[Warning] Failed to load fallback config: {e}")
+
+if not PAYPAL_CLIENT_ID:
+    PAYPAL_CLIENT_ID = "MOCK_CLIENT_ID"
+if not PAYPAL_SECRET:
+    PAYPAL_SECRET = "MOCK_SECRET"
+
 API_ENDPOINT = "https://api.sandbox.paypal.com/v2/payments/checkout/orders"
 
 def check_paypal_connectivity() -> Optional[str]:
