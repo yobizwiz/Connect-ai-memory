@@ -185,7 +185,14 @@ def _generate_suno(cookie, api_key, prompt, duration_sec, output_path):
                 _log(f"초고음질(320kbps Stereo Master) 음원 다운로드 중...", "ok")
                 
                 try:
-                    urllib.request.urlretrieve(audio_url, var_output_path)
+                    req = urllib.request.Request(
+                        audio_url,
+                        headers={
+                            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                        }
+                    )
+                    with urllib.request.urlopen(req, timeout=60) as response, open(var_output_path, "wb") as out_file:
+                        out_file.write(response.read())
                     downloaded_paths.append(var_output_path)
                 except Exception as e:
                     _log(f"다운로드 실패: {e}", "warn")
