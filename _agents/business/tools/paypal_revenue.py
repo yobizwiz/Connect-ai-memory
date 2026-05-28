@@ -46,12 +46,43 @@ def _log(msg, kind="info"):
     print(f"{prefix} {msg}", file=dest, flush=True)
 
 
+def _find_config():
+    """v3.4: 설정 파일 다중 경로 탐색. Connect AI 앱이 스크립트를 다른 CWD 에서
+       실행할 경우에도 paypal_revenue.json 을 찾을 수 있도록 여러 후보를 탐색."""
+    candidates = [
+        CONFIG,  # 1순위: __file__ 기준 같은 디렉토리
+        os.path.join(os.getcwd(), "paypal_revenue.json"),  # 2순위: CWD
+    ]
+    # 3순위: 환경변수로 직접 지정 (Connect AI 앱에서 설정 가능)
+    env_config = os.environ.get("PAYPAL_CONFIG_PATH", "").strip()
+    if env_config:
+        candidates.insert(0, env_config)
+    # 4순위: 프로젝트 루트에서 _agents/business/tools/ 경로 추론
+    for anchor in [os.getcwd(), HERE]:
+        cur = os.path.abspath(anchor)
+        for _ in range(6):  # 최대 6레벨 상위까지
+            guess = os.path.join(cur, "_agents", "business", "tools", "paypal_revenue.json")
+            if os.path.exists(guess) and guess not in candidates:
+                candidates.append(guess)
+            parent = os.path.dirname(cur)
+            if parent == cur:
+                break
+            cur = parent
+    for path in candidates:
+        if os.path.exists(path):
+            return path
+    return CONFIG  # 폴백: 원래 경로 (없으면 _load 에서 {} 반환)
+
+
 def _load():
-    if not os.path.exists(CONFIG):
+    config_path = _find_config()
+    if not os.path.exists(config_path):
         return {}
     try:
-        with open(CONFIG, "r", encoding="utf-8") as f:
-            return json.load(f)
+        with open(config_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            _log(f"설정 로드: {config_path}", "step")
+            return data
     except Exception:
         return {}
 
@@ -417,11 +448,12 @@ def _json_dump(txs, default_currency: str = ""):
 
 def main():
     cfg = _load()
-    mode = (cfg.get("MODE") or "sandbox").strip().lower()
-    client_id = (cfg.get("CLIENT_ID") or "").strip()
-    client_secret = (cfg.get("CLIENT_SECRET") or "").strip()
-    lookback = int(os.environ.get("LOOKBACK_DAYS", cfg.get("LOOKBACK_DAYS", 30)))
-    currency = (cfg.get("CURRENCY") or "").strip().upper()
+    # v3.4: 환경변수 폴백 — Connect AI 앱이 config.md 기반 환경변수를 주입할 때 대응
+    mode = (cfg.get("MODE") or os.environ.get("PAYPAL_MODE") or "sandbox").strip().lower()
+    client_id = (cfg.get("CLIENT_ID") or os.environ.get("PAYPAL_CLIENT_ID") or "").strip()
+    client_secret = (cfg.get("CLIENT_SECRET") or os.environ.get("PAYPAL_CLIENT_SECRET") or os.environ.get("PAYPAL_SECRET") or "").strip()
+    lookback = int(os.environ.get("LOOKBACK_DAYS") or os.environ.get("PAYPAL_LOOKBACK_DAYS") or cfg.get("LOOKBACK_DAYS", 30))
+    currency = (cfg.get("CURRENCY") or os.environ.get("PAYPAL_CURRENCY") or "").strip().upper()
     output_mode = (os.environ.get("OUTPUT") or "markdown").strip().lower()
 
     if not client_id or not client_secret:
