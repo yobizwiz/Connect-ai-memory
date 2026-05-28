@@ -31,3 +31,7 @@ _agents/*/tools/youtube_account.json
 # OAuth local files
 **/oauth.local.json
 **/*.local.json
+
+# Gemini app data folder
+.gemini/
+

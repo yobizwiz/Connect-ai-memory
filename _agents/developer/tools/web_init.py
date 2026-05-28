@@ -231,7 +231,9 @@ def main():
 
     # 출력 위치
     if not out_dir:
-        out_dir = os.path.expanduser("~/connect-ai-projects")
+        tools_dir = os.path.dirname(os.path.abspath(__file__))
+        project_root = os.path.abspath(os.path.join(tools_dir, "../../../"))
+        out_dir = os.path.join(project_root, "connect-ai-projects")
     out_dir = os.path.expanduser(out_dir)
     os.makedirs(out_dir, exist_ok=True)
 

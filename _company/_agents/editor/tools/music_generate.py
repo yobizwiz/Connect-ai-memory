@@ -295,7 +295,9 @@ def main():
     if genre:
         prompt = f"{prompt}, genre: {genre}"
 
-    output_dir = cfg.get("OUTPUT_DIR") or os.path.expanduser("~/connect-ai-music/output")
+    tools_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.abspath(os.path.join(tools_dir, "../../../"))
+    output_dir = cfg.get("OUTPUT_DIR") or os.path.join(project_root, "connect-ai-music/output")
     os.makedirs(output_dir, exist_ok=True)
     timestamp = time.strftime("%Y%m%d_%H%M%S")
     output_path = os.path.join(output_dir, f"bgm_{timestamp}.mp3")

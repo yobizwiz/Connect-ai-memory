@@ -59,7 +59,9 @@ MODELS = {
     },
 }
 
-DEFAULT_INSTALL_DIR = os.path.expanduser("~/connect-ai-music")
+_tools_dir = os.path.dirname(os.path.abspath(__file__))
+_project_root = os.path.abspath(os.path.join(_tools_dir, "../../../"))
+DEFAULT_INSTALL_DIR = os.path.join(_project_root, "connect-ai-music")
 
 
 def _log(msg, kind="info"):
