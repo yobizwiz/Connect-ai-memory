@@ -3,6 +3,10 @@
 .obsidian/
 .trash/
 node_modules/
+**/node_modules/
+connect-ai-projects/
+connect-ai-music/
+project/
 *.tmp
 *.log
 .cache/
