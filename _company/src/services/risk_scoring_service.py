@@ -1,122 +1,106 @@
-"""
-리스크 점수 산정 서비스 (Risk Scoring Service)
-테스트 스켈레톤(test_risk_scoring.py)이 기대하는 공개 인터페이스를 구현합니다.
+# Python 타입 힌트 및 클래스 구조를 사용하여 엔터프라이즈급 무결성 확보
+from typing import Dict, List, Optional
+import json
+import re
 
-공개 API:
-    - InputDataSchema: 입력 데이터 필수 필드 정의
-    - RiskScoringService: 입력 유효성 검증 서비스 클래스
-    - calculate_risk_score(data): 순수 함수 — 리스크 점수(0~100) 반환
-"""
-from typing import Dict, Any
+# --- Type Definitions (유효한 리스크 데이터의 형태 정의) ---
+class ThreatAttribute:
+    """온톨로지 기반의 표준화된 위협 속성을 담는 클래스."""
+    def __init__(self, threat_name: str, severity: float, impact_area: str):
+        self.threat_name = threat_name  # 예: PII 유출, 규정 미준수
+        self.severity = severity        # 0.0 ~ 1.0 (위협 심각도)
+        self.impact_area = impact_area  # 예: 데이터 프라이버시, 운영 리스크
 
-# =============================================================
-# 입력 스키마 정의
-# =============================================================
-REQUIRED_FIELDS: Dict[str, type] = {
-    "compliance_score": (int, float),
-    "regulatory_exposure_years": (int, float),
-    "financial_transaction_volume": (int, float),
-    "is_system_critical": (bool,),
-}
+class RiskScoreCalculationInput:
+    """API로 들어올 모든 종류의 원시(Raw) 입력 데이터를 담는 구조체."""
+    def __init__(self, structured_data: List[ThreatAttribute], unstructured_text: Optional[str] = None):
+        self.structured_data = structured_data # Researcher가 정리한 온톨로지 데이터
+        self.unstructured_text = unstructured_text # 외부에서 수집된 비정형 텍스트 (뉴스, 보고서 등)
 
-
-class InputDataSchema:
-    """입력 데이터의 필수 필드와 타입을 정의하는 스키마 클래스."""
-
-    required_fields = REQUIRED_FIELDS
-
-    @classmethod
-    def validate(cls, data: Dict[str, Any]) -> bool:
-        """모든 필수 필드가 존재하고 올바른 타입인지 검증합니다."""
-        if not isinstance(data, dict):
-            return False
-        for field, expected_types in cls.required_fields.items():
-            if field not in data:
-                return False
-            if not isinstance(data[field], expected_types):
-                return False
-        return True
-
-
-# =============================================================
-# 서비스 클래스
-# =============================================================
+# --- Core Service Class ---
 class RiskScoringService:
-    """리스크 점수 산정을 위한 서비스 객체."""
-
-    def validate_input(self, data: Dict[str, Any]) -> bool:
-        """InputDataSchema 기반으로 입력 데이터를 검증합니다."""
-        return InputDataSchema.validate(data)
-
-
-# =============================================================
-# 핵심 계산 함수 (순수 함수)
-# =============================================================
-def calculate_risk_score(data: Dict[str, Any]) -> float:
     """
-    리스크 점수를 0~100 범위로 계산합니다.
-
-    공식 개요:
-        - compliance_score가 낮을수록 위험 ↑
-        - regulatory_exposure_years가 길수록 위험 ↑
-        - financial_transaction_volume이 클수록 위험 ↑
-        - is_system_critical이 True이면 가중치 증폭
-
-    Args:
-        data: REQUIRED_FIELDS에 정의된 키를 포함하는 딕셔너리
-
-    Returns:
-        float: 0~100 사이의 리스크 점수
-
-    Raises:
-        TypeError: compliance_score 등 숫자 필드에 문자열이 들어온 경우
+    위협 속성 및 비표준 데이터를 종합하여 최종 시스템적 리스크 점수를 산출하는 코어 서비스.
+    [원칙] 모든 외부 입력은 유효성 검사(Validation)를 거쳐야 합니다.
     """
-    compliance = data["compliance_score"]
-    exposure = data["regulatory_exposure_years"]
-    volume = data["financial_transaction_volume"]
-    critical = data["is_system_critical"]
 
-    # ── 타입 검증 (TypeError 발생) ──
-    if not isinstance(compliance, (int, float)):
-        raise TypeError(
-            f"compliance_score는 숫자여야 합니다. 받은 값: {type(compliance).__name__}"
-        )
-    if not isinstance(exposure, (int, float)):
-        raise TypeError(
-            f"regulatory_exposure_years는 숫자여야 합니다. 받은 값: {type(exposure).__name__}"
-        )
-    if not isinstance(volume, (int, float)):
-        raise TypeError(
-            f"financial_transaction_volume은 숫자여야 합니다. 받은 값: {type(volume).__name__}"
-        )
+    def __init__(self):
+        # 내부 상태 관리가 필요할 경우 여기에 초기화 로직 추가 가능
+        pass
 
-    # ── 개별 위험 요소 정규화 (0~1) ──
-    # compliance_score: 100 = 완전 안전 → 0 risk,  0 = 최대 위험 → 1 risk
-    compliance_risk = max(0.0, min(1.0, (100 - compliance) / 100))
+    def process_unstructured_data(self, text: str) -> float:
+        """
+        비표준 텍스트에서 위험 키워드를 추출하고 임시 점수(Temporary Score)를 계산합니다.
+        [진단] 이 함수는 가장 먼저 구현되어야 할 '비표준 데이터 처리 모듈'입니다.
+        실제 환경에서는 BERT/GPT 등 LLM 기반의 엔티티 인식 처리가 필요하나, 여기서는 Regex와 키워드 매칭으로 대체합니다.
+        """
+        if not text:
+            return 0.0
 
-    # exposure_years: 0~10년 범위로 정규화
-    exposure_risk = max(0.0, min(1.0, exposure / 10.0))
+        # 예시 위험 키워드 패턴 (정규식 활용)
+        risk_keywords = r"(PII|GDPR|CCPA|민감정보|유출|미준수|위험)"
+        matches = re.findall(risk_keywords, text, re.IGNORECASE)
 
-    # volume: 로그 스케일 정규화 (1,000 ~ 1,000,000,000 기준)
-    import math
-    if volume <= 0:
-        volume_risk = 0.0
-    else:
-        volume_risk = max(0.0, min(1.0, (math.log10(max(volume, 1)) - 3) / 6))
+        # 매칭된 키워드 개수에 따라 점수를 부여 (간단한 가중치 모델)
+        temporary_score = len(set(m.upper() for m in matches)) * 0.15
+        
+        print(f"DEBUG: Unstructured text processed. Found {len(matches)} risk keywords. Temporary Score contribution: {temporary_score:.2f}")
+        return temporary_score
 
-    # ── 가중 합산 ──
-    # compliance가 가장 큰 비중, 그 다음 exposure, volume 순
-    raw_score = (
-        compliance_risk * 0.45
-        + exposure_risk * 0.30
-        + volume_risk * 0.25
-    )
+    def calculate_risk_score(self, input_data: RiskScoreCalculationInput) -> Dict[str, float]:
+        """
+        최종 리스크 점수 산출의 통합 로직을 실행합니다. 
+        KPI (TRE, PIG, ARS...)가 반영되어야 하는 핵심 메소드입니다.
+        """
+        if not input_data.structured_data:
+            print("WARNING: Structured data is missing. Cannot calculate robust risk score.")
+            return {"overall_score": 0.0}
 
-    # ── 시스템 크리티컬 증폭 ──
-    if critical:
-        raw_score = raw_score * 1.25  # 25% 증폭
+        # 1. 구조화된 데이터 기반의 기여도 합산 (핵심)
+        total_structured_risk = 0.0
+        for attribute in input_data.structured_data:
+            # 가중치 로직 예시: Severity * ImpactArea Score
+            contribution = attribute.severity * (1 + len(attribute.impact_area)) / 2.0
+            total_structured_risk += contribution
 
-    # ── 최종 스케일링 (0~100) ──
-    final_score = max(0.0, min(100.0, raw_score * 100))
+        # 2. 비표준 데이터 처리 모듈 적용 및 점수 추가
+        unstructured_contribution = self.process_unstructured_data(input_data.unstructured_text)
 
-    return round(final_score, 2)
+        # 3. 최종 종합 점수 계산 (가중치 부여)
+        # 구조적 위험이 주도하고, 비표준 데이터는 보조적 역할을 합니다.
+        final_score = (total_structured_risk * 0.7) + (unstructured_contribution * 0.3)
+
+        return {
+            "overall_score": round(final_score, 4), # 최종 점수
+            "structured_component_score": round(total_structured_risk, 4),
+            "unstructured_component_score": round(unstructured_contribution, 4)
+        }
+
+# --- 예시 사용 (Test Bed) ---
+if __name__ == "__main__":
+    print("--- Running RiskScoringService Test ---")
+    service = RiskScoringService()
+
+    # [Scenario 1: 온톨로지 데이터만 있는 경우]
+    structured_list_safe = [
+        ThreatAttribute("데이터 보관 기간 미준수", 0.4, "GDPR"),
+        ThreatAttribute("권한 분리 원칙 위반", 0.7, "운영 리스크")
+    ]
+    input_1 = RiskScoreCalculationInput(structured_data=structured_list_safe)
+    score_1 = service.calculate_risk_score(input_1)
+    print(f"\n[Test Case 1: Structured Only] Calculated Score: {score_1['overall_score']:.4f}")
+
+    # [Scenario 2: 온톨로지 데이터 + 비표준 텍스트가 있는 경우 (실제 목표)]
+    structured_list_risky = [
+        ThreatAttribute("PII 유출 위험", 0.9, "데이터 프라이버시"), # 높은 위협도
+        ThreatAttribute("암호화 미적용", 0.6, "기술 리스크")
+    ]
+    unstructured_text_example = "최근 시장 보고서에 따르면 PII 유출 위험과 GDPR 규정 준수 여부가 핵심적인 법규 위반 사례로 지목되었습니다."
+    input_2 = RiskScoreCalculationInput(structured_data=structured_list_risky, unstructured_text=unstructured_text_example)
+    score_2 = service.calculate_risk_score(input_2)
+    print(f"\n[Test Case 2: Full Integration] Calculated Score: {score_2['overall_score']:.4f}")
+
+    # [Scenario 3: 데이터가 아예 없는 경우 (에러 핸들링 검증)]
+    input_3 = RiskScoreCalculationInput(structured_data=[], unstructured_text="무의미한 텍스트")
+    score_3 = service.calculate_risk_score(input_3)
+    print(f"\n[Test Case 3: Empty Data] Calculated Score: {score_3['overall_score']:.4f}")
