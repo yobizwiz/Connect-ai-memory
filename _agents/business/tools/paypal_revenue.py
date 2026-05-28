@@ -227,13 +227,15 @@ def _summarize(txs, default_currency: str = ""):
     lines.append(f"# 💰 PayPal 매출 분석")
     lines.append(f"_{now.isoformat(timespec='minutes')} · 최근 거래 {len(txs)}건_")
     lines.append("")
+    lines.append("> ✅ **PayPal API 연결 성공** — OAuth 인증 및 거래 조회 정상 완료.")
+    lines.append("")
 
     if not txs:
-        lines.append("> ⚠️ 분석 기간에 거래가 없어요. PayPal Developer Dashboard 에서 모드(sandbox/live)·기간·계정을 확인하세요.")
+        lines.append("> ℹ️ 분석 기간에 거래가 없어요. PayPal Developer Dashboard 에서 모드(sandbox/live)·기간·계정을 확인하세요.")
         lines.append("")
         lines.append("**가능한 원인:**")
         lines.append("- 샌드박스 모드인데 실제 결제 데이터가 없음 → sandbox.paypal.com 에서 거래 시뮬레이션")
-        lines.append("- API 권한 부족 → Developer Dashboard 에서 'Transaction Search' 권한 활성화")
+        lines.append("- 아직 결제가 발생하지 않은 계정")
         lines.append("- 너무 짧은 기간 → LOOKBACK_DAYS 늘려보기")
         return "\n".join(lines)
 
@@ -335,8 +337,11 @@ def _json_dump(txs, default_currency: str = ""):
     """v2: OUTPUT=json 모드에서 호출. 마크다운 대신 watcher / 대시보드가 파싱하기
        쉬운 구조화 JSON 출력. 새 결제 감지 + 대시보드 그래프 양쪽에서 사용."""
     out = {
+        "status": "ok",
+        "success": True,
         "generated_at": datetime.now(timezone.utc).isoformat(timespec='seconds'),
         "currency_filter": default_currency,
+        "transaction_count": len(txs),
         "totals": {"by_currency": {}, "by_period": {"today": 0.0, "week": 0.0, "month": 0.0}},
         "by_project": {},
         "by_day": {},        # {"2026-05-12": {"USD": {"gross": float, "count": int}}}
