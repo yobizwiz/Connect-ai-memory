@@ -1,0 +1,21 @@
+{
+  "scenario_id": "SCN-HCP-001",
+  "industry": "Healthcare (의료)",
+  "vulnerability_description": "직원 실수로 환자 개인 건강 기록(PHI)이 암호화되지 않은 상태로 외부 클라우드에 업로드됨.",
+  "data_type_impacted": ["PHI (Protected Health Info)", "PII"],
+  "regulations_violated": [
+    {"name": "HIPAA", "scope": "미국 의료 정보 보호법", "penalty_basis": "환자 피해 및 노출 규모"},
+    {"name": "GDPR", "scope": "EU 개인정보보호규정", "penalty_basis": "개인 데이터 처리 원칙 위반"}
+  ],
+  "risk_coefficients": {
+    "sensitivity_index": 0.95,
+    "responsibility_grade_coefficient": 0.85,
+    "quasiprofessional_liability_multiplier": 1.2,
+    "base_breach_cost_estimate": 1000000  // 기준 벌금/손실 비용 (USD)
+  },
+  "impact_analysis": {
+    "legal_risk": "최고",
+    "reputation_damage_score": 0.9,
+    "mitigation_cost_estimate": 50000 // 데이터 감사 및 보안 강화 비용 예측치
+  }
+}

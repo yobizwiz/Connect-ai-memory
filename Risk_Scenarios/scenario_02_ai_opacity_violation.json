@@ -1,0 +1,21 @@
+{
+  "scenario_id": "SCN-AI-002",
+  "industry": "Finance (금융)",
+  "vulnerability_description": "대출 승인 결정이 AI 알고리즘에 의해 이루어졌으나, 거절 사유 및 영향 요소를 사용자에게 명확히 설명(Explainability)하지 못함.",
+  "data_type_impacted": ["Financial Data", "Profiling Data"],
+  "regulations_violated": [
+    {"name": "EU AI Act", "scope": "고위험 AI 시스템 투명성 의무", "penalty_basis": "설명 가능성(Explainability) 미준수"},
+    {"name": "GDPR", "scope": "자동화된 개별 결정에 대한 권리 (Right to Explanation)", "penalty_basis": "결정 과정의 비투명성"}
+  ],
+  "risk_coefficients": {
+    "sensitivity_index": 0.80,
+    "responsibility_grade_coefficient": 0.90,
+    "quasiprofessional_liability_multiplier": 1.1,
+    "base_breach_cost_estimate": 750000
+  },
+  "impact_analysis": {
+    "legal_risk": "높음",
+    "reputation_damage_score": 0.8,
+    "mitigation_cost_estimate": 30000 // XAI(설명 가능한 AI) 모듈 도입 비용 예측치
+  }
+}

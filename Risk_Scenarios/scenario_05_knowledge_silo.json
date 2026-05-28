@@ -1,0 +1,21 @@
+{
+  "scenario_id": "SCN-KNO-005",
+  "industry": "Legal/Regulatory (법무/규제)",
+  "vulnerability_description": "고객의 특정 법률 자문 요청에 대해, 내부 매뉴얼(A)과 과거 판례(B), 그리고 최신 규정(C)이 서로 다른 출처로 분산되어 AI가 통합적이지 못한 모순된 결론을 도출함.",
+  "data_type_impacted": ["Structured Knowledge", "Unstructured Text"],
+  "regulations_violated": [
+    {"name": "Semantic Integrity", "scope": "지식의 완전성 및 일관성 원칙", "penalty_basis": "정보 오염으로 인한 법적/금전적 손실"},
+    {"name": "Source Attribution", "scope": "출처 명시 의무", "penalty_basis": "근거 제시 실패"}
+  ],
+  "risk_coefficients": {
+    "sensitivity_index": 0.65,
+    "responsibility_grade_coefficient": 0.70,
+    "quasiprofessional_liability_multiplier": 1.2,
+    "base_breach_cost_estimate": 400000 // 직접적인 법적 벌금보다는 소송 리스크에 가깝게 설정
+  },
+  "impact_analysis": {
+    "legal_risk": "중간~높음",
+    "reputation_damage_score": 0.7,
+    "mitigation_cost_estimate": 65000 // 지식 그래프 구축 및 통합 RAG 시스템 비용 예측치
+  }
+}

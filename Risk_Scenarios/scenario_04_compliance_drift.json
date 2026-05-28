@@ -1,0 +1,21 @@
+{
+  "scenario_id": "SCN-PRO-004",
+  "industry": "Professional Service (컨설팅/회계)",
+  "vulnerability_description": "클라이언트의 내부 감사 요청(Audit Request)에 필요한 법적 필수 체크리스트가 담당자의 '개인적인 기억'에 의존하여 누락됨. (Compliance Drift 발생)",
+  "data_type_impacted": ["Process Data", "Procedural Knowledge"],
+  "regulations_violated": [
+    {"name": "GAAP/IFRS", "scope": "국제 회계 기준 및 감사 원칙", "penalty_basis": "내부 통제 시스템의 실패"},
+    {"name": "Professional Ethics", "scope": "전문가 윤리 규정", "penalty_basis": "준전문가로서의 책임 방기"}
+  ],
+  "risk_coefficients": {
+    "sensitivity_index": 0.70,
+    "responsibility_grade_coefficient": 1.0,
+    "quasiprofessional_liability_multiplier": 1.5, // 전문가 책임을 가장 높게 반영
+    "base_breach_cost_estimate": 600000
+  },
+  "impact_analysis": {
+    "legal_risk": "높음",
+    "reputation_damage_score": 0.85,
+    "mitigation_cost_estimate": 45000 // 컴플라이언스 게이트웨이 시스템 구축 비용 예측치
+  }
+}

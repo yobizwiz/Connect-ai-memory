@@ -1,0 +1,21 @@
+{
+  "scenario_id": "SCN-INTL-003",
+  "industry": "Tech/IT (기술 서비스)",
+  "vulnerability_description": "미국에서 수집된 사용자 데이터를 유럽 지사로 전송하는 과정에서, PII(이름, 이메일)에 대한 적절한 마스킹 처리 없이 원본 데이터가 포함됨.",
+  "data_type_impacted": ["PII", "Geographic Data"],
+  "regulations_violated": [
+    {"name": "GDPR", "scope": "국외 데이터 전송 규정 (Transfer Rules)", "penalty_basis": "데이터 주권 및 적절한 보호 조치 미흡"},
+    {"name": "CCPA", "scope": "개인정보 판매 제한 및 처리 동의 원칙", "penalty_basis": "동의 없는 국경 간 데이터 이동"}
+  ],
+  "risk_coefficients": {
+    "sensitivity_index": 0.90,
+    "responsibility_grade_coefficient": 0.75,
+    "quasiprofessional_liability_multiplier": 1.3,
+    "base_breach_cost_estimate": 850000
+  },
+  "impact_analysis": {
+    "legal_risk": "매우 높음",
+    "reputation_damage_score": 0.95,
+    "mitigation_cost_estimate": 70000 // 전용 데이터 마스킹 파이프라인 구축 비용 예측치
+  }
+}
