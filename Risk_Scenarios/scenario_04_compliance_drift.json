@@ -10,12 +10,12 @@
   "risk_coefficients": {
     "sensitivity_index": 0.70,
     "responsibility_grade_coefficient": 1.0,
-    "quasiprofessional_liability_multiplier": 1.5, // 전문가 책임을 가장 높게 반영
+    "quasiprofessional_liability_multiplier": 1.5,
     "base_breach_cost_estimate": 600000
   },
   "impact_analysis": {
     "legal_risk": "높음",
     "reputation_damage_score": 0.85,
-    "mitigation_cost_estimate": 45000 // 컴플라이언스 게이트웨이 시스템 구축 비용 예측치
+    "mitigation_cost_estimate": 45000
   }
 }

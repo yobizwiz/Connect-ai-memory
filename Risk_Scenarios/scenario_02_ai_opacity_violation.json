@@ -16,6 +16,6 @@
   "impact_analysis": {
     "legal_risk": "높음",
     "reputation_damage_score": 0.8,
-    "mitigation_cost_estimate": 30000 // XAI(설명 가능한 AI) 모듈 도입 비용 예측치
+    "mitigation_cost_estimate": 30000
   }
 }

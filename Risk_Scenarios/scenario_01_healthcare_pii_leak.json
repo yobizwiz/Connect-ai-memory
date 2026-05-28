@@ -11,11 +11,11 @@
     "sensitivity_index": 0.95,
     "responsibility_grade_coefficient": 0.85,
     "quasiprofessional_liability_multiplier": 1.2,
-    "base_breach_cost_estimate": 1000000  // 기준 벌금/손실 비용 (USD)
+    "base_breach_cost_estimate": 1000000
   },
   "impact_analysis": {
     "legal_risk": "최고",
     "reputation_damage_score": 0.9,
-    "mitigation_cost_estimate": 50000 // 데이터 감사 및 보안 강화 비용 예측치
+    "mitigation_cost_estimate": 50000
   }
 }

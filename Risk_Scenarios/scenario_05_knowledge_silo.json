@@ -11,11 +11,11 @@
     "sensitivity_index": 0.65,
     "responsibility_grade_coefficient": 0.70,
     "quasiprofessional_liability_multiplier": 1.2,
-    "base_breach_cost_estimate": 400000 // 직접적인 법적 벌금보다는 소송 리스크에 가깝게 설정
+    "base_breach_cost_estimate": 400000
   },
   "impact_analysis": {
     "legal_risk": "중간~높음",
     "reputation_damage_score": 0.7,
-    "mitigation_cost_estimate": 65000 // 지식 그래프 구축 및 통합 RAG 시스템 비용 예측치
+    "mitigation_cost_estimate": 65000
   }
 }

@@ -16,6 +16,6 @@
   "impact_analysis": {
     "legal_risk": "매우 높음",
     "reputation_damage_score": 0.95,
-    "mitigation_cost_estimate": 70000 // 전용 데이터 마스킹 파이프라인 구축 비용 예측치
+    "mitigation_cost_estimate": 70000
   }
 }
