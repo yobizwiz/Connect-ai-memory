@@ -1,0 +1,72 @@
+[
+  {
+    "ID": "LP001",
+    "Regulation": "EU AI Act (High-Risk Systems)",
+    "ViolationType": "Lack of Transparency & Documentation Deficiency",
+    "Description": "고위험 AI 시스템(예: 의료 진단, 채용 평가)의 작동 원리 및 학습 데이터에 대한 투명성 확보 실패. 특히 '설명 가능성(Explainability)' 요구사항 위반.",
+    "LegalBasis": "Article 13 (Transparency Obligations)",
+    "ImpactMechanism": "규제 당국은 모델 감사(Audit)를 통해 근거 부족을 확인하고, 시스템 전체의 사용 금지 명령 및 막대한 과징금 부과. 이는 단순 벌금이 아닌 '시장 접근권 박탈'로 이어짐.",
+    "QuantifiableLossEstimate": {
+      "MinimumFine_EUR": "€15M (최대 30% 매출)",
+      "MaximumFine_EUR": "€75M (전체 시장 손실액에 비례)",
+      "OperationalCostEstimate": "6개월 이상 시스템 재설계 및 감사 비용 ($20M - $50M)"
+    },
+    "PrecedentStrength": "High. 구조적 의무 위반으로, 법정 다툼보다 규제 당국의 명령이 시장에 치명적."
+  },
+  {
+    "ID": "LP002",
+    "Regulation": "DORA (Digital Operational Resilience Act)",
+    "ViolationType": "Third-Party Vendor Risk Management Failure",
+    "Description": "핵심 인프라를 제공하는 외부 공급망(예: 클라우드 서비스)의 리스크가 충분히 관리되지 않아 시스템적 장애 발생. '운영 연속성' 자체가 붕괴되는 사례.",
+    "LegalBasis": "Article 10 (ICT Third-Party Risk)",
+    "ImpactMechanism": "금융 기관은 운영 중단에 대한 책임(Accountability)을 지며, 시장 전체의 신뢰 하락으로 인해 고객 이탈 및 영업 정지 처분. 금전적 손실 외에 '시장 평판'이라는 무형 자산이 가장 크게 훼손됨.",
+    "QuantifiableLossEstimate": {
+      "MinimumFine_USD": "$50M (단기 운영 중단 벌금)",
+      "MaximumFine_USD": "$1B+ (장기 시스템 복구 및 신뢰 회복 비용)",
+      "OperationalCostEstimate": "최소 1년 이상의 비상 계획 수립 및 아키텍처 전면 개편 비용 ($30M - $70M)"
+    },
+    "PrecedentStrength": "Very High. 금융 시장의 특성상, '신뢰'가 가장 큰 자산이자 위반 시 가장 치명적인 손실 원인."
+  },
+  {
+    "ID": "LP003",
+    "Regulation": "HIPAA/GDPR (Cross-Border PII Leakage)",
+    "ViolationType": "Purpose Limitation & Cross-Border Data Transfer Failure",
+    "Description": "개인의 민감 정보(PII)가 원래의 사용 목적을 벗어나거나, 규제가 까다로운 제3국으로 부적절하게 전송/활용된 경우. (AI 학습에 비식별화 실패 데이터 사용 등)",
+    "LegalBasis": "GDPR Article 5 & HIPAA Security Rule",
+    "ImpactMechanism": "규제 당국의 대규모 과징금 외에도, 해당 데이터를 보유한 시스템 전체가 '불법 처리'로 간주되어 거래처 및 투자자로부터의 신뢰를 상실함. (데이터 자체의 무효화 위험).",
+    "QuantifiableLossEstimate": {
+      "MinimumFine_USD": "$10M (단일 국가/사고 기준)",
+      "MaximumFine_USD": "전체 매출의 4% 또는 €20M (최대 중첩 적용)",
+      "OperationalCostEstimate": "데이터 수집/활용 파이프라인 전체 재구축 및 법률 자문 비용 ($15M - $35M)"
+    },
+    "PrecedentStrength": "Very High. 전 세계 규제가 공통적으로 겨냥하는, 가장 예측 가능하면서도 치명적인 위반 영역."
+  },
+  {
+    "ID": "LP004",
+    "Regulation": "Professional Liability (Hallucination/Source Attribution Deficit)",
+    "ViolationType": "Unattributed AI Output used for Legal/Financial Advice",
+    "Description": "AI가 근거 없는 정보(환각)를 생성하고, 이를 전문가의 의견처럼 제시하여 의사결정을 내리게 함으로써 금전적 손실을 발생시킨 경우. (준전문가 책임).",
+    "LegalBasis": "Common Law Doctrine of Negligence & Professional Misconduct.",
+    "ImpactMechanism": "직접적인 벌금보다, 소송 법률 비용, 피해자에게 대한 배상액(Damages), 그리고 회사의 전문적 지위 상실에 따른 사업 기회 손실이 핵심. (명예 및 신뢰도 하락의 재무화).",
+    "QuantifiableLossEstimate": {
+      "MinimumPayout_USD": "$5M (1~2건의 소송 패소 예상액)",
+      "MaximumPayout_USD": "$30M+ (광범위한 피해 확산 및 전문직 책임 인정 시)",
+      "OperationalCostEstimate": "책임 추적 시스템(Provenance Tracking) 구축 비용 ($8M - $15M)"
+    },
+    "PrecedentStrength": "Emerging & Critical. 규제가 법제화되기 전에, 판례를 통해 위험을 입증해야 하는 가장 핵심적인 영역."
+  },
+  {
+    "ID": "LP005",
+    "Regulation": "Cybersecurity/Supply Chain (Systemic Interruption)",
+    "ViolationType": "Insufficient Incident Response Plan & Patch Management Gap",
+    "Description": "외부 공격(랜섬웨어 등) 발생 시, 사전에 준비된 비즈니스 연속성 계획(BCP) 부재로 인해 서비스가 장기간 중단되고 핵심 데이터를 복구하지 못한 경우.",
+    "LegalBasis": "Contractual SLA & Industry Best Practices (NIST/ISO 27001)",
+    "ImpactMechanism": "계약 위반에 따른 손해배상(Breach of Contract) 청구와 함께, 운영 중단 기간 동안의 매출액 손실이 직접적인 재무적 피해로 계산됨. 시스템 복구가 불가능할 경우 사업 폐업까지 초래.",
+    "QuantifiableLossEstimate": {
+      "MinimumDamage_USD": "$10M (최소 2주간 핵심 서비스 중단 비용)",
+      "MaximumDamage_USD": "전체 연 매출의 일정 비율 (%)",
+      "OperationalCostEstimate": "재발 방지 시스템 구축 및 보안 감사 강화 비용 ($25M - $60M)"
+    },
+    "PrecedentStrength": "Very High. 비즈니스 운영 자체에 대한 직접적이고 측정 가능한 손실을 발생시킴."
+  }
+]
