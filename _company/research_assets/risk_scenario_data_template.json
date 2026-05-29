@@ -1,0 +1,46 @@
+{
+  "report_title": "Non-Financial Structural Risk Assessment (R_NF)",
+  "last_updated": "[YYYY-MM-DD]",
+  "scope": "Operational Continuity & Future Compliance",
+  "risks": [
+    {
+      "risk_id": "R01",
+      "trend_name": "Geopolitical Data Supply Chain Disruption (지정학적 데이터 공급망 단절)",
+      "root_cause": "국가 간 통신 규제 변화, 핵심 인프라의 정치화.",
+      "impact_type": "Operational Downtime Cost",
+      "quantification_variables": {
+        "T_stop_estimate": "[추정 최대 중단 시간 (일/시간)]",
+        "revenue_hourly_avg": "[현재 시간당 평균 매출액]",
+        "fixed_cost_daily": "[평균 고정 비용]"
+      },
+      "estimated_max_financial_loss_Lmax": "$[계산 필요 - $]$",
+      "supporting_data_source": "[필요한 외부 보고서 출처 및 근거 (예: OECD, World Bank)]"
+    },
+    {
+      "risk_id": "R02",
+      "trend_name": "Critical Knowledge Asset Drain (핵심 지식 자본 유출)",
+      "root_cause": "숙련된 인력의 경쟁사 이탈 또는 은퇴로 인한 핵심 비즈니스 로직 및 운영 노하우 상실.",
+      "impact_type": "Project Restart & Rework Cost",
+      "quantification_variables": {
+        "T_restore_estimate": "[최소 복구에 필요한 기간 (개월/년)]",
+        "reworked_manpower_cost_total": "[재작업 투입 인건비 총액]",
+        "lost_opportunity_value": "[기간 동안 포기된 시장 가치]"
+      },
+      "estimated_max_financial_loss_Lmax": "$[계산 필요 - $]$",
+      "supporting_data_source": "[필요한 외부 설문조사/인력시장 데이터 출처 및 근거 (예: Gartner Talent Report)]"
+    },
+    {
+      "risk_id": "R03",
+      "trend_name": "Climate & ESG Mandate Compliance Failure (기후 변화/ESG 규제 미준수)",
+      "root_cause": "글로벌 탄소세 도입, 공급망 전반의 환경 기준 강화.",
+      "impact_type": "Future Carbon Tax / Regulatory Penalty",
+      "quantification_variables": {
+        "current_emissions_unit": "[현재 배출량 단위 (ton CO2e)]",
+        "estimated_carbon_price_future": "[예상 미래 탄소 가격 ($/ton)]",
+        "mandatory_compliance_gap_score": "[규제 Gap 점수]"
+      },
+      "estimated_max_financial_loss_Lmax": "$[계산 필요 - $]$",
+      "supporting_data_source": "[필요한 외부 규제 포털 및 기후 관련 시장 보고서 출처 및 근거 (예: EU CBAM 공식 자료)]"
+    }
+  ]
+}
