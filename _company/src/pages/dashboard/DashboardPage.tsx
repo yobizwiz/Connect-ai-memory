@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useScrollLogger } from '../../hooks/useScrollLogger'; // Hook 임포트 확인
 import StreamingDataComponent from './StreamingDataComponent';
 
@@ -13,7 +13,8 @@ interface DashboardReport {
  */
 const DashboardPage: React.FC = () => {
   // 스크롤 로거를 사용하여 페이지 레벨에서 전체 감시(Attention Point) 시작
-  const loggerRef = useScrollLogger();
+  const pageRef = useRef<HTMLDivElement>(null);
+  useScrollLogger(pageRef, '/api/v1/log-attention');
 
   // 💡 초기 상태 정의 및 API 호출 시뮬레이션 준비
   const [report, setReport] = useState<DashboardReport>({
@@ -30,7 +31,7 @@ const DashboardPage: React.FC = () => {
 
 
   return (
-    <div className="min-h-[150vh] p-8 bg-gray-50"> 
+    <div ref={pageRef} className="min-h-[150vh] p-8 bg-gray-50"> 
       {/* min-h-[150vh]: 스크롤이 발생함을 강제하여 useScrollLogger 테스트 환경 조성 */}
       <h1 className="text-4xl font-extrabold text-red-700 mb-2">
         📊 시스템 무결성 감사 대시보드 (Dashboard) 
