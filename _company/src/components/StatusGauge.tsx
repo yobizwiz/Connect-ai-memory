@@ -32,9 +32,10 @@ const StatusGauge: React.FC<{ data: CombinedDashboardData }> = ({ data }) => {
     );
 
     const style = getStatusStyles(data.status, data.level);
+    const isGlitchActive = data.isGlitchActive || Math.round(data.treValue) >= 1200;
 
     return (
-        <div className={`p-8 rounded-xl shadow-2xl transition-all duration-700 ${data.isGlitchActive ? 'animate-pulse' : ''}`} 
+        <div className={`p-8 rounded-xl shadow-2xl transition-all duration-700 ${isGlitchActive ? 'glitch-noise' : ''}`} 
              style={style}>
             
             {/* Glitch Effect 적용 대상 */}
