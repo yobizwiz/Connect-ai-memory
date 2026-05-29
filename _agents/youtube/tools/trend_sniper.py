@@ -74,7 +74,7 @@ def main():
 
     print(f"\n🎯 [트렌드 스나이퍼] 키워드 {chosen} 스캔 시작...")
     youtube = build('youtube', 'v3', developerKey=api_key)
-    last_month = (datetime.datetime.utcnow() - datetime.timedelta(days=30)).isoformat("T") + "Z"
+    last_month = (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=30)).isoformat().replace("+00:00", "Z")
     sniper_data = []
     for q in chosen:
         print(f"📡 [{q}] 검색 중...")
