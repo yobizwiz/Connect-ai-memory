@@ -1,0 +1,101 @@
+{
+  "schema_name": "Total_Estimated_Loss_Risk_Score_v3",
+  "description": "글로벌 규제 위반 시나리오 기반의 총 예상 손실액(TRE) 계산을 위한 API 데이터 스키마입니다. 모든 변수는 재무적 영향($)으로 환산되어야 합니다.",
+  "calculation_formula": "Total TRE = (SUM of Component Losses) * Systemic Multiplier + Base Operational Loss",
+  "components": [
+    {
+      "component_id": "C01_DATA_PRIVACY",
+      "name": "개인정보 유출 및 비식별화 실패 손실",
+      "regulatory_focus": ["GDPR", "CCPA", "HIPAA"],
+      "input_variables": [
+        {
+          "variable_key": "data_leakage_count",
+          "description": "유출된 개인 식별 정보(PII) 기록의 총 수량.",
+          "type": "Integer (Count)",
+          "weighting_factor": 1.5,
+          "base_loss_unit": 750,
+          "calculation_logic": "MIN(data_leakage_count * base_loss_unit + (data_leakage_count * weighting_factor))",
+          "example_loss_type": "$50K ~ $2M+"
+        },
+        {
+          "variable_key": "sensitivity_level",
+          "description": "유출된 데이터의 민감도 레벨 (1: 일반, 3: 건강/재무 등 고위험).",
+          "type": "Categorical (1-3)",
+          "weighting_factor": {
+            "1": 0.5,
+            "2": 1.5,
+            "3": 4.0
+          },
+          "base_loss_unit": 10000,
+          "calculation_logic": "CASE sensitivity_level WHEN '3' THEN 30000 ELSE (sensitivity_level * 10000) END"
+        }
+      ]
+    },
+    {
+      "component_id": "C02_COMPLIANCE_PROCESS",
+      "name": "규정 준수 공백 및 절차적 하자 손실",
+      "regulatory_focus": ["DORA", "EU AI Act", "Internal Audit"],
+      "input_variables": [
+        {
+          "variable_key": "checkpoint_failure_count",
+          "description": "필수 규제 체크포인트(예: 2단계 승인, 감사 로그 기록)가 누락된 횟수.",
+          "type": "Integer (Count)",
+          "weighting_factor": 5000,
+          "base_loss_unit": 10000,
+          "calculation_logic": "(checkpoint_failure_count * base_loss_unit) + (checkpoint_failure_count * weighting_factor)" ,
+          "example_loss_type": "프로젝트 재시작 비용 및 위약금 ($100K ~ $5M)"
+        },
+        {
+          "variable_key": "systemic_risk_exposure",
+          "description": "시스템적 위험에 노출된 핵심 비즈니스 기능의 수 (예: 결제 게이트웨이, 데이터 흐름).",
+          "type": "Integer (Count)",
+          "weighting_factor": 100000,
+          "base_loss_unit": 50000,
+          "calculation_logic": "(systemic_risk_exposure * weighting_factor)" ,
+          "example_loss_type": "비즈니스 연속성 위협 ($5M+)"
+        }
+      ]
+    },
+    {
+      "component_id": "C03_AI_INTEGRITY",
+      "name": "AI 기반 환각 및 출처 불명확성 책임 손실",
+      "regulatory_focus": ["EU AI Act", "Source Attribution Mandate"],
+      "input_variables": [
+        {
+          "variable_key": "hallucination_instance_count",
+          "description": "AI가 근거 없이 잘못된 정보를 생성하여 사용된 횟수.",
+          "type": "Integer (Count)",
+          "weighting_factor": 2000,
+          "base_loss_unit": 5000,
+          "calculation_logic": "(hallucination_instance_count * base_loss_unit) + (hallucination_instance_count * weighting_factor)",
+          "example_loss_type": "전문가 배상 책임 및 명예 실추 비용 ($25K ~ $10M+)"
+        },
+        {
+          "variable_key": "jurisdiction_risk",
+          "description": "법적 분쟁이 발생한 주요 관할권의 위험 등급 (A: 저위험, B: 중위험, C: 고위험).",
+          "type": "Categorical (A-C)",
+          "weighting_factor": {
+            "A": 1.0,
+            "B": 2.5,
+            "C": 4.0
+          },
+          "base_loss_unit": 0,
+          "calculation_logic": "CASE jurisdiction_risk WHEN 'C' THEN 40000 END (최소 벌금 적용)"
+        }
+      ]
+    }
+  ],
+  "finalization_steps": {
+    "systemic_multiplier": {
+      "name": "시스템적 공포 증폭 계수",
+      "description": "위반이 시스템 전체의 신뢰도와 비즈니스 모델 자체를 위협하는 경우 곱해지는 요소. (예: 공급망 데이터 단절, 대규모 서비스 중단)",
+      "value_range": [1.5, 3.0],
+      "default_application": "TRE * 1.2 (최소)"
+    },
+    "base_operational_loss": {
+      "name": "기본 운영 손실액",
+      "description": "규제 위반과 무관하게 발생하는 기본적인 재정적 지출(예: 즉각적인 법률 자문 비용).",
+      "value_range": [5000, 20000]
+    }
+  }
+}

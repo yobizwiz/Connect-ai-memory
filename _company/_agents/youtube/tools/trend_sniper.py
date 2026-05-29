@@ -106,6 +106,8 @@ def main():
 1. 🌍 트렌드 해킹 분석 — 어떤 패턴이 조회수를 끌고 있는지
 2. 🎯 빈집 털기 전략 — 차별화 가능한 틈새 주제
 3. 🎬 파괴적 영상 기획안 — 썸네일 카피, 제목 3개, 후킹 오프닝(첫 5초)
+
+[속도 및 분량 제한 지침] 로컬 GPU/CPU 환경의 빠른 실행과 타임아웃 방지를 위해, 장황한 서술이나 긴 문장을 일체 배제하고 300자 내외의 고밀도 요약 마크다운(Bullet points 위주)으로만 작성하세요. 핵심 뼈대 정보만 제공해야 합니다.
 """
 
     # v2.89.70 — LM Studio (OpenAI 호환 API) + Ollama 둘 다 지원. URL/포트로 자동 감지.
@@ -150,7 +152,7 @@ def main():
                     "model": model,
                     "messages": [{"role": "user", "content": prompt}],
                     "stream": False,
-                    "max_tokens": 2048,
+                    "max_tokens": 512,
                 },
                 timeout=180,
             )
@@ -159,7 +161,14 @@ def main():
         else:
             r = requests.post(
                 f"{ollama_url}/api/generate",
-                json={"model": model, "prompt": prompt, "stream": False},
+                json={
+                    "model": model, 
+                    "prompt": prompt, 
+                    "stream": False,
+                    "options": {
+                        "num_predict": 512
+                    }
+                },
                 timeout=180,
             )
             r.raise_for_status()
