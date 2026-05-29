@@ -1,102 +1,90 @@
 {
-  "dataset_name": "Compliance Risk Scenarios Dataset",
-  "description": "운영 무결성(Operational Integrity) 실패로 인한 잠재적 최대 재무 손실액 (TRE)을 산정하기 위한 구조화된 시나리오 데이터셋. 모든 수치는 추정치이며, 실제 법규 및 사안별 변동성이 큼.",
-  "schema_version": "1.0",
-  "scenarios": [
-    {
-      "scenario_id": "S001",
-      "title": "PII 마스킹 실패로 인한 데이터 유출 (GDPR/CCPA 위반)",
-      "risk_category": "데이터 무결성 및 프라이버시 침해",
-      "governing_regulation": ["GDPR Article 32", "CCPA"],
-      "root_cause": "AI 학습 또는 분석 과정에서 민감 정보(PII)에 대한 전처리 마스킹(Masking) 로직 누락.",
-      "impact_severity": "Critical (최고 수준)",
-      "financial_loss_estimate": {
-        "penalty_type": "벌금 및 배상액",
-        "estimated_fine_range": "$15M - $20M+",
-        "calculation_basis": "전 세계 매출의 최대 4% 또는 €20M 중 높은 금액 (GDPR 기준)",
-        "additional_cost": "소송 비용, 평판 회복 비용 ($3M - $5M)"
-      },
-      "operational_impact": {
-        "system_failure_metric": "시스템 감사 보고서의 유효성 상실",
-        "description": "데이터 처리 파이프라인 전체가 일시 중단되며, 재발 방지 시스템 구축에 막대한 자원 투입 필요."
-      },
-      "triggering_event": "제3자 AI 모델을 통한 데이터 분석 결과 유출 시도 감지"
-    },
-    {
-      "scenario_id": "S002",
-      "title": "의료 기록 시스템의 오류 및 미보고 (HIPAA 위반)",
-      "risk_category": "전문 서비스 규제/개인 건강 정보(PHI) 침해",
-      "governing_regulation": ["HIPAA Security Rule"],
-      "root_cause": "전자의무기록(EMR) 시스템의 업데이트 과정에서 필수 보안 패치 누락 또는 인력 실수로 인한 접근 통제 실패.",
-      "impact_severity": "Critical (최고 수준)",
-      "financial_loss_estimate": {
-        "penalty_type": "벌금 및 운영 정지",
-        "estimated_fine_range": "$5M - $10M+",
-        "calculation_basis": "위반 심각도에 따른 계층적 벌금 부과 + 데이터 복구 비용",
-        "additional_cost": "운영 중단으로 인한 서비스 매출 손실 (최소 6개월분)"
-      },
-      "operational_impact": {
-        "system_failure_metric": "진료 기록의 법적 무효화 및 접근 불가 상태 초래",
-        "description": "법정 증거 자료로서 활용 불가능해지며, 환자 신뢰도 붕괴."
-      },
-      "triggering_event": "보안 취약점 공격 성공 및 내부 감사 추적이 원활하지 않음이 확인됨"
-    },
-    {
-      "scenario_id": "S003",
-      "title": "AI 모델의 허위 정보 생성으로 인한 명예훼손 (EU AI Act 위반 예상)",
-      "risk_category": "기술 윤리 및 법적 책임(Liability) 증대",
-      "governing_regulation": ["EU AI Act (Draft)", "명예훼손법"],
-      "root_cause": "LLM 기반의 자동 보고서 작성 시, 출처가 불분명하거나 사실과 다른 정보를 '확신'하며 제시하여 피해를 야기.",
-      "impact_severity": "High (높음)",
-      "financial_loss_estimate": {
-        "penalty_type": "민사상 손해배상 및 규제 벌금",
-        "estimated_fine_range": "$2M - $8M+",
-        "calculation_basis": "피해 규모(명예훼손 피해액)와 모델 개발사의 책임 비율에 따라 산정.",
-        "additional_cost": "법적 자문 비용, 명성 회복 캠페인 비용 ($1M)"
-      },
-      "operational_impact": {
-        "system_failure_metric": "AI 생성 아웃풋의 법적 근거 불확보로 인한 모든 보고서 무효화",
-        "description": "시스템 전체가 '검증된 사실'을 제시할 수 없다는 공포를 유발."
-      },
-      "triggering_event": "제공된 데이터 기반으로 작성된 자문/보고서가 제3자에게 심각한 피해를 준 경우"
-    },
-    {
-      "scenario_id": "S004",
-      "title": "프로세스 단계별 컴플라이언스 체크리스트 누락 (규정 미적용)",
-      "risk_category": "운영 프로세스의 구조적 결함(Compliance Drift)",
-      "governing_regulation": ["산업 표준/내부 감사 규정"],
-      "root_cause": "매뉴얼화된 필수 승인 절차나 법률 체크포인트가 사람이 기억에 의존하거나, 업무 워크플로우 자동화 과정에서 누락됨.",
-      "impact_severity": "Medium-High (중~고)",
-      "financial_loss_estimate": {
-        "penalty_type": "내부 감사가 발견한 부실 운영으로 인한 재작업 및 벌금",
-        "estimated_fine_range": "$500K - $3M+",
-        "calculation_basis": "재발 방지 시스템 구축 비용(핵심 지표) + 업무 중단 손실액.",
-        "additional_cost": "감사관의 재점검 요구에 따른 운영 비효율 발생."
-      },
-      "operational_impact": {
-        "system_failure_metric": "운영 프로세스 전체가 '인간의 실수를 보정'하는 임시 방편으로 전락.",
-        "description": "시스템 신뢰도의 근본적 훼손."
-      },
-      "triggering_event": "최종 승인 단계에서 필수 서류 또는 법적 고지(Disclaimer)가 누락된 케이스 발견."
-    },
-    {
-      "scenario_id": "S005",
-      "title": "데이터 주권 침해 및 국경 간 전송 위반 (Data Sovereignty)",
-      "risk_category": "국제 법규/지정학적 리스크",
-      "governing_regulation": ["GDPR Article 46", "각 국가의 데이터 거버넌스법"],
-      "root_cause": "특정 국가의 규제가 요구하는 데이터 저장 위치(Data Residency)를 무시하고, 클라우드 환경에서 데이터를 전송/저장함.",
-      "impact_severity": "High (높음)",
-      "financial_loss_estimate": {
-        "penalty_type": "국가 간 협정 위반 벌금",
-        "estimated_fine_range": "$8M - $12M+",
-        "calculation_basis": "데이터 주권 침해에 따른 국가 차원의 제재와 서비스 이용 금지 리스크.",
-        "additional_cost": "현지 법률 자문 및 데이터 이전 아키텍처 재구축 비용."
-      },
-      "operational_impact": {
-        "system_failure_metric": "특정 지역 시장에서의 사업 전개 자체가 원천 봉쇄됨 (Market Exit Risk).",
-        "description": "비즈니스 모델의 지리적 한계가 발생함."
-      },
-      "triggering_event": "데이터 국경 간 이동(Cross-border Transfer)에 대한 공식 감사 경고 수령."
-    }
-  ]
+    "title": "산업별/업종별 규제 미준수 사례 분석 (TRE 기반)",
+    "description": "AI, 데이터 프라이버시, 운영 연속성 측면에서 발생 가능한 최대 잠재적 재정 손실(Total Potential Loss)을 구조화한 케이스 스터디. 이 데이터를 활용하여 '법적 리스크 보험'의 판매 근거를 확보할 수 있습니다.",
+    "case_studies": [
+        {
+            "id": "CS001",
+            "industry": "금융 자문/로펌 (Financial Consulting / Legal Tech)",
+            "violation_type": "AI 환각 및 출처 불명확성(Hallucination & Lack of Source Attribution)",
+            "regulatory_context": "EU AI Act, GDPR (데이터 처리 오류), 전문 서비스 윤리 규정",
+            "root_cause": "LLM 기반의 내부 지식 검색 시스템 구축 시, '환각 방지' 로직과 출처 검증(Source Grounding) 메커니즘 미비. 단순히 답변을 생성하는 데 그치고, 법적 근거 제시를 누락함.",
+            "scenario_summary": "AI가 복잡한 세금/법률 이슈에 대해 유사 사례 기반의 '확신성 높은' 답변을 생성했으나, 실제로는 존재하지 않는 가상의 조항과 판례를 인용하며 의뢰인에게 잘못된 투자 전략을 제시함. 이후 법적 분쟁 발생.",
+            "potential_loss_breakdown": {
+                "component": "법규 위반 벌금 (Regulatory Fine)",
+                "details": "EU AI Act 또는 관련 금융 규제에 따른 과징금 부과 가능성 (최대 글로벌 매출의 일정 비율).",
+                "estimated_amount_eur": "€10M - €50M+",
+                "justification": "[근거: EU 법규 및 전문 서비스 책임 가이드라인. 벌금 규모는 위반 심각도에 따라 기하급수적임.]"
+            },
+            "potential_loss_breakdown_2": {
+                "component": "직접 손실액 (Direct Financial Loss)",
+                "details": "잘못된 자문으로 인해 고객이 실제로 잃은 투자금 또는 비즈니스 기회 비용.",
+                "estimated_amount_usd": "$5M - $30M",
+                "justification": "[근거: 소송 패소액 및 합의금 규모 추정.]"
+            },
+            "potential_loss_breakdown_3": {
+                "component": "운영 중단/신뢰도 손실 (Operational Downtime / Reputation Loss)",
+                "details": "사건 발생 후 시스템 전면 재점검 및 컨설팅 서비스 일시 중단에 따른 매출 손실.",
+                "estimated_amount_usd": "$2M - $10M",
+                "justification": "[근거: 시장 평판 하락(Reputation Damage)은 정량화가 어려우나, 최소 몇 분기간의 신규 계약 기회 상실로 추정.]"
+            },
+            "total_estimated_risk_tre": "최소 $17M 이상 (Worst Case Scenario)",
+            "mitigation_focus": "컴플라이언스 게이트웨이(Compliance Gateway) 구현, 모든 AI 출력물에 대한 **반드시 출처-법규 연결 고리** 강제화."
+        },
+        {
+            "id": "CS002",
+            "industry": "의료 및 헬스케어 (Healthcare / Data Processing)",
+            "violation_type": "PII 유출 및 비식별화 실패 (Data Leakage & Failure to Masking)",
+            "regulatory_context": "GDPR, HIPAA(미국), 국내 개인정보보호법",
+            "root_cause": "데이터 분석 과정에서 민감한 식별자 정보(이름, 주민등록번호, 진단 코드 등)를 마스킹 처리하지 않은 채 외부 LLM API에 전송하거나 내부 팀원에게 공유함.",
+            "scenario_summary": "연구 목적으로 수집된 환자의 의료 기록 데이터 셋을 AI 분석 모델에 입력하는 과정에서 PII 필드 전체가 노출됨. 해당 정보가 해커 또는 비인가자에게 유출되어 대규모 규제 조사 및 소송 발생.",
+            "potential_loss_breakdown": {
+                "component": "법규 위반 벌금 (Regulatory Fine)",
+                "details": "GDPR 기준, 최고 글로벌 연매출의 4% 또는 €20M 중 낮은 금액. 의료 데이터는 가장 민감한 범주에 속함.",
+                "estimated_amount_eur": "€15M - €75M+",
+                "justification": "[근거: GDPR 위반 사례 및 국내법상 최대 벌금 규모를 종합 고려.]"
+            },
+            "potential_loss_breakdown_2": {
+                "component": "개인 소송 및 배상 책임 (Class Action Lawsuit)",
+                "details": "피해 환자들을 대상으로 하는 집단 민사소송. 의료 정보는 영구적이고 회복 불가능한 피해를 야기함.",
+                "estimated_amount_usd": "$10M - $50M",
+                "justification": "[근거: 대규모 데이터 유출 사고의 평균 배상액 및 합의금 규모 추정.]"
+            },
+            "potential_loss_breakdown_3": {
+                "component": "운영 중단/데이터 재구축 비용 (Data Remediation Cost)",
+                "details": "유출된 데이터 셋을 복구하고, 전체 시스템에 대한 보안 감사 및 전면적인 접근 통제(Access Control) 로직 재설계에 필요한 막대한 인력 및 시간 투입.",
+                "estimated_amount_usd": "$3M - $15M",
+                "justification": "[근거: 전문 보안 컨설팅 비용, 내부 IT 리소스 투입량 산정.]"
+            },
+            "total_estimated_risk_tre": "최소 $28M 이상 (Worst Case Scenario)",
+            "mitigation_focus": "PII 마스킹 자동화 로직 강제 적용(Input/Output Validation), 접근 권한을 'Need-to-Know' 기반으로 극단적으로 제한."
+        },
+        {
+            "id": "CS003",
+            "industry": "금융 인프라/핀테크 (Banking Infrastructure / Fintech)",
+            "violation_type": "운영 연속성 실패 및 규정 미적용(Compliance Drift & Operational Failure)",
+            "regulatory_context": "DORA (Digital Operational Resilience Act), 금융감독원 지침",
+            "root_cause": "핵심 비즈니스 프로세스(예: 자금 이체, 신규 상품 승인)의 일부 단계가 수작업 체크리스트나 구두 합의에 의존함. 외부 공급망(Third-Party Vendor) 변경 시 필수 법적/기술적 검증 절차를 생략함.",
+            "scenario_summary": "핵심 자금 이체 프로세스에서, 승인 담당자의 업무 부재 또는 시스템 업데이트 과정 중 수동 개입으로 인해, 특정 국가의 제재 리스트(Sanction List)를 확인하는 필수 단계가 누락됨. 거액의 불법 거래가 발생하여 금융기관 전체 신뢰도 및 규제 당국의 감시 대상이 됨.",
+            "potential_loss_breakdown": {
+                "component": "직접적인 재정 손실 (Direct Transaction Loss)",
+                "details": "불법/제재 국가와의 자금 거래로 인해 발생한 직접적인 금융 손실액. 이 금액은 즉시 회수 불가능할 수 있음.",
+                "estimated_amount_usd": "$10M - $80M+",
+                "justification": "[근거: 실제 제재 위반 사안의 규모 및 관련 국제기구 보고서.]"
+            },
+            "potential_loss_breakdown_2": {
+                "component": "운영 중단 비용 (Operational Downtime Cost, P_op)",
+                "details": "규제 당국의 강제 조사/정지 명령으로 인해 핵심 서비스가 장기간(예: 1개월) 운영되지 못하여 발생하는 매출 손실.",
+                "estimated_amount_usd": "$5M - $20M",
+                "justification": "[근거: 금융권의 평균 일일 거래량 및 고객 기반을 바탕으로 계산.]"
+            },
+            "potential_loss_breakdown_3": {
+                "component": "규제 벌금 및 감사 비용 (Regulatory Fines & Audit Costs)",
+                "details": "DORA 등 시스템적 리스크 대응 실패에 따른 최고 수준의 규제 벌금 부과.",
+                "estimated_amount_usd": "$8M - $40M",
+                "justification": "[근거: 금융권 대형 사고 발생 시 발생하는 조사 및 처벌 비용.]"
+            },
+            "total_estimated_risk_tre": "최소 $23M 이상 (Worst Case Scenario)",
+            "mitigation_focus": "프로세스 전 단계에 대한 자동화된 '준수 게이트웨이(Compliance Gateway)' 구축. 모든 핵심 로직은 **시스템적으로 강제**되어야 하며, 사람의 개입 여지는 최소화."
+        }
+    ]
 }
