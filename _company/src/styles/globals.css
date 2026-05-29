@@ -1,22 +1,23 @@
-/* Global styles for the yobizwiz system */
+/* (기존 CSS 내용 유지 후) */
 
-@keyframes glitch {
-  0% { transform: translate(0); }
-  20% { transform: translate(-3px, 3px) skewX(1deg); opacity: 0.8; }
-  40% { transform: translate(3px, -3px) skewX(-1deg); opacity: 0.9; }
-  60% { transform: translate(-2px, 2px) skewX(0.5deg); opacity: 0.7; }
-  80% { transform: translate(2px, -2px) skewX(-0.5deg); opacity: 0.9; }
-  100% { transform: translate(0); }
+/* Glitch Effect Styles - TRE > 1200 Triggered */
+.glitch-active {
+    animation: glitch-blink 0.1s infinite alternate; /* 빠른 깜빡임 애니메이션 추가 */
 }
 
-/* Glitch Noise Class */
-.glitch-noise {
-  animation: glitch 0.1s infinite alternate linear;
-  transition: all 0.3s ease; /* Smooth transition when activating/deactivating the effect */
+@keyframes glitch-blink {
+    from { transform: translate(1px, 1px); opacity: 0.95; }
+    to { transform: translate(-2px, -2px); opacity: 1; }
 }
 
-/* Basic container styles for demonstration */
-.dashboard-container {
-    min-height: 200vh; /* To enable scrolling and test Attention Point logging */
-    padding: 40px;
+/* Chromatic Aberration Layer (R/G/B 분리 효과를 위한 오버레이) */
+.chroma-layer {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    opacity: 0.2; /* 강도 조절 */
+    transform: translate(calc(var(--glitch-offset)), calc(var(--glitch-y)));
 }
+
+/* R, G, B 채널을 위한 별도의 클래스 정의 (JS에서 변수로 처리) */
+.red-shift { --glitch-offset: 2px; --glitch-y: -1px; }
+.blue-shift { --glitch-offset: -2px; --glitch-y: 1px; }
