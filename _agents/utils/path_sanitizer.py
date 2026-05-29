@@ -1,14 +1,15 @@
 import os
-from typing import Optional, Tuple
+from typing import Optional
 
 def sanitize_path(original_path: str) -> str:
     """
     경로 문자열에서 OS 독립적인 경로 구분자 충돌을 막기 위해 
     콜론(:) 문자를 하이픈(-)으로 대체합니다.
+    Windows 드라이브 문자(예: C:)는 치환에서 제외합니다.
     """
-    # 콜론 치환 로직
-    sanitized = original_path.replace(':', '-')
-    return sanitized
+    drive, path = os.path.splitdrive(original_path)
+    sanitized_path = path.replace(':', '-')
+    return drive + sanitized_path
 
 def ensure_directory_and_save(base_dir: str, filename: str, content: str) -> Optional[str]:
     """
@@ -25,21 +26,9 @@ def ensure_directory_and_save(base_dir: str, filename: str, content: str) -> Opt
         # 1. 전체 경로 구성
         full_path = os.path.join(base_dir, filename)
         
-        # 2. 경로 정제 (이것이 핵심 수정 로직입니다)
-        sanitized_path = sanitize_path(full_path)
+        # 2. 경로 정제
+        final_full_path = sanitize_path(full_path)
         
-        # 디렉토리와 파일명에서 콜론을 치환하여 최종 경로를 재구성합니다.
-        # 주의: os.path.dirname()은 이미 OS 네이티브 구분자를 사용하므로, 
-        # 우리는 전체 문자열에서 : -> - 변환만 수행하고 이를 다시 os.path.join으로 결합하는 것이 안전합니다.
-
-        sanitized_dir = sanitize_path(os.path.dirname(full_path))
-        final_dir = os.path.join(base_dir, sanitized_dir) # base_dir가 이미 안정적이라고 가정
-        final_file_name = sanitize_path(filename)
-
-        # 최종 저장 경로를 다시 구성하고 콜론을 치환합니다.
-        # 예시: sessions/2026:05:29T11:30:00/video.md -> sessions/2026-05-29T11-30-00/video.md
-        final_full_path = os.path.join(sanitize_path(os.path.dirname(sanitized_dir)), sanitize_path(filename))
-
         # 3. 디렉토리 생성 (존재하지 않으면 강제 생성)
         os.makedirs(os.path.dirname(final_full_path), exist_ok=True)
         
@@ -52,6 +41,7 @@ def ensure_directory_and_save(base_dir: str, filename: str, content: str) -> Opt
     except Exception as e:
         print(f"파일 저장 실패: {e}")
         return None
+
 # Test Code (Self-Verification Helper)
 if __name__ == "__main__":
     test_paths = [
@@ -61,7 +51,7 @@ if __name__ == "__main__":
     ]
     print("\n--- 테스트 실행 ---")
     for original, description in test_paths:
-        saved_path = ensure_directory_and_save("temp_test_dir", original.split('/')[-1], f"Content for {description}")
+        saved_path = ensure_directory_and_save("temp_test_dir", original, f"Content for {description}")
         if saved_path:
             print(f"[SUCCESS] '{original}' -> Saved as: {saved_path}")
         else:
@@ -78,4 +68,3 @@ def cleanup():
 
 # cleanup() # 테스트 후 주석 해제하여 실행 가능하게 함.
 print("Path Sanitizer Module Loaded Successfully.")
-<|"|>
