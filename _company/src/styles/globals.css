@@ -1,0 +1,22 @@
+/* Global styles for the yobizwiz system */
+
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-3px, 3px) skewX(1deg); opacity: 0.8; }
+  40% { transform: translate(3px, -3px) skewX(-1deg); opacity: 0.9; }
+  60% { transform: translate(-2px, 2px) skewX(0.5deg); opacity: 0.7; }
+  80% { transform: translate(2px, -2px) skewX(-0.5deg); opacity: 0.9; }
+  100% { transform: translate(0); }
+}
+
+/* Glitch Noise Class */
+.glitch-noise {
+  animation: glitch 0.1s infinite alternate linear;
+  transition: all 0.3s ease; /* Smooth transition when activating/deactivating the effect */
+}
+
+/* Basic container styles for demonstration */
+.dashboard-container {
+    min-height: 200vh; /* To enable scrolling and test Attention Point logging */
+    padding: 40px;
+}
