@@ -1,0 +1,81 @@
+{
+  "schema_name": "Structural_Risk_Exposure_Model",
+  "version": "1.0.0",
+  "description": "글로벌 규제 위반 및 운영 시스템적 결함에 따른 총 위험 노출도(Total Risk Exposure, TRE)를 계산하기 위한 표준화된 데이터 모델.",
+  "core_metric": {
+    "name": "TRE (Total Risk Exposure)",
+    "definition": "최소 벌금액 + 최대 배상 책임액 + 기회비용 손실액. 이 값은 '운영 생존 보험료' 관점에서 고객에게 제시되어야 함.",
+    "calculation_formula": "TRE = MAX(Fines) + MAX(Compensation) * W_Gap + L_Opportunity",
+    "weighting_factor_W_Gap": 1.5,
+    "data_type": "Float (Millions USD)"
+  },
+  "risk_categories": [
+    {
+      "category_id": "REG_COMPLIANCE",
+      "name": "법규 및 규제 준수 위험 (Regulatory Compliance Risk)",
+      "scope": "특정 산업 법률(HIPAA, GDPR 등) 위반에 초점.",
+      "metrics": [
+        {
+          "metric_id": "PII_Leakage_Index",
+          "name": "개인 식별 정보 유출 지수 (PII Leakage Index)",
+          "description": "비식별화 실패로 인한 데이터 유출의 규모와 심각성. 마스킹 누락 비율, 피해자 수 등을 통합 측정.",
+          "data_type": "Index Score (0-100) & Estimated Loss ($M)",
+          "legal_basis": ["GDPR", "CCPA", "HIPAA"],
+          "source_citation": "[근거: sessions/2026-05-19T04-23/secretary.md] 및 Researcher 개인 메모리 (PII_Leakage_Index)"
+        },
+        {
+          "metric_id": "Scope_Violation_Flag",
+          "name": "업무 범위 초과 위반 플래그 (Jurisdiction Violation)",
+          "description": "서비스가 제공할 수 있는 전문 영역(법률/의료 자문 등)을 벗어난 판단이나 조언을 제공했을 때의 위험도.",
+          "data_type": "Binary Flag / Risk Score",
+          "legal_basis": ["Ethical Guidelines", "Professional Responsibility"],
+          "source_citation": "[근거: Researcher 개인 메모리 (Scope_Violation_Flag)]"
+        },
+        {
+          "metric_id": "Compliance_Drift_Score",
+          "name": "절차적 공백 점수 (Procedural Gap Score)",
+          "description": "필수 절차(예: 2단계 승인, 데이터 거버넌스 검토) 누락 및 문서화 미비로 인한 운영상의 구조적 위험.",
+          "data_type": "Index Count (Critical Checkpoint Failure Count)",
+          "legal_basis": ["Internal Audit Standards", "BMS Requirements"],
+          "source_citation": "[근거: Researcher 개인 메모리 (Compliance_Drift_Score)]"
+        }
+      ]
+    },
+    {
+      "category_id": "TECH_GOVERNANCE",
+      "name": "AI 및 기술 시스템 거버넌스 위험 (Tech & AI Governance Risk)",
+      "scope": "AI 사용 과정 자체의 투명성, 신뢰성, 책임 소재에 초점. EU AI Act 대응 핵심.",
+      "metrics": [
+        {
+          "metric_id": "Source_Attribution_Deficit",
+          "name": "출처 불명확성/환각 지수 (Hallucination Index)",
+          "description": "AI 답변이 근거 없이 생성되거나, 출처를 명시하지 못하여 발생한 법적 책임. 'Provenance Mandate' 위반.",
+          "data_type": "Severity Score (0-10) & Estimated Loss ($M)",
+          "legal_basis": ["EU AI Act", "Research Ethics"],
+          "source_citation": "[근거: Researcher 개인 메모리 (Source_Attribution_Deficit)]"
+        },
+        {
+          "metric_id": "Knowledge_Silo_Depth",
+          "name": "지식 사일로 깊이 점수 (Silo Depth Score)",
+          "description": "파편화된 데이터 출처가 모순되거나 불완전한 결론을 도출하게 만드는 시스템적 비효율성.",
+          "data_type": "Index Count (Conflicting Data Source Count)",
+          "legal_basis": ["Data Governance Best Practices", "Efficiency Loss"],
+          "source_citation": "[근거: Researcher 개인 메모리 (Knowledge_Silo_Depth)]"
+        },
+        {
+          "metric_id": "Structural_Gap_Alert",
+          "name": "구조적 사각지대 경고 레벨 (Structural Gap Alert)",
+          "description": "단순 규정 미준수를 넘어, 비즈니스 모델의 근본적인 연속성(BCP)을 위협하는 구조적 공백. ($L_{max}$ 관점).",
+          "data_type": "Alert Level (Low/Medium/High/Critical)",
+          "legal_basis": ["Operational Survival Theory"],
+          "source_citation": "[근거: 지난 의사결정 로그 (2026-05-29T17:06) 및 Researcher 개인 메모리]"
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "last_updated": "2026-05-29",
+    "status": "FINALIZED - V1.0 Ready for API Integration",
+    "action_required": "개발팀은 이 스키마를 기반으로 각 지표별 가중치($W$)와 데이터 수집 파이프라인을 구축해야 합니다."
+  }
+}
