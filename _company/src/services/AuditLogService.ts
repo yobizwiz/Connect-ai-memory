@@ -1,7 +1,5 @@
 // c:\Users\jinoh\Desktop\Connect AI\_company\src\services\AuditLogService.ts
 
-import { AuditLogSchema } from './types/AuditLogTypes';
-
 /**
  * @description 감사 로그(Immutable Ledger)를 처리하는 서비스 레이어.
  * 이 서비스는 모든 기록이 '불변'하고, '책임 소재'를 명확히 하는 것이 최우선 목표입니다.
@@ -30,8 +28,7 @@ export class AuditLogService {
         const finalLog: AuditLogSchema = {
             event_uuid: eventUuid,
             timestamp_utc: timestampUtc,
-            ...logData,
-            #immutable: true // 주석으로 불변성 강조
+            ...logData
         };
 
         // 실제 DB 트랜잭션 시작 (예: PostgreSQL의 INSERT INTO ... RETURNING *)
@@ -53,7 +50,11 @@ export class AuditLogService {
     public static async getLogById(eventUuid: string): Promise<AuditLogSchema | null> {
         // 실제 DB 쿼리 (SELECT * FROM audit_log WHERE event_uuid = ?)
         console.log(`[AUDIT LOG] Retrieving log by UUID: ${eventUuid}`);
-        return AuditLogService['mockDatabase'].get(undefined)?.find(log => log.event_uuid === eventUuid) || null;
+        for (const logs of Array.from(AuditLogService.mockDatabase.values())) {
+            const found = logs.find((log: AuditLogSchema) => log.event_uuid === eventUuid);
+            if (found) return found;
+        }
+        return null;
     }
 
     // 경고: delete나 update 메소드는 이 서비스에 포함하지 않습니다. 무결성 유지가 핵심이기 때문입니다.

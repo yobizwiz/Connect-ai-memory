@@ -13,14 +13,20 @@
       "trigger_event": "핵심 외부 파트너사 시스템 장애 및 데이터 흐름 차단",
       "impact_metric": ["Downtime Duration (시간)", "Recovery Cost ($)"],
       "weighting_parameters": {
-        "data_dependency_score": 0.9,  // 핵심 프로세스에 필수적일수록 가중치 높음 (1.0이 최대 의존성)
-        "mitigation_level": 0.2,       // 현재 회사의 대응 수준 (낮을수록 위험 증가)
-        "historical_failure_frequency": "Medium" // 과거 실패 경험 기반 확률
+        "data_dependency_score": 0.9,
+        "_data_dependency_score_note": "핵심 프로세스에 필수적일수록 가중치 높음 (1.0이 최대 의존성)",
+        "mitigation_level": 0.2,
+        "_mitigation_level_note": "현재 회사의 대응 수준 (낮을수록 위험 증가)",
+        "historical_failure_frequency": "Medium",
+        "_historical_failure_frequency_note": "과거 실패 경험 기반 확률"
       },
       "financial_estimation": {
-        "estimated_max_fine_or_penalty": "$5M - $10M", // 계약 위반 및 손해배상 책임 예상치
-        "opportunity_loss_multiplier": 3.5,     // 정상 영업 이익 대비 최대 기회비용 배수 (매우 높음)
-        "minimum_business_days_impacted": 7  // 최소 마비 일수
+        "estimated_max_fine_or_penalty": "$5M - $10M",
+        "_estimated_max_fine_or_penalty_note": "계약 위반 및 손해배상 책임 예상치",
+        "opportunity_loss_multiplier": 3.5,
+        "_opportunity_loss_multiplier_note": "정상 영업 이익 대비 최대 기회비용 배수 (매우 높음)",
+        "minimum_business_days_impacted": 7,
+        "_minimum_business_days_impacted_note": "최소 마비 일수"
       }
     },
     {
@@ -30,14 +36,20 @@
       "trigger_event": "LLM 환각(Hallucination)으로 인한 잘못된 법률/재무 조언 제공 및 의사결정 유도",
       "impact_metric": ["Loss of Reputation Score (점)", "Direct Financial Loss ($)"],
       "weighting_parameters": {
-        "client_trust_factor": 0.95, // 전문직 컨설팅의 특성상 신뢰도가 극도로 중요함 (높은 가중치)
-        "verifiability_requirement": 1.0, // 모든 조언에 대한 완벽한 출처 증명 요구 (최대값)
-        "governance_checkpoints": "Missing" // 사후 감사/검증 단계의 부재가 위험도를 높임
+        "client_trust_factor": 0.95,
+        "_client_trust_factor_note": "전문직 컨설팅의 특성상 신뢰도가 극도로 중요함 (높은 가중치)",
+        "verifiability_requirement": 1.0,
+        "_verifiability_requirement_note": "모든 조언에 대한 완벽한 출처 증명 요구 (최대값)",
+        "governance_checkpoints": "Missing",
+        "_governance_checkpoints_note": "사후 감사/검증 단계의 부재가 위험도를 높임"
       },
       "financial_estimation": {
-        "estimated_max_fine_or_penalty": "$10M - $50M", // 법률 및 윤리 위반, 평판 손상에 따른 징계성 벌금 예상치 (최대값)
-        "opportunity_loss_multiplier": 4.0,     // 신뢰도 하락으로 인한 장기적 영업 기회 상실 배수
-        "minimum_business_days_impacted": "Lifetime" // 평생 지속될 수 있는 손상
+        "estimated_max_fine_or_penalty": "$10M - $50M",
+        "_estimated_max_fine_or_penalty_note": "법률 및 윤리 위반, 평판 손상에 따른 징계성 벌금 예상치 (최대값)",
+        "opportunity_loss_multiplier": 4.0,
+        "_opportunity_loss_multiplier_note": "신뢰도 하락으로 인한 장기적 영업 기회 상실 배수",
+        "minimum_business_days_impacted": "Lifetime",
+        "_minimum_business_days_impacted_note": "평생 지속될 수 있는 손상"
       }
     },
     {
@@ -47,14 +59,20 @@
       "trigger_event": "서로 다른 시스템 모듈 간 API 통신 오류, 버전 불일치(Version Drift)로 인한 프로세스 전반의 정지.",
       "impact_metric": ["System Uptime Loss (시간)", "복구 시간 비용 ($)"],
       "weighting_parameters": {
-        "system_interdependency_count": 5, // 연결된 필수 모듈 수 (많을수록 위험 증가)
-        "api_standardization_level": 0.4, // API 표준화 및 게이트웨이 유무 (낮으면 위험 높음)
-        "rollback_capability": "Low" // 이전 상태로 복구하는 능력의 부족
+        "system_interdependency_count": 5,
+        "_system_interdependency_count_note": "연결된 필수 모듈 수 (많을수록 위험 증가)",
+        "api_standardization_level": 0.4,
+        "_api_standardization_level_note": "API 표준화 및 게이트웨이 유무 (낮으면 위험 높음)",
+        "rollback_capability": "Low",
+        "_rollback_capability_note": "이전 상태로 복구하는 능력의 부족"
       },
       "financial_estimation": {
-        "estimated_max_fine_or_penalty": "$2M - $8M", // 서비스 중단에 따른 직접적 손해배상 및 위약금
-        "opportunity_loss_multiplier": 3.0,     // 시스템 다운타임으로 인한 즉각적인 매출 손실 배수
-        "minimum_business_days_impacted": 1 // 단 하루만 마비되어도 재앙적일 수 있음
+        "estimated_max_fine_or_penalty": "$2M - $8M",
+        "_estimated_max_fine_or_penalty_note": "서비스 중단에 따른 직접적 손해배상 및 위약금",
+        "opportunity_loss_multiplier": 3.0,
+        "_opportunity_loss_multiplier_note": "시스템 다운타임으로 인한 즉각적인 매출 손실 배수",
+        "minimum_business_days_impacted": 1,
+        "_minimum_business_days_impacted_note": "단 하루만 마비되어도 재앙적일 수 있음"
       }
     }
   ]

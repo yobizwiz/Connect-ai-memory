@@ -1,5 +1,6 @@
 // @ts-ignore - 테스트 환경에서 임포트 경로 오류 무시
 import { calculateRiskReport } from '@/services/risk_calculator_service';
+// @ts-ignore - 테스트 환경에서 임포트 경로 오류 무시
 import { RiskInputSchema, SimulationReport } from '@/types/RiskSimulationSchema';
 
 describe('🚨 E2E 통합 리스크 시뮬레이션 검증 (Structural Integrity Test)', () => {

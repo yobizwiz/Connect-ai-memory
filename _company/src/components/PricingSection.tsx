@@ -1,6 +1,14 @@
 import React from 'react';
 
-const PriceCard = ({ title, description, price, isRecommended, colorClass }) => (
+interface PriceCardProps {
+    title: string;
+    description: string;
+    price: number;
+    isRecommended: boolean;
+    colorClass: string;
+}
+
+const PriceCard = ({ title, description, price, isRecommended, colorClass }: PriceCardProps) => (
     <div className={`flex-1 p-8 rounded-xl shadow-2xl border-t-4 ${colorClass} transition duration-300 transform hover:scale-[1.02] bg-gray-800/70`}>
         {isRecommended && (
             <span className="inline-block mb-4 px-4 py-1 text-sm font-bold uppercase rounded-full bg-red-600 shadow-lg">

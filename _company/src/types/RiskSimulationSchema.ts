@@ -14,6 +14,7 @@ export type RiskState = 'Normal' | 'Yellow' | 'Red';
  * @property {object} details - 상세 경고 메시지 및 기술적 근거 제공.
  * @property {string} details.explanation - 리스크 발생의 핵심 이유 설명 (Why).
  * @property {number} details.severityScore - 0(최소)부터 100(최대)까지의 시스템 취약점 점수.
+ */
 export interface SimulationReport {
     state: RiskState;
     lossAmountUSD: number;
@@ -25,11 +26,10 @@ export interface SimulationReport {
     };
 }
 
-/**
- * @typedef {object} InputParameters
- * @property {number} complianceRate - 규정 준수율 (0.0 ~ 1.0).
- * @property {number} automationRatio - 프로세스 자동화 비율 (0.0 ~ 1.0).
- * @property {boolean} dataIntegrityCompromised - 데이터 무결성 침해 여부 (true/false).
- */
+export interface InputParameters {
+    complianceRate: number;
+    automationRatio: number;
+    dataIntegrityCompromised: boolean;
+}
 
 export interface RiskInputs extends InputParameters {}

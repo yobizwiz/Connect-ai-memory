@@ -29,7 +29,7 @@
  * @param {ComplianceCheckPayload} payload
  * @returns {Promise<GatekeeperWarningPayload>} The structured warning or pass status.
  */
-export const runComplianceSimulation = async (payload) => {
+export const runComplianceSimulation = async (payload: any) => {
     console.log("--- Starting Gatekeeper Compliance Simulation ---");
 
     // 1. Check for forced critical failure first (Sandbox/Test mode override)
@@ -72,7 +72,7 @@ export const runComplianceSimulation = async (payload) => {
  * @param {number} [score=100] - The calculated score, defaults to 100 for forced fail.
  * @returns {GatekeeperWarningPayload} Critical failure object.
  */
-const generateCriticalFailurePayload = (payload, score = 100) => ({
+const generateCriticalFailurePayload = (payload: any, score: number = 100) => ({
     warningLevel: 'CRITICAL',
     errorCode: 'C-999', // CRITICAL FAILURE CODE
     message: `🚨 [시스템 경고] 구조적 무결성 심각 결함 감지. 즉시 활동을 중단하고 전문가에게 자문을 구하십시오. (점수: ${score}%)`,
@@ -91,7 +91,7 @@ const generateCriticalFailurePayload = (payload, score = 100) => ({
 /**
  * Generates standard warning payload for non-critical but concerning risks.
  */
-const createStandardWarningPayload = (payload, message, score) => ({
+const createStandardWarningPayload = (payload: any, message: string, score: number) => ({
     warningLevel: 'HIGH',
     errorCode: 'C-700', 
     message: `⚠️ [경고] ${message} 수준의 위험 요소가 감지되었습니다. 즉각적인 구조 점검이 필요합니다.`,
@@ -111,14 +111,14 @@ const createStandardWarningPayload = (payload, message, score) => ({
 // --- STUB FUNCTIONS (Placeholder for real implementation) ---
 
 /** Placeholder function to calculate complex risk score. */
-const calculateSystemicRisk = (data) => {
+const calculateSystemicRisk = (data: any) => {
     // 실제 구현에서는 데이터 필드, 법규 DB 조회 등을 통해 0~100 사이의 점수를 계산합니다.
     console.warn("⚠️ [Warning] calculateSystemicRisk 함수는 Placeholder입니다. 실제 로직으로 대체 필요.");
     return Math.floor(Math.random() * 40) + 20; // Mock random score (20-60)
 };
 
 /** @returns {Promise<GatekeeperWarningPayload>} */
-export const getComplianceApiEndpoint = async (payload) => {
+export const getComplianceApiEndpoint = async (payload: any) => {
     // 실제 API 라우팅에서는 여기에 로직이 들어갑니다.
     return runComplianceSimulation(payload);
 }

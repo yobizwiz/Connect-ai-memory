@@ -31,7 +31,7 @@ export const useApiCall = <T>(apiCall: () => Promise<T>) => {
         error: null,
     });
 
-    const execute = useCallback(async (initialFailure?: ApiFailureType) => {
+    const execute = useCallback(async (initialFailure: ApiFailureType | null = null) => {
         setState({ data: null, loading: true, error: initialFailure });
         try {
             // 실제 API 호출 실행

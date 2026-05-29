@@ -1,5 +1,5 @@
-import { RiskCalculatorService } from '../services/RiskCalculatorService';
-import { RiskInputs, RiskState, WarningLevel } from '../services/types/risk_calculator_types';
+import { RiskCalculatorService } from '../RiskCalculatorService';
+import { RiskInputs, RiskState, WarningLevel } from '../types/risk_calculator_types';
 
 /**
  * @fileoverview RiskCalculatorService의 단위 테스트 케이스입니다.

@@ -29,7 +29,7 @@
  * @param {InputVariables} inputs - 필수 컴플라이언스 변수들.
  * @returns {CalculationResult} 최종 손실액과 상세 분석 결과.
  */
-export const calculateEstimatedLoss = (inputs) => {
+export const calculateEstimatedLoss = (inputs: any) => {
     // 1. 입력 유효성 검증 (Guard Clause)
     if (!inputs || inputs.dataSubjectCountN < 1 || !inputs.jurisdictionCode || !inputs.dataTypeClassification) {
         throw new Error("필수 컴플라이언스 변수가 누락되었습니다. 모든 필드를 채워주세요.");

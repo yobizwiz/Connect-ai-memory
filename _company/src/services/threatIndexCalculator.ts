@@ -30,7 +30,7 @@ export const calculateThreatIndex = async (answers: Record<string, 'yes' | 'no'>
     const MAX_SCORE = 20; // 최대 위험 점수 설정
 
     // [근거: Researcher가 제공한 체크리스트 구조를 기반으로 가중치 할당]
-    const scoringMap = {
+    const scoringMap: Record<string, { weight: number; description: string }> = {
         "q1_1": { weight: 5, description: "PII 유출은 최상위 리스크입니다. (High Impact)" }, // PII Leakage
         "q1_2": { weight: 3, description: "데이터 사일로 발생 위험." }, // Data Silo
         "q1_3": { weight: 4, description: "법적 근거 미비는 준전문가 책임 리스크를 야기합니다." }, // Compliance Failure

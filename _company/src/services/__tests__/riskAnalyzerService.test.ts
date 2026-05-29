@@ -1,5 +1,5 @@
 import { analyzeStructuralRisk, handlePaymentFailure } from '../riskAnalyzerService';
-import * as jest from '@jest/globals';
+import { jest } from '@jest/globals';
 
 // Mocking the API calls for isolated testing
 jest.mock('../riskAnalyzerService');

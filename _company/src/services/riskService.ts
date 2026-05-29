@@ -21,7 +21,7 @@
  * @param {RiskInputData} data - 시뮬레이션 입력 데이터
  * @returns {Record<string, number>} 6대 KPI 점수 객체
  */
-export function calculateKpis(data) {
+export function calculateKpis(data: any) {
     // --- [KPI Calculation Logic] ---
 
     // TRE (Total Risk Exposure): 미준수와 시스템 불안정성의 곱에 비례
@@ -59,7 +59,7 @@ export function calculateKpis(data) {
  * @param {RiskInputData} data - 시뮬레이션 입력 데이터
  * @returns {{riskLevel: 'GREEN' | 'YELLOW' | 'RED', indicators: Array<{kpi: string, value: number}>}}
  */
-export function determineRiskState(kpis, data) {
+export function determineRiskState(kpis: any, data: any) {
     let riskLevel = 'GREEN';
     const warningIndicators = [];
 
@@ -91,7 +91,7 @@ export function determineRiskState(kpis, data) {
  * @param {RiskInputData} input - 사용자가 제공하는 원시 데이터
  * @returns {Promise<RiskOutputData>} 구조화된 위험 보고서 객체
  */
-export async function getSystemicRiskReport(input) {
+export async function getSystemicRiskReport(input: any) {
     console.log(`[INFO] Analyzing risk report for Non-Compliance Score: ${input.regulatoryNonComplianceScore}`);
 
     // 1. KPI 계산 (Core Business Logic)

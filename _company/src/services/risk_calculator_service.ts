@@ -52,8 +52,8 @@ export const calculateRisk = async (inputs: RiskInputs): Promise<SimulationRepor
         title: `[${state}] 시스템 무결성 리스크 진단 보고서`,
         requiredActions: requiredActions,
         details: {
-            explanation: `현재 시스템은 ${state} 상태로 판단됩니다. 주된 취약점은 '${inputs.complianceRate < 0.9 ? '규정 준수율' : (inputs.automationRatio < 0.5 ? '자동화 미흡' : '데이터 무결성')}'에 있습니다. 이 공백을 메우지 않으면 잠재적 최대 손실액(${this.lossAmountUSD.toLocaleString()} USD)이 발생할 수 있습니다.`,
-            severityScore: Math.min(100, Math.round((totalLossAmountUSD / 500))); // 임의 점수 부여 로직
+            explanation: `현재 시스템은 ${state} 상태로 판단됩니다. 주된 취약점은 '${inputs.complianceRate < 0.9 ? '규정 준수율' : (inputs.automationRatio < 0.5 ? '자동화 미흡' : '데이터 무결성')}'에 있습니다. 이 공백을 메우지 않으면 잠재적 최대 손실액(${totalLossAmountUSD.toLocaleString()} USD)이 발생할 수 있습니다.`,
+            severityScore: Math.min(100, Math.round((totalLossAmountUSD / 500))) // 임의 점수 부여 로직
         }
     };
 

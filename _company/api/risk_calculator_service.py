@@ -96,7 +96,7 @@ def simulate_state_transition(initial_kpis: RiskKPI, steps: int = 3) -> RiskRepo
 # 이 코드는 FastAPI 애플리케이션의 라우터에 연결됩니다.
 # =============================================
 
-from fastapi import APIRouter, Body
+from fastapi import APIRouter, Body, HTTPException
 router = APIRouter()
 
 @router.post("/api/v1/risk_assessment", response_model=RiskReport)

@@ -12,7 +12,7 @@ const DashboardLayout: React.FC<{ data: CombinedDashboardData | null }> = ({ dat
     }
 
     // 데이터가 존재하는 경우에만 렌더링 로직 실행
-    const { status, level, treValue, pigScore, arsIndex, cdrRatio, ailFactor, ksdDeviation, message, isGlitchActive, stateLog } = data;
+    const { status, level, treValue, pigScore, arsIndex, cdrRatio, ailFactor, ksdDeviation, message, isGlitchActive, timestamp, previousStatus, newStatus, triggerReason } = data;
 
     return (
         <div className="p-8 bg-gray-50 min-h-screen">
@@ -58,7 +58,7 @@ const DashboardLayout: React.FC<{ data: CombinedDashboardData | null }> = ({ dat
                 </p>
                 <div className={`p-4 rounded ${status === 'CRITICAL' ? 'bg-red-100 border-l-4 border-red-500' : status === 'WARNING' ? 'bg-yellow-100 border-l-4 border-yellow-500' : 'bg-green-100 border-l-4 border-green-500'} transition-all`}>
                     <p className="font-semibold text-lg mb-1">{status} Zone 진입/유지</p>
-                    <p className='text-sm'>[${stateLog.timestamp}] ${stateLog.previousStatus ? `(Prev: ${stateLog.previousStatus})` : ''} $\to$ **${stateLog.newStatus}** | Trigger: ${stateLog.triggerReason}</p>
+                    <p className='text-sm'>[{timestamp}] {previousStatus ? `(Prev: ${previousStatus})` : ''} → **{newStatus}** | Trigger: {triggerReason}</p>
                 </div>
             </section>
 

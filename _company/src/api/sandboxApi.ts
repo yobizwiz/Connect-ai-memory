@@ -24,7 +24,7 @@ import { ThreatIndexPayload } from '../services/threatIndexCalculator';
  * @param {ThreatIndexPayload} payload - 프론트엔드에서 계산되어 전송된 위험 지수 페이로드.
  * @returns {Promise<SandboxApiResponse>} 샌드박스 응답 객체.
  */
-export const requestComplianceAudit = async (payload) => {
+export const requestComplianceAudit = async (payload: ThreatIndexPayload) => {
     console.log(`[SANDBOX] Receiving Threat Index Payload:`, payload);
 
     if (!payload || typeof payload.riskScore !== 'number') {

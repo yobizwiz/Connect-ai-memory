@@ -48,7 +48,7 @@ export class RiskCalculatorService {
         if (potentialMaxLossAmount >= Self.THRESHOLD_YELLOW) {
             // 위험 수준이 높으면 경고 레벨 상승
             currentState = RiskState.RED;
-            warningLevel = warningLevel === WarningLevel.CRITICAL ? warningLevel : WarningLevel.HIGH;
+            warningLevel = WarningLevel.HIGH;
             isCriticalTransition = true; // Red Zone 진입을 위한 플래그 설정
         } else if (potentialMaxLossAmount >= Self.THRESHOLD_NORMAL) {
             // 중간 수준 리스크는 Yellow 경고

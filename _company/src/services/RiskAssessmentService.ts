@@ -15,7 +15,7 @@ export type RiskLevel = 'GREEN' | 'YELLOW' | 'RED';
  */
 export const RiskAssessmentSchema = z.object({
     // 클라이언트가 제공하는 원본 컴플라이언스 데이터 셋.
-    complianceData: z.record(z.string().regex(/[A-Z]+/)), // 예: { "LFC": 0.8, "DORA": 0.2 }
+    complianceData: z.record(z.string().regex(/[A-Z]+/), z.number()), // 예: { "LFC": 0.8, "DORA": 0.2 }
     // 현재 분석이 시작되는 시점의 '기준' 리스크 레벨 (예: Yellow).
     previousLevel: z.enum(['GREEN', 'YELLOW']),
     // 평가를 실행할 특정 트랜잭션 또는 이벤트 ID. 감사 로그 추적에 필수적입니다.

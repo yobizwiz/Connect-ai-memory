@@ -1,7 +1,7 @@
 import json
 from typing import Dict, Any, List
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from fastapi import FastAPI, HTTPException  # pyrefly: ignore
+from pydantic import BaseModel  # pyrefly: ignore
 
 # ===============================================
 # 🚨 1. 리스크 가중치 상수 정의 (Constants & Weights)

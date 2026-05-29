@@ -50,7 +50,7 @@ const StatusGauge: React.FC<{ data: CombinedDashboardData }> = ({ data }) => {
 
                 {/* 상태 설명 */}
                 <p className={`mt-2 text-lg font-medium ${data.status === 'CRITICAL' ? 'animate-[text-glow_1s_infinite]' : ''}`}>
-                    {Math.round(data.treValue).toLocaleString() >= 1200 ? "🔴 생존 임박: 즉각적 구조가 필요합니다." : data.message}
+                    {Math.round(data.treValue) >= 1200 ? "🔴 생존 임박: 즉각적 구조가 필요합니다." : data.message}
                 </p>
             </GlitchEffect>
 
