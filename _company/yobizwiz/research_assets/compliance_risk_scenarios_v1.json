@@ -1,0 +1,102 @@
+{
+  "dataset_name": "Compliance Risk Scenarios Dataset",
+  "description": "운영 무결성(Operational Integrity) 실패로 인한 잠재적 최대 재무 손실액 (TRE)을 산정하기 위한 구조화된 시나리오 데이터셋. 모든 수치는 추정치이며, 실제 법규 및 사안별 변동성이 큼.",
+  "schema_version": "1.0",
+  "scenarios": [
+    {
+      "scenario_id": "S001",
+      "title": "PII 마스킹 실패로 인한 데이터 유출 (GDPR/CCPA 위반)",
+      "risk_category": "데이터 무결성 및 프라이버시 침해",
+      "governing_regulation": ["GDPR Article 32", "CCPA"],
+      "root_cause": "AI 학습 또는 분석 과정에서 민감 정보(PII)에 대한 전처리 마스킹(Masking) 로직 누락.",
+      "impact_severity": "Critical (최고 수준)",
+      "financial_loss_estimate": {
+        "penalty_type": "벌금 및 배상액",
+        "estimated_fine_range": "$15M - $20M+",
+        "calculation_basis": "전 세계 매출의 최대 4% 또는 €20M 중 높은 금액 (GDPR 기준)",
+        "additional_cost": "소송 비용, 평판 회복 비용 ($3M - $5M)"
+      },
+      "operational_impact": {
+        "system_failure_metric": "시스템 감사 보고서의 유효성 상실",
+        "description": "데이터 처리 파이프라인 전체가 일시 중단되며, 재발 방지 시스템 구축에 막대한 자원 투입 필요."
+      },
+      "triggering_event": "제3자 AI 모델을 통한 데이터 분석 결과 유출 시도 감지"
+    },
+    {
+      "scenario_id": "S002",
+      "title": "의료 기록 시스템의 오류 및 미보고 (HIPAA 위반)",
+      "risk_category": "전문 서비스 규제/개인 건강 정보(PHI) 침해",
+      "governing_regulation": ["HIPAA Security Rule"],
+      "root_cause": "전자의무기록(EMR) 시스템의 업데이트 과정에서 필수 보안 패치 누락 또는 인력 실수로 인한 접근 통제 실패.",
+      "impact_severity": "Critical (최고 수준)",
+      "financial_loss_estimate": {
+        "penalty_type": "벌금 및 운영 정지",
+        "estimated_fine_range": "$5M - $10M+",
+        "calculation_basis": "위반 심각도에 따른 계층적 벌금 부과 + 데이터 복구 비용",
+        "additional_cost": "운영 중단으로 인한 서비스 매출 손실 (최소 6개월분)"
+      },
+      "operational_impact": {
+        "system_failure_metric": "진료 기록의 법적 무효화 및 접근 불가 상태 초래",
+        "description": "법정 증거 자료로서 활용 불가능해지며, 환자 신뢰도 붕괴."
+      },
+      "triggering_event": "보안 취약점 공격 성공 및 내부 감사 추적이 원활하지 않음이 확인됨"
+    },
+    {
+      "scenario_id": "S003",
+      "title": "AI 모델의 허위 정보 생성으로 인한 명예훼손 (EU AI Act 위반 예상)",
+      "risk_category": "기술 윤리 및 법적 책임(Liability) 증대",
+      "governing_regulation": ["EU AI Act (Draft)", "명예훼손법"],
+      "root_cause": "LLM 기반의 자동 보고서 작성 시, 출처가 불분명하거나 사실과 다른 정보를 '확신'하며 제시하여 피해를 야기.",
+      "impact_severity": "High (높음)",
+      "financial_loss_estimate": {
+        "penalty_type": "민사상 손해배상 및 규제 벌금",
+        "estimated_fine_range": "$2M - $8M+",
+        "calculation_basis": "피해 규모(명예훼손 피해액)와 모델 개발사의 책임 비율에 따라 산정.",
+        "additional_cost": "법적 자문 비용, 명성 회복 캠페인 비용 ($1M)"
+      },
+      "operational_impact": {
+        "system_failure_metric": "AI 생성 아웃풋의 법적 근거 불확보로 인한 모든 보고서 무효화",
+        "description": "시스템 전체가 '검증된 사실'을 제시할 수 없다는 공포를 유발."
+      },
+      "triggering_event": "제공된 데이터 기반으로 작성된 자문/보고서가 제3자에게 심각한 피해를 준 경우"
+    },
+    {
+      "scenario_id": "S004",
+      "title": "프로세스 단계별 컴플라이언스 체크리스트 누락 (규정 미적용)",
+      "risk_category": "운영 프로세스의 구조적 결함(Compliance Drift)",
+      "governing_regulation": ["산업 표준/내부 감사 규정"],
+      "root_cause": "매뉴얼화된 필수 승인 절차나 법률 체크포인트가 사람이 기억에 의존하거나, 업무 워크플로우 자동화 과정에서 누락됨.",
+      "impact_severity": "Medium-High (중~고)",
+      "financial_loss_estimate": {
+        "penalty_type": "내부 감사가 발견한 부실 운영으로 인한 재작업 및 벌금",
+        "estimated_fine_range": "$500K - $3M+",
+        "calculation_basis": "재발 방지 시스템 구축 비용(핵심 지표) + 업무 중단 손실액.",
+        "additional_cost": "감사관의 재점검 요구에 따른 운영 비효율 발생."
+      },
+      "operational_impact": {
+        "system_failure_metric": "운영 프로세스 전체가 '인간의 실수를 보정'하는 임시 방편으로 전락.",
+        "description": "시스템 신뢰도의 근본적 훼손."
+      },
+      "triggering_event": "최종 승인 단계에서 필수 서류 또는 법적 고지(Disclaimer)가 누락된 케이스 발견."
+    },
+    {
+      "scenario_id": "S005",
+      "title": "데이터 주권 침해 및 국경 간 전송 위반 (Data Sovereignty)",
+      "risk_category": "국제 법규/지정학적 리스크",
+      "governing_regulation": ["GDPR Article 46", "각 국가의 데이터 거버넌스법"],
+      "root_cause": "특정 국가의 규제가 요구하는 데이터 저장 위치(Data Residency)를 무시하고, 클라우드 환경에서 데이터를 전송/저장함.",
+      "impact_severity": "High (높음)",
+      "financial_loss_estimate": {
+        "penalty_type": "국가 간 협정 위반 벌금",
+        "estimated_fine_range": "$8M - $12M+",
+        "calculation_basis": "데이터 주권 침해에 따른 국가 차원의 제재와 서비스 이용 금지 리스크.",
+        "additional_cost": "현지 법률 자문 및 데이터 이전 아키텍처 재구축 비용."
+      },
+      "operational_impact": {
+        "system_failure_metric": "특정 지역 시장에서의 사업 전개 자체가 원천 봉쇄됨 (Market Exit Risk).",
+        "description": "비즈니스 모델의 지리적 한계가 발생함."
+      },
+      "triggering_event": "데이터 국경 간 이동(Cross-border Transfer)에 대한 공식 감사 경고 수령."
+    }
+  ]
+}
