@@ -131,11 +131,20 @@ def main():
 
 ## 4) 한 줄 요약
 - 다음 영상의 핵심 컨셉을 한 문장으로
+
+[속도 및 분량 제한 지침] 로컬 GPU/CPU 환경의 빠른 실행과 타임아웃 방지를 위해, 장황한 서술이나 긴 문장을 일체 배제하고 300자 내외의 고밀도 요약 마크다운(Bullet points 위주)으로만 작성하세요. 핵심 뼈대 정보만 제공해야 합니다.
 """
     print("🧠 [LLM 분석 중...]")
     try:
         r = requests.post(f"{ollama_url}/api/generate",
-                          json={"model": model, "prompt": prompt, "stream": False},
+                          json={
+                              "model": model, 
+                              "prompt": prompt, 
+                              "stream": False,
+                              "options": {
+                                  "num_predict": 512
+                              }
+                          },
                           timeout=240)
         r.raise_for_status()
         brief = r.json().get("response", "").strip()
