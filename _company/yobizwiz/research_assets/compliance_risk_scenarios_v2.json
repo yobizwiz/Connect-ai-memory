@@ -1,0 +1,47 @@
+[
+  {
+    "regulation": "Digital Operational Resilience Act (DORA)",
+    "scope": "금융 서비스 제공자 및 핵심 인프라",
+    "pain_point": "IT 시스템 중단 및 운영 연속성 리스크 미관리",
+    "compliance_area": "운영 기술 리스크 관리(OTRM) / 위협 대응 계획",
+    "required_check": [
+      {"item": "사이버 사고 발생 시 비상 전력/시스템 백업 주기 검증", "severity": "Critical", "failure_impact_type": "Operational Downtime", "reference_clause": "Article 10"},
+      {"item": "제3자 공급망(Third-Party) 리스크 평가 및 계약적 통제 장치 확보", "severity": "High", "failure_impact_type": "Vendor Dependency Failure", "reference_clause": "Article 24"}
+    ],
+    "estimated_fine_mechanism": {
+      "description": "규정 준수 실패 시, 관련 규제 당국(예: 금융감독원)의 제재 및 최대 매출액 대비 일정 비율 벌금 부과 가능.",
+      "quantitative_impact": "$5M - $100M (규모에 따라 변동)",
+      "loss_driver": "Operational Downtime (운영 중단 비용 P_op)"
+    }
+  },
+  {
+    "regulation": "EU Artificial Intelligence Act (AI Act)",
+    "scope": "고위험(High-Risk) AI 시스템을 사용하는 모든 기업",
+    "pain_point": "투명성 및 안전성 요구사항 미충족으로 인한 법적 책임.",
+    "compliance_area": "시장 출시 전 적합성 평가 (Conformity Assessment)",
+    "required_check": [
+      {"item": "AI 시스템의 사용 목적, 성능 한계점(Limitation) 명확히 고지 및 기록", "severity": "Critical", "failure_impact_type": "Misuse & Liability", "reference_clause": "Article 13 (Transparency)"},
+      {"item": "데이터셋의 편향성(Bias) 정기 감사 및 적절한 보정 절차 마련", "severity": "High", "failure_impact_type": "Discriminatory Outcome", "reference_clause": "Annex III"}
+    ],
+    "estimated_fine_mechanism": {
+      "description": "고위험 AI 시스템 관련 규정 위반 시, 전 세계 연간 매출액 대비 최대 35%까지 벌금 부과 가능.",
+      "quantitative_impact": "최대 글로벌 매출의 35%",
+      "loss_driver": "Reputational Damage & Direct Fine (명예 실추 및 직접 벌금)"
+    }
+  },
+  {
+    "regulation": "GDPR / PII Protection",
+    "scope": "개인 정보 처리 프로세스를 갖는 모든 기업",
+    "pain_point": "AI 모델 학습 또는 분석 과정에서 PII 비식별화(Masking) 실패 및 유출.",
+    "compliance_area": "데이터 최소화 원칙 준수 (Data Minimization)",
+    "required_check": [
+      {"item": "PII 마스킹이 필수적인 데이터 전송/학습 파이프라인 구축", "severity": "Critical", "failure_impact_type": "Data Breach", "reference_clause": "Article 32"},
+      {"item": "데이터 주체(Subject)의 삭제권 및 이동권(Right to Erasure/Portability) 준수 프로세스 자동화", "severity": "High", "failure_impact_type": "Legal Mandate Failure", "reference_clause": "Article 17"}
+    ],
+    "estimated_fine_mechanism": {
+      "description": "최대 2,000만 유로 또는 전 세계 연간 매출액 대비 최대 4% 중 더 큰 금액.",
+      "quantitative_impact": "$20M - $200M+",
+      "loss_driver": "Legal Liability & Regulatory Fine (법적 책임 및 규제 벌금)"
+    }
+  }
+]

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useRouter } from 'next/router';
 
 interface ResultsReportProps {
   finalScore: number; // 최종 누적 리스크 점수 (0~9)
@@ -9,6 +10,8 @@ interface ResultsReportProps {
  * 사용자가 제출한 최종 점수에 기반하여, 공포와 긴급성을 극대화하는 보고서를 출력합니다.
  */
 const ResultsReport: React.FC<ResultsReportProps> = ({ finalScore }) => {
+  const router = useRouter();
+
   // 📈 점수별 리스크 레벨 정의 (공포감 최대화)
   let levelName: string;
   let alertColorClass: string;
@@ -53,6 +56,7 @@ const ResultsReport: React.FC<ResultsReportProps> = ({ finalScore }) => {
         <p className='mb-6'>이 점수는 단순한 진단 결과가 아닙니다. 현재 비즈니스가 직면한 '시스템적 생존 위협'의 정량화된 수치입니다.</p>
         {/* 최종 CTA 버튼 */}
         <button 
+            onClick={() => router.push('/PaymentGate')}
             className="px-12 py-4 text-xl font-bold bg-[#C0392B] hover:bg-red-700 transition duration-300 rounded-full shadow-lg shadow-red-900/50"
         >
             Compliance Gateway Pro 전문가에게 문의하기 (지금 당장)

@@ -24,6 +24,7 @@ const QuizPage: React.FC<QuizPageProps> = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<UserAnswers>({}); // { QID: A/B/C }
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   // 🚀 UTM 파라미터 추출 및 로깅 (진단 시작 시점 트래킹)
   React.useEffect(() => {
@@ -92,6 +93,7 @@ const QuizPage: React.FC<QuizPageProps> = () => {
         // 최종 점수와 답변 데이터를 Props로 넘겨 ResultsReport 컴포넌트가 받게 됩니다.
         console.log(`[System] Final Risk Score Calculated: ${finalScore}`);
         setIsLoading(false);
+        setIsSubmitted(true);
 
         // 실제 환경에서는 history.push('/report?score=' + finalScore) 와 같이 라우팅을 사용합니다.
     }, 2000);
@@ -102,6 +104,21 @@ const QuizPage: React.FC<QuizPageProps> = () => {
 
   if (isLoading) {
     return <div className="flex justify-center items-center min-h-screen text-red-500">Analyzing Systemic Vulnerabilities... Please wait.</div>;
+  }
+
+  if (isSubmitted) {
+    const finalScore = calculateTotalScore();
+    return (
+      <div className="min-h-screen bg-[#1A1A1A] text-white p-8 font-inter">
+        <header className="text-center mb-12 border-b border-[#3A3A3A] pb-6">
+          <h1 className="text-4xl font-extrabold text-red-500 tracking-wider">Compliance Gateway Pro</h1>
+          <p className="text-lg mt-2 text-gray-400">Systemic Survival Threat Assessment V.2.1</p>
+        </header>
+        <div className="max-w-4xl mx-auto">
+          <ResultsReport finalScore={finalScore} />
+        </div>
+      </div>
+    );
   }
 
   const currentQuestion = allQuizQuestions[currentQuestionIndex];
