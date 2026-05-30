@@ -34,34 +34,34 @@ export const useMockRiskStream = () => {
 
             // 시뮬레이션 목표: Normal -> Warning -> Critical 순으로 TRE를 급격히 증가시킴
             if (currentTRE < T_YELLOW * 0.8) {
-                // Phase 1: Normal Zone (점진적 상승)
+                // Phase 1: Normal Zone (점진적 상승) - baseline status
                 nextStatePayload = {
                     ...currentState,
                     treValue: Math.min(T_YELLOW - 50, currentTRE + Math.floor(Math.random() * 150)), // Yellow 근처까지 느리게 증가
-                    message: `Normal operation. Current $TRE$: ${Math.round(currentTRE)}`,
+                    message: "✅ [BASELINE STATUS]: 사각지대에 잠재적 규제 노출 리스크가 상존합니다. 선제적 통제 프로세스를 필수적으로 확보하십시오.",
                     status: 'NORMAL', level: 1, isGlitchActive: false
                 };
                 newLog = { timestamp: new Date().toISOString(), previousStatus: 'NORMAL', newStatus: 'NORMAL', triggerReason: 'Normal fluctuation' };
 
             } else if (currentTRE >= T_YELLOW * 0.8 && currentTRE < T_RED - 300) {
-                // Phase 2: Yellow Zone 진입 및 유지 (경계 인식 유도)
+                // Phase 2: Yellow Zone 진입 및 유지 (경계 인식 및 손실 방지 요구)
                 nextStatePayload = {
                     ...currentState,
                     treValue: Math.min(T_RED - 100, currentTRE + Math.floor(Math.random() * 350)), // 경고 수준으로 급격히 증가
-                    message: `⚠️ WARNING! Yellow Zone 진입 감지. $TRE$가 임계치에 근접합니다.`,
+                    message: "⚠️ [WARNING ZONE]: 잠재적 컴플라이언스 드리프트 감지! 지체 시 최소 $L_{min}$ ($50,000+)의 손실이 예견됩니다. 선제적 보강 설계를 즉시 개입하십시오.",
                     status: 'WARNING', level: 2, isGlitchActive: true // Glitch 활성화 시작
                 };
-                newLog = { timestamp: new Date().toISOString(), previousStatus: 'NORMAL', newStatus: 'WARNING', triggerReason: `TRE가 ${T_YELLOW}을 초과하여 경계 인식` };
+                newLog = { timestamp: new Date().toISOString(), previousStatus: 'NORMAL', newStatus: 'WARNING', triggerReason: `TRE가 ${T_YELLOW}을 초과하여 경계 인식 및 $L_min 위협 확인` };
 
             } else {
-                // Phase 3: Red Zone 진입 (시스템적 위협 체감)
+                // Phase 3: Red Zone 진입 (시스템적 생존 위협 체감 및 강제 조치)
                 nextStatePayload = {
                     ...currentState,
                     treValue: Math.min(1500, currentTRE + Math.floor(Math.random() * 600)), // 위험 수준으로 폭발적 증가
-                    message: `🚨 CRITICAL RED ZONE! 시스템 생존 위협 감지! 즉각적인 조치가 필요합니다.`,
+                    message: "🚨 [CRITICAL RED ZONE]: PII 비식별화 실패 및 AI 환각 책임 전가 감지! 최대 $L_{max}$ ($20,000,000+)의 재정 손실 위험에 노출되어 규정 위반에 해당합니다. 이것은 옵션이 아닙니다. 구조 무결성 방어벽을 즉시 활성화하고 복구 조치를 즉시 수행해야 합니다!",
                     status: 'CRITICAL', level: 3, isGlitchActive: true // Glitch 유지 및 강조
                 };
-                newLog = { timestamp: new Date().toISOString(), previousStatus: 'WARNING', newStatus: 'CRITICAL', triggerReason: `TRE가 ${T_RED}을 돌파하여 시스템적 위험 발생` };
+                newLog = { timestamp: new Date().toISOString(), previousStatus: 'WARNING', newStatus: 'CRITICAL', triggerReason: `TRE가 ${T_RED}을 돌파하여 시스템적 무효화 위협 및 $L_max 강제 진입` };
             }
 
             // KPI 값들은 상태에 따라 다르게 움직이게 설정 (시뮬레이션)

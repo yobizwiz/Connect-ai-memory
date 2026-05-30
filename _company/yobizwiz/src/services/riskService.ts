@@ -35,7 +35,7 @@ export const calculateLmaxScore = (userData: UserInputData): number => {
 
 /**
  * @description Lmax 점수를 기반으로 Paywall 상태를 결정하고 메시지를 생성합니다.
- * 현빈님의 비즈니스 로직을 구현합니다. (Critical/Alert/Compliant)
+ * 현빈님의 비즈니스 로직 및 작가의 설득력 높은 행동경제학적 명령조 가이드를 구현합니다. (Critical/Alert/Compliant)
  * @param score - 계산된 총 위험 노출도 점수 (0~100).
  * @returns { status: PaywallStatus, message: string }
  */
@@ -47,17 +47,17 @@ export const determinePaywallStatus = (score: number): {
   let message: string;
 
   if (score >= 80) {
-    // Critical Zone: 공포 유발, 즉각적 개입 강제.
+    // Critical Zone: 공포 유발, 즉각적 개입 강제. (Mandate Tone 반영)
     status = 'RED_CRITICAL';
-    message = "🚨 CRITICAL FAILURE ZONE: 현재 비즈니스 구조가 심대한 위협에 노출되어 있습니다. 즉시 전문 진단 및 해결책이 필요합니다. (Lmax 기반)";
+    message = "🚨 [CRITICAL FAILURE ZONE]: PII 비식별화 실패 및 AI 환각 책임 전가 위협 감지! 현재 비즈니스 구조가 심대한 위협에 노출되어 규정 위반에 해당합니다. 최대 $L_{max} ($20,000,000+)의 파국적인 재정적 벌금 소송 소멸 위협을 즉시 제거해야 합니다. 이것은 옵션이 아닙니다. 구조 무결성 복구 및 방어벽 구축을 즉시 수행해야 합니다!";
   } else if (score >= 50) {
     // Alert Zone: 경고, 행동 촉구.
     status = 'YELLOW_ALERT';
-    message = "⚠️ ALERT ZONE: 잠재적인 구조적 결함(Structural Gap)이 감지되었습니다. 미검증 리스크를 포착하고 개선해야 합니다.";
+    message = "⚠️ [ALERT ZONE]: 잠재적 컴플라이언스 드리프트 및 구조적 결함(Structural Gap) 감지! 지체 시 최소 $L_{min} ($50,000+)의 재무 손실이 예견됩니다. 선제적 통제 설계를 즉시 개입하고, 미검증 사각지대 리스크를 필수적으로 확보하십시오!";
   } else {
     // Compliant Zone: 안도감과 동시에 경계심 부여 (사각지대 경고).
     status = 'GREEN_COMPLIANT';
-    message = "✅ BASELINE STATUS: 현재는 안정적이나, 잠재적인 사각지대에 리스크가 존재합니다. 선제적 관리가 필요합니다.";
+    message = "✅ [BASELINE STATUS]: 현재 상태는 임시 안정 구역이나, 사각지대에 잠재 리스크가 상존합니다. 규정 위반에 따른 무효화 위험 요소를 선제적으로 진단하고, 방어 프로세스를 필수적으로 확보하십시오.";
   }
 
   return { status, message };

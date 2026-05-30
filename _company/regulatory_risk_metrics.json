@@ -1,0 +1,100 @@
+{
+  "metadata": {
+    "dataset_name": "Global_Compliance_Risk_Metrics",
+    "version": "1.0.0",
+    "description": "B2B 서비스의 잠재적 법적/운영적 리스크에 따른 재무적 최대 손실액(Lmax)을 계산하기 위한 핵심 규제 지표 데이터셋.",
+    "source_protocol": "[근거: AEDE Protocol & Researcher 개인 메모리]"
+  },
+  "risk_scenarios": [
+    {
+      "scenario_id": "SCN_001",
+      "name": "GDPR (개인정보 처리 위반)",
+      "regulation": "General Data Protection Regulation (EU, GDPR)",
+      "trigger_root_cause": "사용자의 동의 없는 데이터 국외 전송 및 목적 외 활용.",
+      "risk_level": "CRITICAL",
+      "loss_metrics": {
+        "tier1_penalty": {
+          "description": "가장 낮은 심각도의 위반 (예: 절차적 미흡).",
+          "range_formula": "최대 €1,000만 OR 글로벌 매출의 2% 중 큰 값",
+          "provenance": "[근거: AEDE Protocol]"
+        },
+        "tier2_penalty": {
+          "description": "가장 심각한 위반 (예: 동의 없는 민감 정보 처리).",
+          "range_formula": "최대 €2,000만 OR 글로벌 매출의 4% 중 큰 값",
+          "provenance": "[근거: AEDE Protocol]"
+        }
+      },
+      "calculation_guide": "실제 벌금은 '위반 데이터 건수'와 '비즈니스 규모(매출액)'에 가중치 적용 필요."
+    },
+    {
+      "scenario_id": "SCN_002",
+      "name": "PII 유출 및 비식별화 실패",
+      "regulation": "HIPAA / CCPA (미국)",
+      "trigger_root_cause": "비식별화(Masking) 누락 또는 데이터 주권 위반에 따른 민감 정보 노출.",
+      "risk_level": "CRITICAL",
+      "loss_metrics": {
+        "direct_statutory_damage": {
+          "description": "개인당 법적 손해배상금 (CCPA 기준).",
+          "range_formula": "최소 $100/건 ~ 최대 $750/건 (과실/고의에 따라 차등)",
+          "provenance": "[근거: AEDE Protocol]"
+        },
+        "regulatory_fine": {
+          "description": "규제 기관의 과징금 (HIPAA 기준).",
+          "range_formula": "최소 $50,000/사건 ~ 최대 $2M+ (Willful Neglect 누적)",
+          "provenance": "[근거: AEDE Protocol]"
+        },
+        "operational_impact": {
+          "description": "데이터 재구축 및 법무 대응 비용.",
+          "estimate_range": "$50K ~ $2M+",
+          "provenance": "[근거: Researcher 개인 메모리 (PII_Leakage_Index)]"
+        }
+      },
+      "calculation_guide": "총 손실액 = (개인당 피해 X 건수) + 벌금 + 운영 비용."
+    },
+    {
+      "scenario_id": "SCN_003",
+      "name": "AI 환각 및 출처 부재 책임 전가",
+      "regulation": "EU AI Act / 일반 민법 (신규 리스크)",
+      "trigger_root_cause": "LLM이 근거 없는 허위 정보(Hallucination)를 생성하고, 이를 의사결정의 기초 자료로 사용함.",
+      "risk_level": "CRITICAL",
+      "loss_metrics": {
+        "estimated_liability_range": {
+          "description": "준전문가 배상 책임 및 명예/신뢰도 하락에 대한 추정치.",
+          "formula": "$5,000,000 ~ $20,000,000",
+          "provenance": "[근거: Researcher 개인 메모리 (Source_Attribution_Deficit)]"
+        },
+        "compliance_drift_component": {
+          "description": "AI 사용 과정에서의 검증(Provenance) 부재로 인한 시스템적 위험.",
+          "formula": "$100,000 ~ $5,000,000",
+          "provenance": "[근거: AEDE Protocol]"
+        },
+        "intangible_loss": {
+          "description": "명예 실추 및 시장 신뢰도 하락 (정량화 어려움).",
+          "estimate_range": "최대 $10M 이상",
+          "provenance": "[근거: Researcher 개인 메모리]"
+        }
+      },
+      "calculation_guide": "손실액을 산출할 때는 '벌금' 외에 '신뢰도 하락으로 인한 기회비용'을 반드시 포함해야 함."
+    },
+     {
+      "scenario_id": "SCN_004",
+      "name": "컴플라이언스 절차 누락 (Compliance Drift)",
+      "regulation": "산업 표준 및 계약법 (General Operational Risk)",
+      "trigger_root_cause": "필수 감사 체크포인트(Critical Checkpoint) 누락 또는 문서화 미비.",
+      "risk_level": "HIGH",
+      "loss_metrics": {
+        "project_rework_cost": {
+          "description": "프로젝트 재시작 비용 및 시간 손실.",
+          "estimate_range": "$500K ~ $2M",
+          "provenance": "[근거: Researcher 개인 메모리 (Compliance_Drift_Score)]"
+        },
+        "contractual_penalty": {
+          "description": "계약 위반 및 지연에 따른 패널티.",
+          "estimate_range": "$100K ~ $5M",
+          "provenance": "[근거: AEDE Protocol]"
+        }
+      },
+      "calculation_guide": "시간당 손실률을 곱하여 누적 최대 재무 손실액(TRE)을 추정."
+    }
+  ]
+}
