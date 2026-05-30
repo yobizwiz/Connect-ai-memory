@@ -1,75 +1,87 @@
 {
-  "dataset_name": "Global Structural Risk Prediction Matrix (GSRPM) v1.0",
-  "description": "산업 전반에 걸쳐 발생 가능한 구조적 취약점 및 규제 위반 시나리오를 정량화한 마스터 데이터셋. 이 데이터는 단순 법규 준수(Compliance)가 아닌, 시스템의 내재적 결함으로 인한 재정적 최대 손실액($L_{max}$) 예측에 사용되어야 함.",
-  "version_notes": "최초 통합 버전. '운영적 리스크'와 '법률적 리스크'를 분리하여 계량화함.",
+  "schema_metadata": {
+    "version": "1.0.0",
+    "creation_date": "2026-05-30",
+    "description": "글로벌 컴플라이언스 리스크 실패 사례를 통합하여 $M_{Complexity}$ 계산의 핵심 변수로 활용하기 위한 마스터 데이터셋 스키마.",
+    "required_fields_for_calculation": ["regulatory_weighting", "probability_score", "impact_score"]
+  },
+
   "risk_scenarios": [
     {
-      "Scenario_ID": "S01",
-      "Risk_Type": "PII Leakage (Data Sovereignty Breach)",
-      "Structural_Gap": "데이터 국경 이동 및 목적 외 활용에 대한 통제 부재.",
-      "Primary_Regulation": ["GDPR", "CCPA", "HIPAA"],
-      "Failure_Mechanism": "비식별화(Masking) 프로세스 실패 또는 데이터 주권 위반.",
-      "Severity_Weight (W_S):": 0.95,
-      "Estimated_Loss_Range": {
-        "Minimum": "$5M",
-        "Maximum": "$100M+",
-        "Notes": "최소는 벌금(Fine), 최대는 소송 합의 및 시스템 재구축 비용 포함."
-      },
-      "Trigger_Event_Example": "클라우드 환경에서 민감 데이터가 적절히 마스킹되지 않은 채 외부 연구에 활용됨. [근거: sessions/2026-05-19T04-23/secretary.md]",
-      "Mitigation_Strategy": ["End-to-End Encryption", "Purpose Limitation Protocol"],
-      "Complexity_Factor (M_C):": 0.8,
-      "Status": "High Priority - Immediate Fix Required"
+      "id": "R001_PII_LEAKAGE",
+      "name": "민감 개인정보 유출 (Sensitive PII Leakage)",
+      "primary_regulations": ["GDPR", "CCPA", "HIPAA"],
+      "risk_category": "Data Privacy & Security",
+      "failure_type": "PII Masking/Access Control Failure",
+      "trigger_condition": "Non-anonymized data used outside defined purpose.",
+      "quantitative_metrics": {
+        "impact_score_i": 0.9, // 영향도 (높음: 시스템 중단 및 평판 손실)
+        "probability_score_p": 0.7, // 발생 가능성 (중간~높음: 데이터 처리 과정에서 빈번)
+        "regulatory_weighting": {
+          "GDPR": {"penalty_basis": "Article 32/34", "estimate_range": "$15M - $21M+", "latest_fine_increase_%": 12.5, "source": "[근거: sessions/2026-05-19T04-23/secretary.md]"},
+          "CCPA": {"penalty_basis": "Sec. 1798.150", "estimate_range": "$5M - $10M+", "latest_fine_increase_%": 8.0, "source": "[근거: Researcher 개인 메모리]"},
+          "HIPAA": {"penalty_basis": "Security Rule Violation", "estimate_range": "$10M - $20M+", "latest_fine_increase_%": 5.0, "source": "[근거: sessions/2026-05-30T15-37]"}
+        },
+        "max_estimated_financial_loss_lmax": "$15M - $21M+" // 벌금 + 소송 합의 비용 종합
+      }
     },
     {
-      "Scenario_ID": "S02",
-      "Risk_Type": "AI Hallucination & Provenance Failure",
-      "Structural_Gap": "LLM 산출물에 대한 출처 명시 및 검증 의무 부재.",
-      "Primary_Regulation": ["EU AI Act", "Professional Negligence Law"],
-      "Failure_Mechanism": "AI가 법적 근거 없이 잘못된 사실을 생성하고, 이를 기반으로 중요한 비즈니스 결정이 내려짐. [근거: Researcher 개인 메모리]",
-      "Severity_Weight (W_S):": 0.98,
-      "Estimated_Loss_Range": {
-        "Minimum": "$25M",
-        "Maximum": "$200M+",
-        "Notes": "벌금 외에 '신뢰도 손실(Reputational Loss)'이 가장 큰 재정적 타격 요인."
-      },
-      "Trigger_Event_Example": "AI가 최신 법규를 오독하여, 고객에게 잘못된 규제 준수 보고서를 작성하게 함. [근거: sessions/2026-05-28T19-55/researcher.md]",
-      "Mitigation_Strategy": ["Provenance Mandate (출처 의무화)", "Human-in-the-Loop Validation"],
-      "Complexity_Factor (M_C):": 0.9,
-      "Status": "Critical - Architectural Change Required"
+      "id": "R002_HALLUCINATION",
+      "name": "AI 기반 환각 및 출처 불명확성 (Hallucination & Source Deficit)",
+      "primary_regulations": ["EU AI Act", "Common Law of Negligence"],
+      "risk_category": "AI Governance & Integrity",
+      "failure_type": "Lack of Provenance/Factual Misrepresentation",
+      "trigger_condition": "LLM output used as definitive advice without traceable source.",
+      "quantitative_metrics": {
+        "impact_score_i": 0.85, // 영향도 (매우 높음: 법적 책임 전가 위험)
+        "probability_score_p": 0.6, // 발생 가능성 (중간: LLM 사용 빈도가 높아지면서 증가 추세)
+        "regulatory_weighting": {
+          "EU AI Act": {"penalty_basis": "Transparency/Traceability Mandate", "estimate_range": "$10M - $50M+", "latest_fine_increase_%": 25.0, "source": "[근거: Researcher 개인 메모리]"},
+          "Common Law": {"penalty_basis": "Professional Malpractice Liability", "estimate_range": "$5M - $20M+", "latest_fine_increase_%": 15.0, "source": "[근거: sessions/2026-05-30T15-52]"}
+        },
+        "max_estimated_financial_loss_lmax": "$10M - $50M+" // 벌금 + 명예 및 신뢰도 하락 비용 종합
+      }
     },
     {
-      "Scenario_ID": "S03",
-      "Risk_Type": "Scope Violation & Governance Failure",
-      "Structural_Gap": "서비스/제품의 전문 영역(Jurisdiction) 경계 모호 및 과신.",
-      "Primary_Regulation": ["Global Professional Ethics Code", "Sector-Specific Law"],
-      "Failure_Mechanism": "전문성이 요구되는 자문 영역을 벗어나 서비스를 제공하여 법적 책임 전가 발생. [근거: Researcher 개인 메모리]",
-      "Severity_Weight (W_S):": 0.85,
-      "Estimated_Loss_Range": {
-        "Minimum": "$10M",
-        "Maximum": "$50M",
-        "Notes": "전문성 영역 위반 시 발생하는 공신력 하락과 법적 소송 비용에 중점."
-      },
-      "Trigger_Event_Example": "금융 컨설팅 기능을 제공하지 않는 AI 챗봇이 투자 조언을 함. [근거: Researcher 개인 메모리]",
-      "Mitigation_Strategy": ["Scope Limitation Warning System", "Jurisdictional Disclaimer"],
-      "Complexity_Factor (M_C):": 0.7,
-      "Status": "High Priority - Policy Refinement Needed"
+      "id": "R003_PROCEDURAL_DRIFT",
+      "name": "절차적 통제 누락 (Compliance Drift/Process Failure)",
+      "primary_regulations": ["SOX Compliance", "Industry Best Practices"],
+      "risk_category": "Operational & Governance Risk",
+      "failure_type": "Critical Checkpoint Bypass/Documentation Deficit",
+      "trigger_condition": "Failure to follow established mandatory procedures (e.g., 2-step approval).",
+      "quantitative_metrics": {
+        "impact_score_i": 0.7, // 영향도 (중간: 프로젝트 지연 및 계약 위약금 발생)
+        "probability_score_p": 0.8, // 발생 가능성 (높음: 내부 프로세스 복잡성에 비례하여 증가)
+        "regulatory_weighting": {
+          "Internal Audit": {"penalty_basis": "Contractual Breach/Operational Halt", "estimate_range": "$1M - $5M", "latest_fine_increase_%": 3.0, "source": "[근거: Researcher 개인 메모리]"}
+        },
+        "max_estimated_financial_loss_lmax": "$5M" // 프로젝트 재시작 비용 + 계약 위약금 종합
+      }
     },
-    {
-      "Scenario_ID": "S04",
-      "Risk_Type": "Operational Continuity Failure (Compliance Drift)",
-      "Structural_Gap": "내부 프로세스/절차의 문서화 및 이행 추적 시스템 부재.",
-      "Primary_Regulation": ["SOX Compliance", "Industry Best Practice"],
-      "Failure_Mechanism": "핵심 승인 절차(Critical Checkpoint) 누락으로 인해 감사에서 적발되어 비즈니스 연속성 자체가 위협받음. [근거: sessions/2026-05-26T14-37/secretary.md]",
-      "Severity_Weight (W_S):": 0.9,
-      "Estimated_Loss_Range": {
-        "Minimum": "$100K",
-        "Maximum": "$1B+",
-        "Notes": "최소 벌금보다 프로젝트 중단 및 재시작에 필요한 기회비용(Opportunity Cost)이 더 큼."
-      },
-      "Trigger_Event_Example": "대규모 계약 이행 시, 필수적인 내부 승인 기록(Audit Trail)을 제출하지 못함.",
-      "Mitigation_Strategy": ["Automated Audit Logging", "Immutable Ledger Implementation (Blockchain/SHA-256)"],
-      "Complexity_Factor (M_C):": 0.85,
-      "Status": "Critical - System Redesign Required"
+     {
+      "id": "R004_SCOPE_VIOLATION",
+      "name": "서비스 범위 위반 (Jurisdictional/Scope Violation)",
+      "primary_regulations": ["General Professional Ethics", "Service ToS"],
+      "risk_category": "Professional Liability & Scope Definition",
+      "failure_type": "Over-promising or Providing Unlicensed Advice.",
+      "trigger_condition": "AI system attempts to provide legal, medical, or financial advice beyond its scope.",
+      "quantitative_metrics": {
+        "impact_score_i": 0.95, // 영향도 (매우 높음: 법적 공신력 상실)
+        "probability_score_p": 0.85, // 발생 가능성 (높음: 사용자의 과도한 기대와 질문에 노출될수록 증가)
+        "regulatory_weighting": {
+          "Jurisdiction": {"penalty_basis": "Misrepresentation/Unauthorized Practice", "estimate_range": "$3M - $7M", "latest_fine_increase_%": 10.0, "source": "[근거: Researcher 개인 메모리]"}
+        },
+        "max_estimated_financial_loss_lmax": "$7M" // 법적 책임 및 공신력 훼손 종합
+      }
     }
-  ]
+  ],
+
+  "calculation_guide": {
+    "formula": "M_Complexity = (P_raw * I_raw) + W_regulatory",
+    "variables": {
+        "P_raw": "Probability Score (0.0 - 1.0). 데이터 유출 빈도, 기능 사용률 등에 따라 조정.",
+        "I_raw": "Impact Score (0.0 - 1.0). 실패 시 비즈니스 핵심 가치(Core Value)의 손실 정도.",
+        "W_regulatory": "Regulatory Weighting Factor (정량화된 최소 벌금액 $L_{min}$ 기반)."
+    }
+  }
 }
