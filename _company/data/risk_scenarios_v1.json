@@ -1,0 +1,67 @@
+[
+  {
+    "risk_id": "R001",
+    "risk_name": "AI 환각 기반 책임 전가 (Hallucination Liability)",
+    "trigger_trend": "Generative AI 사용의 보편화",
+    "structural_violation": "Provenance Mandate 위반",
+    "lmax_calculation": {
+      "component1": "준전문가 배상 책임 (Expert Liability): $5M~20M",
+      "component2": "신뢰도 하락 및 명예 손실: 가중치 3.0 (비재무적)",
+      "total_lmax_estimate": "$5,000,000 - $20,000,000+"
+    },
+    "required_mitigation": "AI 산출물에 대한 출처 기록 및 검증 시스템 의무화 (Audit Trail)",
+    "target_audience_pain": "내부 자료의 법적 효력 상실"
+  },
+  {
+    "risk_id": "R002",
+    "risk_name": "데이터 주권 위반으로 인한 운영 정지",
+    "trigger_trend": "글로벌 시장 진출 및 데이터 국경 이동",
+    "structural_violation": "Data Sovereignty Breach",
+    "lmax_calculation": {
+      "component1": "규제 벌금 (Regulatory Fine): $100M - $500M+",
+      "component2": "운영 중단 손실 (Downtime Loss): 가중치 4.0 (시스템적)",
+      "total_lmax_estimate": "$1억 - 수억 달러+"
+    },
+    "required_mitigation": "지역별 데이터 로컬라이제이션 아키텍처 구축 및 자동화된 컴플라이언스 체크포인트 시스템",
+    "target_audience_pain": "시장 진출 계획의 전면 취소"
+  },
+  {
+    "risk_id": "R003",
+    "risk_name": "Deepfake 기반 공신력 붕괴 (Reputational Collapse)",
+    "trigger_trend": "합성 미디어(Synthetic Media) 기술의 상업화",
+    "structural_violation": "Identity Integrity Failure",
+    "lmax_calculation": {
+      "component1": "소송 및 법적 대응 비용: $10M - $50M+",
+      "component2": "브랜드 가치 하락 (Intangible Asset Loss): 가중치 5.0 (최대)",
+      "total_lmax_estimate": "$1,000만 - 수천만 달러+"
+    },
+    "required_mitigation": "디지털 신원 검증 시스템 및 사후 위기 대응 프로토콜 구축",
+    "target_audience_pain": "브랜드 가치의 회복 불가능성"
+  },
+  {
+    "risk_id": "R004",
+    "risk_name": "그린워싱 법적 책임 (Greenwashing Liability)",
+    "trigger_trend": "ESG 및 지속 가능한 투자 요구 증대",
+    "structural_violation": "Misrepresentation of Core Value",
+    "lmax_calculation": {
+      "component1": "기만 광고 및 허위 진술 벌금: $100M - 수십억 달러",
+      "component2": "투자자 신뢰 상실 (Trust Erosion): 가중치 4.5 (장기적)",
+      "total_lmax_estimate": "$1억 - 다단계 재무 손실"
+    },
+    "required_mitigation": "제3자 검증 기반의 데이터 보고 시스템 도입 및 투명한 측정 기준 확립",
+    "target_audience_pain": "투자금 회수 및 시장 퇴출 위험"
+  },
+  {
+    "risk_id": "R005",
+    "risk_name": "원격 근무 환경의 통제 불능 데이터 유출",
+    "trigger_trend": "하이브리드/분산형 업무 모델 확산",
+    "structural_violation": "Endpoint Security Failure / Compliance Drift",
+    "lmax_calculation": {
+      "component1": "PII 유출에 따른 벌금 및 소송: $5M - $1B+",
+      "component2": "내부 감사 실패로 인한 업무 중단: 가중치 3.5 (운영적)",
+      "total_lmax_estimate": "$500만 - 수억 달러+"
+    },
+    "required_mitigation": "제로 트러스트 아키텍처(Zero Trust Architecture) 및 중앙 집중식 접근 제어 시스템",
+    "target_audience_pain": "개인 업무 환경에서의 통제권 상실"
+  }
+]
