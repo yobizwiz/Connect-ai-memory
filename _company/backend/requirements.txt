@@ -1,0 +1,4 @@
+fastapi
+uvicorn[standard]
+pydantic
+python-jose # For potential future JWT handling or simple hashing utilities
