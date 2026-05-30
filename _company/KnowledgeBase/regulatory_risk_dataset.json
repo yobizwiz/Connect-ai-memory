@@ -1,0 +1,70 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "description": "yobizwiz 핵심 리스크 모델을 위한 구조화된 규제 및 운영 위반 데이터셋. 모든 수치는 재무적 최대 손실액(TRE) 기반으로 추정됨.",
+    "source_timestamp": "2026-05-30T12:00:00Z",
+    "governance_schema": "[위반 가능성 점수] (High/Medium/Low) | [예상 재정적 벌금($)] (Range) | [회피 방안 설명]"
+  },
+  "risk_scenarios": [
+    {
+      "id": "R001",
+      "risk_name": "PII 비식별화 실패로 인한 데이터 유출 (GDPR/HIPAA)",
+      "violation_type": "Data Breach / PII Leakage",
+      "severity": "Critical",
+      "potential_score": "[위반 가능성 점수]: High",
+      "estimated_loss_range": "[예상 재정적 벌금($)]: $50,000 ~ $2M+",
+      "mitigation_strategy": "[회피 방안 설명]: 데이터 수집 단계부터 전용 마스킹 파이프라인 적용 및 최소한의 데이터만 저장(Data Minimization) 원칙 준수. 모든 전송은 암호화 필수.",
+      "provenance": "Self-RAG Knowledge (PII_Leakage_Index) | sessions/2026-05-19T04-23/secretary.md"
+    },
+    {
+      "id": "R002",
+      "risk_name": "AI 출처 불명확성 및 환각 기반의 법률 자문 제공 (Hallucination)",
+      "violation_type": "Professional Malpractice / Provenance Deficit",
+      "severity": "Critical",
+      "potential_score": "[위반 가능성 점수]: High",
+      "estimated_loss_range": "[예상 재정적 벌금($)]: $500만 ~ $2,000만+",
+      "mitigation_strategy": "[회피 방안 설명]: 모든 AI 산출물에 강제적인 출처(Provenance) 꼬리표를 삽입하고, '본 내용은 법률 자문이 아니며, 반드시 전문가 검토가 필요함'이라는 면책 고지를 필수적으로 노출해야 함.",
+      "provenance": "Researcher Personal Memory (취약점 1) | [근거: sessions/2026-05-26T...] Contextual Memo"
+    },
+    {
+      "id": "R003",
+      "risk_name": "규제 변화 예측 실패 및 컴플라이언스 절차 누락 (Compliance Drift)",
+      "violation_type": "Operational / Procedural Failure",
+      "severity": "High",
+      "potential_score": "[위반 가능성 점수]: High",
+      "estimated_loss_range": "[예상 재정적 벌금($)]: $100K ~ $5M+",
+      "mitigation_strategy": "[회피 방안 설명]: 규제 변화 추이를 실시간으로 모니터링하는 자동화된 컴플라이언스 매트릭스를 구축하고, 모든 핵심 의사결정 지점(Checkpoint)에 '규제 검토 승인' 단계를 강제 삽입해야 함.",
+      "provenance": "Self-RAG Knowledge (Compliance_Drift_Score) | Researcher Personal Memory"
+    },
+    {
+      "id": "R004",
+      "risk_name": "서비스의 법적 전문 영역 초과 자문 시도 (Scope Violation)",
+      "violation_type": "Jurisdictional Overreach / Authority Violation",
+      "severity": "Critical",
+      "potential_score": "[위반 가능성 점수]: High",
+      "estimated_loss_range": "[예상 재정적 벌금($)]: $75,000 ~ $3M+",
+      "mitigation_strategy": "[회피 방안 설명]: 서비스 사용 시작 전 '서비스 제공 범위 명세서'를 의무적으로 노출하고, 전문 영역을 벗어나는 질문에는 즉시 경고 메시지를 띄우는(Guardrail) 시스템 로직을 구현해야 함.",
+      "provenance": "Self-RAG Knowledge (Scope_Violation_Flag) | Researcher Personal Memory"
+    },
+    {
+      "id": "R005",
+      "risk_name": "파편화된 지식으로 인한 모순적/불완전한 결론 도출 (Knowledge Silo)",
+      "violation_type": "Structural / Decision Quality Deficit",
+      "severity": "Medium",
+      "potential_score": "[위반 가능성 점수]: Medium",
+      "estimated_loss_range": "[예상 재정적 벌금($)]: $50K ~ $1M",
+      "mitigation_strategy": "[회피 방안 설명]: 모든 지식 검색 과정에 대해 '다중 출처 검증(Multi-Source Triangulation)'을 의무화하고, 상충되는 정보가 발견될 시 사용자에게 해당 모순점을 명시적으로 보고해야 함.",
+      "provenance": "Self-RAG Knowledge (Knowledge_Silo_Depth) | Researcher Personal Memory"
+    },
+    {
+      "id": "R006",
+      "risk_name": "데이터 주권 침해 또는 목적 외 활용 (Data Sovereignty/Invalidation)",
+      "violation_type": "Regulatory / Cross-border Transfer Violation",
+      "severity": "Critical",
+      "potential_score": "[위반 가능성 점수]: High",
+      "estimated_loss_range": "[예상 재정적 벌금($)]: $1억 이상 (영업 정지 포함)",
+      "mitigation_strategy": "[회피 방안 설명]: 데이터가 수집된 지역/국가의 법규를 최우선으로 따르며, 국경을 넘는 모든 데이터 전송에 대해 사용자 동의 및 현지화 서버 배치를 원칙으로 해야 함.",
+      "provenance": "Researcher Personal Memory (Data Sovereignty) | [근거: sessions/2026-05-28T19-55/researcher.md]"
+    }
+  ]
+}
