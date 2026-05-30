@@ -1,0 +1,30 @@
+# 📚 Case Study Library: Top Regulatory Violation Scenarios (for Content Generation)
+
+*본 데이터는 블로그, 백서 및 마케팅 카피라이팅에 사용되는 고위험 시나리오와 재정적 손실 근거($L_{max}$)입니다.*
+
+## Case 1. 국경을 넘는 개인정보 유출 (Cross-Border PII Leakage)
+*   **핵심 규제:** GDPR, CCPA 등 데이터 주권법 위반.
+*   **시나리오:** 유럽 고객의 민감한 건강 정보(PHI)가 미국 클라우드 서버에 임시 저장되었다가 무단 접근된 경우.
+*   **위반 근거 조항:** PII Leakage / Lack of Data Sovereignty (데이터 주권 상실).
+*   **재정적 손실 ($L_{max}$):** 전 세계 연 매출의 최대 **4% 또는 2천만 유로($€20M$)**. 소송 및 합의금으로 인해 최소 비즈니스 자산의 15% 이상을 즉각 상실할 수 있음.
+*   **공포 포인트:** 데이터가 어디에 있는지 모른 채, 법적 대응 자체가 불가능해짐.
+
+## Case 2. AI 출처 부재로 인한 지식 재산권 침해 (AI Provenance Failure)
+*   **핵심 규제:** 저작권법 위반, 무단 학습 데이터 사용 (Training Data Misuse).
+*   **시나리오:** 자체 개발한 LLM이 경쟁사 독점 데이터를 출처 표기 없이 활용하여 모델을 구축하고 상용화했을 때.
+*   **위반 근거 조항:** Intellectual Property Violation / Failure to Audit Source Attribution.
+*   **재정적 손실 ($L_{max}$):** **계약 파기로 인한 라이선스 비용 및 법적 배상금(최소 억대)**. 시장 평판(Reputation)은 회복 불가능한 자산으로 간주됨.
+*   **공포 포인트:** 기술 개발 자체가 '도둑질'로 규정되어 사업 근간이 무너짐.
+
+## Case 3. 시스템 로그 및 감사 기록 누락 (Audit Trail Gap)
+*   **핵심 규제:** 산업별 컴플라이언스(HIPAA, SOC2 등), 내부 통제 부재.
+*   **시나리오:** 보안 침해가 발생했을 때, 언제 누가 어떤 데이터에 접근했는지 추적할 수 있는 '감사 로그 원장' 자체가 조작되거나 누락된 경우.
+*   **위반 근거 조항:** Lack of Immutable Audit Trail (불변의 감사 기록 부재).
+*   **재정적 손실 ($L_{max}$):** **최대 과징금($L_{max}$)에 더하여, 비즈니스 신뢰도 0%로 인한 거래 중단(Revenue Zero)**. 보험 가입 자체가 불가능해짐.
+*   **공포 포인트:** 문제가 생겼을 때 '증명할 수 없다'는 것이 곧 무능력의 증거가 되어 모든 것을 상실함.
+
+---
+### <create_file path="KnowledgeBase/ContentStrategy"># 💡 콘텐츠 전략: 공포 기반 블로그 아티클 작성 원칙
+1.  **구조:** Problem (공포) $\rightarrow$ Why (원인 분석) $\rightarrow$ Solution (명령적 제시).
+2.  **어조:** 권위적, 경고형(Warning Tone), 명령조 사용 의무화.
+3.  **핵심 액션:** 모든 케이스 스터디 말미에 "당장 X를 점검하고 Y를 확보하십시오"라는 CTA 명시.
