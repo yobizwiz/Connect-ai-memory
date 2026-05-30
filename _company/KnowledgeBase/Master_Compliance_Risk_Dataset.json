@@ -1,67 +1,40 @@
 {
-  "dataset_version": "1.0.0-Beta",
-  "creation_date": "2026-05-30",
-  "description": "글로벌 주요 규제 위반 시나리오별 재무적/운영적 손실을 정량화한 마스터 데이터셋. 개발팀이 인터랙티브 리스크 게이지 구현의 핵심 백엔드 데이터를 사용합니다.",
-  "risk_variables": [
+  "Last_Updated": "2026-05-30",
+  "Core_Threats_Matrix": [
     {
-      "variable_id": "VAR-001",
-      "regulation": "GDPR (General Data Protection Regulation)",
-      "risk_type": "PII Leakage: Unmasked/Cross-Border Transfer Failure",
-      "root_cause": "데이터 처리 과정에서 개인 식별 정보(PII)의 마스킹 실패 또는 규정 범위를 벗어난 데이터 국경 간 전송 시도.",
-      "severity": "Critical (Operational Shutdown)",
-      "l_min_estimate": 50000,  // 최소 운영 중단 비용: 초기 대응 및 법률 자문 비용 ($)
-      "loss_breakdown": {
-        "regulatory_fine_max": "$2M - $10M+", // 규제 당국 최대 벌금 (전체 매출의 % 기반 할 수 있음) [근거: sessions/2026-05-19T04-23/secretary.md]
-        "litigation_settlement_max": "$5M - $50M+", // 소송 합의 최대 비용 (클래스 액션 포함)
-        "reputation_damage_factor": 0.7, // 평판 손실 가중치 (0.0~1.0, 1.0에 가까울수록 치명적)
-        "market_access_loss": "EU/글로벌 시장 진입 정지 가능성 (운영 중단)"
-      },
-      "mitigation_strategy": ["End-to-end Encryption", "Differential Privacy 적용", "Data Sovereignty 확보"]
+      "Variable": "PII_Leakage_Index",
+      "Legal_Problem": "비식별화 실패로 인한 데이터 유출.",
+      "Example_Case": "HIPAA 관련 대규모 유출 사고 (2021).",
+      "Estimated_Financial_Loss_Range": "$50,000 ~ $2M+ (벌금 + 소송)",
+      "Source": "sessions/2026-05-19T04-23/secretary.md"
     },
     {
-      "variable_id": "VAR-002",
-      "regulation": "EU AI Act (Artificial Intelligence Act)",
-      "risk_type": "AI Hallucination & Provenance Deficit",
-      "root_cause": "LLM 기반 산출물에 출처가 불분명한 허위 정보(Hallucination)를 포함시켜 의사결정의 근거로 사용함으로써 법적 책임을 전가.",
-      "severity": "High (Professional Liability)",
-      "l_min_estimate": 10000, // 최소 운영 중단 비용: 자체 감사 및 재검토 프로세스 구축 비용 ($)
-      "loss_breakdown": {
-        "regulatory_fine_max": "$500K - $20M+", // 고위험 AI 시스템에 대한 규제 벌금
-        "litigation_settlement_max": "$10M - $100M+", // 전문직 책임(Professional Malpractice) 소송 배상액 포함. [근거: Researcher 개인 메모리]
-        "reputation_damage_factor": 0.8,
-        "market_access_loss": "AI 모델 사용 금지 (특정 고위험 분야 시장 접근 제한)"
-      },
-      "mitigation_strategy": ["Provenance Mandate 적용", "Human-in-the-Loop 검증 의무화", "Model Card 발행"]
+      "Variable": "Compliance_Drift_Score",
+      "Legal_Problem": "필수 절차(예: 2단계 승인) 누락 및 문서화 미비.",
+      "Example_Case": "대규모 프로젝트 실패 시 내부 감사 지적 사례.",
+      "Estimated_Financial_Loss_Range": "$100K ~ $5M (프로젝트 재시작 비용)",
+      "Source": "Researcher 개인 메모리"
     },
     {
-      "variable_id": "VAR-003",
-      "regulation": "HIPAA (Health Insurance Portability and Accountability Act)",
-      "risk_type": "PHI Leakage: Unsecured Storage/Transmission",
-      "root_cause": "Protected Health Information(PHI)을 적절히 비식별화하지 않고 저장하거나, 승인되지 않은 채널로 전송하는 경우.",
-      "severity": "Critical (Legal and Criminal)",
-      "l_min_estimate": 100000, // 최소 운영 중단 비용: 전문 법률 자문 및 감사 인력 투입 비용 ($)
-      "loss_breakdown": {
-        "regulatory_fine_max": "$2M - $50M+", // 위반 정도에 따라 벌금 폭증 (최대 3만 달러/개인 기록당 등) [근거: sessions/2026-05-19T04-23/secretary.md]
-        "litigation_settlement_max": "$10M - $200M+", // 민사소송 및 집단 소송 합의금 규모 (매우 높음)
-        "reputation_damage_factor": 0.9,
-        "market_access_loss": "헬스케어 데이터 처리 라이선스 박탈 위험"
-      },
-      "mitigation_strategy": ["Zero Trust Architecture", "Mandatory Encryption at Rest/Transit", "HIPAA Security Rule 준수 감사"]
+      "Variable": "Future_Threat_LLM_Hallucination",
+      "Legal_Problem": "AI 모델의 환각(Hallucination) 및 출처 불명확성으로 인한 준전문가 책임.",
+      "Example_Case": "잘못된 리스크 예측 보고서로 인한 투자 손실 추정.",
+      "Estimated_Financial_Loss_Range": "$5M ~ $20M+ (법적/신뢰도 상실)",
+      "Source": "Researcher 개인 메모리 - 취약점 1"
     },
     {
-      "variable_id": "VAR-004",
-      "regulation": "CCPA (California Consumer Privacy Act) / 기타 데이터 주권법",
-      "risk_type": "Data Subject Rights Violation: Opt-Out/Deletion Failure",
-      "root_cause": "사용자의 삭제 요청(Right to Delete)이나 옵트아웃(Opt-Out) 권리를 적시에, 그리고 완전하게 처리하지 못하는 경우.",
-      "severity": "Medium-High (Operational Inefficiency)",
-      "l_min_estimate": 5000, // 최소 운영 중단 비용: 데이터 감사 및 삭제 프로세스 재구축 비용 ($)
-      "loss_breakdown": {
-        "regulatory_fine_max": "$1M - $7.5M+", // 벌금 규모 (전체 매출의 일정 비율 또는 건당 위반)
-        "litigation_settlement_max": "$2M - $30M", // 집단 소송 규모 증가 경향
-        "reputation_damage_factor": 0.6,
-        "market_access_loss": "캘리포니아 시장에서의 서비스 제한 또는 사용자 신뢰도 급락"
-      },
-      "mitigation_strategy": ["데이터 주권(Data Sovereignty) 아키텍처", "명시적 동의 관리 시스템(CMP)", "자동화된 삭제 파이프라인"]
+      "Variable": "Future_Threat_Data_Sovereignty",
+      "Legal_Problem": "데이터 주권 및 국경 간 목적 외 사용 위반.",
+      "Example_Case": "국가별 데이터 전송 제한/무효화 처분.",
+      "Estimated_Financial_Loss_Range": "$100M+ (시스템 재구축 비용)",
+      "Source": "Researcher 개인 메모리 - 취약점 2"
+    },
+    {
+      "Variable": "Future_Threat_Algorithmic_Bias",
+      "Legal_Problem": "알고리즘 편향성으로 인한 차별적 의사결정.",
+      "Example_Case": "AI 기반 대출 심사 등 공공 서비스에서의 구조적 차별 소송.",
+      "Estimated_Financial_Loss_Range": "$1M ~ $5M (단일 사례), 시스템 구축 비용: $20M+",
+      "Source": "Self-RAG 검증된 지식 / Researcher 개인 메모리"
     }
   ]
 }
