@@ -1,213 +1,188 @@
 // src/components/RiskCalculator.tsx
-import React, { useState, useCallback, useMemo } from 'react';
-import './RiskCalculator.css'; // 전용 CSS 파일 생성 예정
+import React, { useState, useCallback } from 'react';
+import { regulatory_risk_dataset, RiskCase } from '../data/mockRiskDataset';
+import { calculateRiskExposure, logABTestEvent } from '../lib/riskCalculator';
 
-type RiskLevel = 'Normal' | 'Warning' | 'Critical';
+/** @typedef {'INPUT' | 'ANALYZING' | 'WARNING' | 'SOLUTION'} CalculatorState */
 
-interface InputData {
-    piiLeakageCount: number;
-    complianceDriftScore: number;
-    processAuditFailed: boolean;
-}
-
-/**
- * 리스크 레벨별 스타일과 경고 메시지를 관리하는 유틸리티 함수.
- * @param {RiskLevel} level 
- * @returns {{colorClass: string, title: string, description: string}}
+/** @typedef {object} RiskInput - 사용자가 입력하는 개별 리스크 지표 (TypeScript Interface)
+ * @property {string} id - 규제 ID.
+ * @property {number} score - 현재 준수 점수 (0~100).
  */
-const getRiskState = (level: RiskLevel) => {
-    switch (level) {
-        case 'Normal':
-            return { colorClass: 'border-green-500', title: '✅ 리스크 정상 범위', description: '현재 시스템 구조적 결함은 발견되지 않았습니다. 하지만 경계심을 늦추지 마십시오.' };
-        case 'Warning':
-            return { colorClass: 'border-yellow-500', title: '⚠️ 주의: 잠재적 위험 감지', description: '일부 규정 준수 편차가 확인되었습니다. 즉각적인 구조 검토가 필요합니다.' };
-        case 'Critical':
-            return { colorClass: 'border-red-600 animate-pulse', title: '🚨 시스템 생존 위협! (RED ZONE)', description: '심각한 결함이 다수 발견되어 운영 자체가 중단될 위험에 처했습니다. 즉시 전문가의 진단(Audit)을 받으십시오.' };
-    }
-};
+
+const INITIAL_RISK_INPUTS = [
+    { id: "GDPR-2019-A", score: 85 }, // 예시 값
+    { id: "CCPA-2020-B", score: 60 },
+    { id: "HIPAA-2016-C", score: 30 } // 의도적으로 낮은 점수를 설정하여 Warning 유발
+];
 
 /**
- * 핵심 리스크 계산 로직. 사용자 입력 데이터를 구조적 가중치 기반으로 분석합니다.
- * @param {InputData} data 
- * @returns {{riskLevel: RiskLevel, lossScore: number}}
- */
-const calculateRisk = (data: InputData) => {
-    // [근거: Loss_Meter_System_Spec_v1.0.md] - 가중치 적용 로직 구현
-    let score = 0;
-
-    // 1. PII Leakage Weighting (가장 치명적임)
-    const piiScore = data.piiLeakageCount * 8; // 건당 높은 페널티
-    score += piiScore;
-
-    // 2. Compliance Drift Weighting (점수 기반)
-    // 점수가 높을수록, 즉 편차가 클수록 위험도가 급증하는 비선형 함수 적용
-    const compliancePenalty = Math.pow(data.complianceDriftScore / 100, 3) * 50; 
-    score += compliancePenalty;
-
-    // 3. Audit Failure (Binary Trigger - 가장 강력한 트리거)
-    if (data.processAuditFailed) {
-        score += 100; // 최대치에 가깝게 점수를 급상승시켜 Critical 유도
-    }
-
-    let riskLevel: RiskLevel = 'Normal';
-    let lossScore = Math.round(score);
-
-    // 리스크 레벨 결정 로직 (Threshold 기반)
-    if (lossScore >= 150) {
-        riskLevel = 'Critical'; // 임계점 초과
-    } else if (lossScore >= 50) {
-        riskLevel = 'Warning'; // 경고 구간 진입
-    } else {
-        riskLevel = 'Normal';
-    }
-
-    return { riskLevel, lossScore };
-};
-
-
-/**
- * 랜딩 페이지의 핵심 기능: 리스크 점수 계산기 및 Loss Meter 시뮬레이터.
- * 이 컴포넌트는 고객에게 구조적 생존 위협을 체험하게 만드는 영업 무기입니다.
+ * 인터랙티브 리스크 계산기 MVP 컴포넌트. 
+ * Designer의 3단계 상태 변화와 Researcher의 데이터셋을 통합합니다.
  */
 const RiskCalculator: React.FC = () => {
-    // 초기 상태 정의 (모든 위험이 낮은 가정)
-    const [inputs, setInputs] = useState<InputData>({
-        piiLeakageCount: 0,
-        complianceDriftScore: 5,
-        processAuditFailed: false,
-    });
+    // State Machine 구현: 현재 UI가 어느 단계에 있는지 관리합니다.
+    const [state, setState] = useState<CalculatorState>('INPUT');
+    const [inputs, setInputs] = useState<RiskInput[]>(INITIAL_RISK_INPUTS);
+    const [result, setResult] = useState<{ lMax: number, riskScore: number, passed: boolean } | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
 
-    // 사용자 입력 변경 핸들러 (State Update)
-    const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, type, value, checked } = e.target;
-        let updatedValue: any;
+    // ----------------- 핸들러 로직 -----------------
 
-        if (type === 'checkbox') {
-            updatedValue = checked;
-        } else if (name === 'piiLeakageCount' || name === 'complianceDriftScore') {
-            updatedValue = parseFloat(value) || 0;
-        } else {
-            updatedValue = value;
-        }
-
-        setInputs(prev => ({ ...prev, [name]: updatedValue }));
+    /**
+     * 사용자가 개별 리스크 지표의 점수를 업데이트할 때 호출됩니다.
+     */
+    const handleScoreChange = useCallback((id: string, newScore: number) => {
+        setInputs(prevInputs => prevInputs.map(input => 
+            input.id === id ? { ...input, score: parseFloat(newScore) || 0 } : input
+        ));
     }, []);
 
-    // 리스크 계산 로직 (Memoization을 사용하여 불필요한 재계산을 방지)
-    const analysisResult = useMemo(() => {
-        return calculateRisk(inputs);
-    }, [inputs]); // inputs 상태가 변경될 때만 재실행
+    /**
+     * '분석 실행' 버튼 클릭 시 호출되는 핵심 로직. State Transition의 시작점입니다.
+     */
+    const runAnalysis = useCallback(async () => {
+        if (isLoading) return;
 
-    const riskState = getRiskState(analysisResult.riskLevel);
+        setIsLoading(true);
+        setState('ANALYZING');
 
-    // UI 렌더링 로직을 위한 공통 스타일 정의
-    const lossMeterClasses = `p-6 rounded-xl shadow-2xl transition duration-500 ${riskState.colorClass} bg-gray-900/70 border-4`;
+        // 1. A/B 테스트 로그 기록 (비동기 작업 시뮬레이션)
+        await logABTestEvent('A', inputs.reduce((sum, i) => sum + i.score, 0) / inputs.length || 0);
+
+        // 2. 핵심 로직 실행: Lmax 계산 및 리스크 점수 산출 (Defensive Code 사용)
+        const calculatedResult = calculateRiskExposure(inputs);
+        setResult(calculatedResult);
+
+        // 3. State Transition 결정
+        if (!calculatedResult.passed || calculatedResult.riskScore < 50) {
+            setState('WARNING'); // 리스크 높음 -> 경고 상태로 전환
+        } else {
+            setState('SOLUTION'); // 리스크 낮음 -> 해결책 제시 상태로 전환 (가정)
+        }
+
+        setIsLoading(false);
+    }, [inputs, isLoading]);
 
 
-    return (
-        <div className="max-w-4xl mx-auto py-12">
-            {/* 🚨 메인 섹션 제목 */}
-            <h2 className="text-5xl font-extrabold text-red-600 mb-3 tracking-tight">
-                구조적 리스크 진단 시스템 (v1.0)
-            </h2>
-            <p className="text-xl text-gray-400 mb-10 border-b pb-8">
-                잠재적 손실액($QLoss)을 실시간으로 측정하고, 귀사의 생존 위협 수준을 진단하십시오.
-            </p>
+    // ----------------- UI 렌더링 로직 (Designer Spec 반영) -----------------
 
-            <div className="grid lg:grid-cols-2 gap-12 items-start">
-                {/* 📐 좌측: 데이터 입력 (Inputs) */}
-                <div className="space-y-8 p-6 bg-gray-900/50 rounded-xl shadow-inner border border-gray-700">
-                    <h3 className="text-2xl font-semibold text-white border-b pb-4">📊 1. 데이터 입력: 위협 요소 식별</h3>
+    const renderInputStage = () => {
+        return (
+            <div className="p-6 border-b border-red-500/30">
+                <h2 className="text-xl font-mono text-yellow-400 mb-4">// Stage 1: Data Input & Pre-Analysis</h2>
+                <p className="mb-6 text-gray-500">분석을 위해 각 규제 지표의 현재 준수 점수를 입력해주세요. (필수)</p>
 
-                    {/* PII Leakage */}
-                    <div>
-                        <label htmlFor="piiLeakageCount" className="block text-lg font-medium text-gray-300 mb-2">
-                            개인 식별 정보(PII) 유출 건수 (0~10):
-                        </label>
-                        <input 
-                            type="number" 
-                            id="piiLeakageCount"
-                            name="piiLeakageCount"
-                            min="0"
-                            max="10"
-                            value={inputs.piiLeakageCount}
-                            onChange={handleInputChange}
-                            className="w-full p-3 bg-gray-800 text-white border border-gray-700 focus:border-red-500 focus:ring-red-500 transition"
-                        />
-                    </div>
-
-                    {/* Compliance Drift Score */}
-                    <div>
-                        <label htmlFor="complianceDriftScore" className="block text-lg font-medium text-gray-300 mb-2">
-                            규정 준수 편차 점수 (Compliance Drift, 0~100):
-                        </label>
-                        <input 
-                            type="range" 
-                            id="complianceDriftScore"
-                            name="complianceDriftScore"
-                            min="0"
-                            max="100"
-                            value={inputs.complianceDriftScore}
-                            onChange={handleInputChange}
-                            className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer range-lg [&::-webkit-slider-thumb]:bg-red-600 [&::-moz-range-thumb]:bg-red-600"
-                        />
-                        <p className="text-sm text-gray-400 mt-2">현재 편차: <span className="font-bold text-white">{inputs.complianceDriftScore}%</span></p>
-                    </div>
-
-                    {/* Audit Failure Checkbox */}
-                    <div className="flex items-center justify-between pt-4 border-t border-gray-700">
-                        <input 
-                            type="checkbox" 
-                            id="processAuditFailed"
-                            name="processAuditFailed"
-                            checked={inputs.processAuditFailed}
-                            onChange={handleInputChange}
-                            className="form-checkbox h-5 w-5 text-red-600 bg-gray-800 border-gray-700 rounded focus:ring-red-500 cursor-pointer"
-                        />
-                        <label htmlFor="processAuditFailed" className="text-lg font-medium text-gray-300">
-                            프로세스 감사 실패 여부 확인 (Critical Trigger)
-                        </label>
-                    </div>
-                </div>
-
-                {/* 📉 우측: Loss Meter 및 결과 표시 */}
-                <div className={lossMeterClasses}>
-                    <h3 className="text-2xl font-bold text-white mb-6 border-b pb-3">📈 2. 리스크 점수 산출 (Loss Meter)</h3>
-
-                    {/* 헤더 정보 */}
-                    <div className="mb-8 p-4 bg-gray-900/70 rounded-lg border-l-4" style={{ borderColor: riskState.colorClass.includes('red') ? '#ff3d3d' : riskState.colorClass.includes('yellow') ? '#ffe132' : '#48bb78' }}>
-                        <p className="text-sm font-semibold uppercase text-gray-300">진단 상태</p>
-                        <h4 className={`text-3xl font-extrabold mt-1 ${riskState.colorClass}`}>{riskState.title}</h4>
-                    </div>
-
-                    {/* 핵심 지표: Loss Score */}
-                    <div className="mb-6">
-                        <p className="text-lg text-gray-400 mb-2">잠재적 재무 손실액 (Quantitative Loss, $QLoss)</p>
-                        <div className="flex items-baseline space-x-3">
-                            <span className={`text-7xl font-black ${riskState.colorClass}`}>
-                                ${analysisResult.lossScore.toLocaleString()}K <span className='text-4xl'>USD</span>
-                            </span>
-                            <span className={`text-2xl font-bold uppercase tracking-wider hidden sm:inline`}>점수</span>
+                {inputs.map((input) => (
+                    <div key={input.id} className="flex justify-between items-center py-3 border-b last:border-b-0">
+                        <span className="font-mono text-lg">{input.id}: {regulatory_risk_dataset[input.id]?.description || '설명 없음'}</span>
+                        <div className="flex items-center space-x-4">
+                            <label htmlFor={`score-${input.id}`} className="text-sm text-gray-600">현재 준수 점수 (0-100)</label>
+                            <input
+                                id={`score-${input.id}`}
+                                type="number"
+                                min="0"
+                                max="100"
+                                value={input.score}
+                                onChange={(e) => handleScoreChange(input.id, e.target.value)}
+                                className="w-32 p-2 border rounded font-mono bg-gray-50 focus:ring-red-500 focus:border-red-500"
+                            />
                         </div>
                     </div>
+                ))}
 
-                    {/* 상세 설명 및 CTA */}
-                    <div>
-                        <p className="text-xl text-gray-300 mb-4">
-                            경고 분석: {riskState.description}
-                        </p>
-                        <button 
-                            className={`w-full py-4 text-lg font-bold uppercase tracking-widest transition duration-300 ${riskState.colorClass.replace('border-', 'bg-')} hover:opacity-90`}
-                            style={{ backgroundColor: riskState.colorClass.includes('red') ? '#c0392b' : riskState.colorClass.includes('yellow') ? '#f1c40f' : '#2ecc71' }}
-                        >
-                            지금 바로 전문가에게 진단 요청하기 (Audit Request) ⚙️
-                        </button>
-                    </div>
+                <button 
+                    onClick={runAnalysis} 
+                    disabled={isLoading || inputs.some(i => i.score === undefined)}
+                    className={`mt-8 w-full py-3 rounded font-bold transition duration-200 ${isLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-700 hover:bg-red-800'} text-white`}
+                >
+                    {isLoading ? '⚙️ 시스템 분석 중... 잠시만 기다려 주세요.' : '🚨 리스크 분석 실행 (시스템 패닉 트리거)'}
+                </button>
+            </div>
+        );
+    };
 
+    const renderWarningStage = () => {
+        return (
+            <div className="p-8 bg-red-900/10 border-l-4 border-red-600 shadow-xl">
+                <h2 className="text-3xl font-extrabold text-red-700 mb-4">// ⚠️ Stage 2: CRITICAL RISK ALERT</h2>
+                <p className="mb-6 text-lg text-gray-700">🚨 시스템적 리스크가 임계치를 초과했습니다. 즉각적인 대응이 필요합니다.</p>
+
+                <div className="bg-red-100 p-4 rounded border border-red-300 mb-8">
+                    <h3 className="text-xl font-mono text-red-900">최대 예상 재무 손실액 (Lmax):</h3>
+                    <p className="text-5xl font-black tracking-widest mt-2 text-red-800">${result?.lMax.toLocaleString()}</p>
+                    <p className="text-sm text-gray-600 mt-1">이는 현재의 준수 상태를 유지할 경우 예상되는 최소 손실액입니다.</p>
                 </div>
+
+                {/* Solution CTA (Designer Spec 반영) */}
+                <button 
+                    onClick={() => setState('SOLUTION')}
+                    className="w-full py-4 text-xl bg-red-800 hover:bg-red-900 transition duration-200 rounded font-bold text-white shadow-lg"
+                >
+                    🔥 리스크 해소 및 방어책 설계 (yobizwiz Authority Access)
+                </button>
+            </div>
+        );
+    };
+
+    const renderSolutionStage = () => {
+        return (
+             <div className="p-8 bg-green-900/10 border-l-4 border-green-600 shadow-xl">
+                <h2 className="text-3xl font-extrabold text-green-700 mb-4">// ✅ Stage 3: SOLUTION & CONTROL</h2>
+                <p className="mb-6 text-lg text-gray-700">위험을 통제할 수 있는 유일한 방법입니다. 시스템적 방어 로직이 필요합니다.</p>
+
+                {/* 최종 결제 배리어 모달 Placeholder */}
+                <div className="bg-green-100 p-6 rounded border border-green-300 mb-8">
+                    <h3 className="text-2xl font-mono text-green-900">프로토콜 활성화 (Activate Protocol)</h3>
+                    <p className='mt-2'>yobizwiz의 Provenance Audit Layer에 접근하여 시스템 무결성을 복원하십시오.</p>
+                </div>
+
+                {/* 실제 결제 버튼 Placeholder */}
+                 <button 
+                    className="w-full py-4 text-xl bg-blue-600 hover:bg-blue-700 transition duration-200 rounded font-bold text-white shadow-lg"
+                >
+                    ✨ yobizwiz Premium Audit Layer 구독하기 (결제 유도)
+                </button>
+            </div>
+        );
+    };
+
+    // ----------------- 메인 컴포넌트 렌더링 -----------------
+
+    return (
+        <div className="max-w-3xl mx-auto bg-white shadow-2xl rounded-lg overflow-hidden border border-gray-200">
+            {/* Header */}
+            <header className="p-6 bg-gray-800 text-white flex justify-between items-center">
+                <h1 className="text-2xl font-bold tracking-wider">🛡️ Systemic Risk Calculator MVP</h1>
+                <span className='text-sm opacity-75'>v1.0 - Defensive Full Stack Edition</span>
+            </header>
+
+            {/* State Transition based Rendering */}
+            <div className={`transition-all duration-500 ${state === 'ANALYZING' ? 'opacity-50 pointer-events-none' : ''}`}>
+                {state === 'INPUT' && renderInputStage()}
+                
+                {(state === 'WARNING' || state === 'SOLUTION') && result && (
+                    <div className={`p-6 ${state === 'ANALYZING' ? 'hidden' : ''} transition-all duration-500`}>
+                        {state === 'WARNING' ? renderWarningStage() : renderSolutionStage()}
+                    </div>
+                )}
+
+                 {(state === 'ANALYZING') && (
+                    <div className="p-12 text-center">
+                        <h3 className="text-xl font-mono text-blue-600 mb-4">// Analyzing System Integrity...</h3>
+                        {/* 로딩 애니메이션 Placeholder */}
+                         <div className="animate-pulse bg-gray-200 rounded w-full h-8 mb-4"></div>
+                         <p>A/B 테스트 환경 및 규제 데이터셋과 연동하여 $L_{max}$를 계산 중입니다. (잠시만 기다려 주세요.)</p>
+                    </div>
+                )}
+            </div>
+
+            {/* Footer / 결과 요약 */}
+             <div className="p-4 bg-gray-50 border-t text-sm font-mono text-right">
+                현재 상태: <span className={`font-bold ${state === 'WARNING' ? 'text-red-600' : state === 'SOLUTION' ? 'text-green-600' : 'text-gray-500'}`}>{/* State Text */}</span>
             </div>
         </div>
     );
-}
+};
 
 export default RiskCalculator;
