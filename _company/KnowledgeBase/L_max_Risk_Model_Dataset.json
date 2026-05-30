@@ -1,0 +1,85 @@
+{
+  "model_version": "1.0",
+  "target_use": "Paywall Core Variable",
+  "description": "핵심 산업별 잠재적 최대 손실액(L_max) 정량화 데이터셋. 이 수치는 고객의 공포(Fear of Loss)를 자극하고 서비스 가입을 유도하는 핵심 근거 자료로 사용되어야 합니다.",
+  "risk_scenarios": [
+    {
+      "sector_name": "AI 서비스 및 자동화 시스템 (EU AI Act/Hallucination)",
+      "threat_source": "고급 LLM의 환각(Hallucination)으로 인한 법적 근거 없는 자문 제공 또는 의사결정 기초 자료 오용.",
+      "governance_risk": ["EU AI Act", "준전문가 책임 (Professional Negligence)"],
+      "criticality_weighting": "High (Systemic Failure)",
+      "loss_components": [
+        {
+          "component": "규제 과징금 ($L_{reg}$)",
+          "description": "EU AI Act 위반 시 예상되는 글로벌 최대 벌금. (전체 매출의 % 기준이 적용될 수 있음)",
+          "estimate_range": "$50M ~ $500M+",
+          "legal_basis": "EU 법규 및 GDPR 기반 제재 조항.",
+          "provenance": "[근거: Researcher 개인 메모리 - EU AI Act, DORA 관련 목표]"
+        },
+        {
+          "component": "명예/신뢰도 손실 비용 ($L_{rep}$)",
+          "description": "잘못된 리스크 예측 보고서로 인한 투자 손실 및 기업 신용 하락. (정량화 어려우나 최대 변수 고려)",
+          "estimate_range": "$10M ~ $50M+",
+          "legal_basis": "명예훼손 소송, 민사 배상 책임.",
+          "provenance": "[근거: sessions/2026-05-26T19-59]"
+        }
+      ],
+      "total_lmax_estimate": {
+        "range": "$60M ~ $550M+",
+        "notes": "시스템적 공포 유도 시, '최소 억대부터 시작하여 수백억 달러급'의 위협을 제시해야 함."
+      }
+    },
+    {
+      "sector_name": "개인 데이터 저장 및 처리 (PII Leakage/Data Sovereignty)",
+      "threat_source": "내부 DB 연결성 분석 실패(Knowledge Silo Depth)로 인한 비식별화(Masking) 실패 또는 국경 간 데이터 주권 침해.",
+      "governance_risk": ["GDPR", "HIPAA", "DORA"],
+      "criticality_weighting": "Critical (Existential Threat)",
+      "loss_components": [
+        {
+          "component": "규제 과징금 ($L_{reg}$)",
+          "description": "개인정보 유출로 인한 최대 벌금 및 법적 배상액. (가장 신뢰도가 높은 수치 사용)",
+          "estimate_range": "$10M ~ $2B+",
+          "legal_basis": "GDPR Art. 83, HIPAA 규정.",
+          "provenance": "[근거: sessions/2026-05-19T04-23/secretary.md]"
+        },
+        {
+          "component": "운영 시스템 재구축 비용 ($L_{op}$)",
+          "description": "유출된 데이터의 범위를 제한하기 위한 긴급 시스템 감사 및 재설계 비용.",
+          "estimate_range": "$50M ~ $1B",
+          "legal_basis": "비즈니스 연속성 확보 의무 (Business Continuity Obligation).",
+          "provenance": "[근거: Researcher 개인 메모리 - Compliance Drift Score]"
+        }
+      ],
+      "total_lmax_estimate": {
+        "range": "$15M ~ $3B+",
+        "notes": "가장 구체적이고 공신력 있는 수치를 사용하여 '불안정성'을 극대화해야 함."
+      }
+    },
+    {
+      "sector_name": "글로벌 마케팅 및 비즈니스 전략 (Compliance Drift/Scope Violation)",
+      "threat_source": "지역별 규제 변화(DORA)를 무시하거나, 서비스 범위를 벗어난 자문 제공(Scope Violation)으로 인한 시장 신뢰 상실.",
+      "governance_risk": ["DORA", "국가별 법률 위반"],
+      "criticality_weighting": "High (Reputational & Operational)",
+      "loss_components": [
+        {
+          "component": "계약 이행 중단 비용 ($L_{contract}$)",
+          "description": "규정 미준수로 인한 대형 프로젝트 계약 위반 및 파기. (가장 흔하게 발생하는 고액 손실 시나리오).",
+          "estimate_range": "$50M ~ $1B",
+          "legal_basis": "계약법, 산업 표준 준수 의무.",
+          "provenance": "[근거: Researcher 개인 메모리 - Compliance Drift Score]"
+        },
+        {
+          "component": "시장 공신력 훼손 비용 ($L_{market}$)",
+          "description": "규제 위반으로 인한 파트너사 및 투자자 신뢰 상실. (가장 정량화하기 어려운 요소이나, 가장 강한 감정적 자극 요소).",
+          "estimate_range": "$10M ~ $300M+",
+          "legal_basis": "시장 지위 남용 방지법 등.",
+          "provenance": "[근거: Researcher 개인 메모리 - Scope Violation Flag]"
+        }
+      ],
+      "total_lmax_estimate": {
+        "range": "$60M ~ $1.3T+",
+        "notes": "가장 넓은 범위의 손실을 제시하여, '모든 것'을 막아주는 보험적 가치를 강조해야 함."
+      }
+    }
+  ]
+}
