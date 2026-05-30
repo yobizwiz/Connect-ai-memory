@@ -135,7 +135,7 @@ const LiveRiskAlertModule: React.FC = () => {
 
                             {/* Lmax Estimate */}
                             <div className="mb-4 p-3 bg-red-900/50 rounded">
-                                <p className="text-sm text-gray-300">💰 예상 최대 재정적 손실 ($L_{max}$):</p>
+                                <p className="text-sm text-gray-300">{"💰 예상 최대 재정적 손실 ($L_{max}$):"}</p>
                                 <h4 className={`text-xl font-extrabold ${statusStyles.text}`}>{result.lmax_estimate}</h4>
                             </div>
 

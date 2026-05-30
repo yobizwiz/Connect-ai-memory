@@ -1,4 +1,4 @@
-import { SystemRiskData, RiskStateContext, AlertDetail } from '../types';
+import { SystemRiskData, RiskStateContext, AlertDetail, RiskInputs, CalculatedResult } from '../types';
 
 // 🚨 상수 정의: 변경되면 전체 시스템에 영향을 주므로 상수로 분리합니다.
 const THRESHOLD = {
@@ -41,7 +41,11 @@ export function calculateRiskState(rawData: SystemRiskData): RiskStateContext {
         riskLevel: riskLevel,
         isSystemCritical: isSystemCritical,
         lastUpdated: new Date(rawData.timestamp),
-        thresholds: THRESHOLD, // 상수값을 그대로 사용해도 되지만, 구조적 통일성을 위해 포함.
+        thresholds: {
+            warningThreshold: THRESHOLD.WARNING,
+            criticalThreshold: THRESHOLD.CRITICAL,
+        },
+        dataSource: rawData.dataSource,
     };
 }
 
@@ -60,7 +64,7 @@ export function getAlertDetail(state: RiskStateContext): AlertDetail | null {
     if (state.riskLevel === 'WARNING') {
         return {
             title: "⚠️ 시스템 임계치 근접 감지",
-            message: `현재 $L_{max}$가 ${Number(state.thresholds.warningThreshold).toLocaleString()}을 초과했습니다. 데이터 소스(${rawData.dataSource})에 대한 추가적인 검토가 필요합니다.`,
+            message: `현재 $L_{max}$가 ${Number(state.thresholds.warningThreshold).toLocaleString()}을 초과했습니다. 데이터 소스(${state.dataSource})에 대한 추가적인 검토가 필요합니다.`,
             severityColor: "#F39C12", // Designer의 경고색 토큰 사용
             actionRequired: 'Review',
         };
@@ -82,5 +86,23 @@ export function mockFetchRiskData(score: number, source: SystemRiskData['dataSou
         riskScore: score,
         violationCount: Math.floor(Math.random() * 5) + 1,
         dataSource: source
+    };
+}
+
+export const MAX_LOSS_THRESHOLD = 15000;
+
+export function calculateLmaxScore(inputs: RiskInputs): CalculatedResult {
+    const baseLoss = inputs.employeeCount * 100;
+    const aiPenalty = inputs.aiUsageScope * 5000;
+    const complianceDiscount = 1 - inputs.complianceRate;
+    const retentionPenalty = (inputs.dataRetentionYears || 1) * 200;
+
+    const rawLmax = (baseLoss + aiPenalty + retentionPenalty) * complianceDiscount;
+    const lmaxScore = Math.max(0, Math.floor(rawLmax));
+    
+    return {
+        lmaxScore,
+        threshold: MAX_LOSS_THRESHOLD,
+        isCritical: lmaxScore >= MAX_LOSS_THRESHOLD,
     };
 }

@@ -1,4 +1,4 @@
-import { PaywallStateController } from '../services/PaywallStateController';
+import { PaywallStateController, PaymentState } from './PaywallStateController';
 
 /**
  * 결제 트랜잭션을 처리하는 서비스 계층. Stripe/PayPal 등 실제 게이트웨이와의 통신을 담당합니다.
@@ -68,3 +68,31 @@ export class PaymentService {
         // await AuditLogService.recordEvent(eventType, data); 
     }
 }
+
+export const executePaymentTransaction = async (paymentData: { amount: number }): Promise<{ success: boolean; transactionId: string; message: string }> => {
+    console.log(`[PaymentService] Executing standalone payment transaction for amount $${paymentData.amount}...`);
+    await new Promise(resolve => setTimeout(resolve, 1500)); // 시뮬레이션 지연
+
+    const isSuccess = Math.random() > 0.05; // 95% 성공률
+    const transactionId = `txn_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+
+    return {
+        success: isSuccess,
+        transactionId: transactionId,
+        message: isSuccess ? "✅ 결제에 성공했습니다." : "❌ 한도 초과 또는 카드 오류입니다."
+    };
+};
+
+export const processMinimumPremiumPayment = async (riskScore: number, premiumAmount: number): Promise<{ success: boolean; transactionId: string; message: string }> => {
+    console.log(`[PaymentService] Processing minimum premium payment: Score=${riskScore}, Amount=$${premiumAmount}...`);
+    await new Promise(resolve => setTimeout(resolve, 1500)); // 시뮬레이션 지연
+
+    const isSuccess = Math.random() > 0.05; // 95% 성공률
+    const transactionId = `txn_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+
+    return {
+        success: isSuccess,
+        transactionId: transactionId,
+        message: isSuccess ? "✅ 보험료 결제에 성공했습니다." : "❌ 한도 초과 또는 카드 오류입니다."
+    };
+};

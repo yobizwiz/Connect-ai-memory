@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { RiskData } from '../types'; // 가정: types.ts에 정의된 타입 사용
+import { RiskData } from '../components/types'; // 가정: types.ts에 정의된 타입 사용
 // 임시로 API 호출을 시뮬레이션하는 Mock 함수를 사용합니다.
 // 실제 환경에서는 c:\Users\jinoh\Desktop\Connect AI\_company\components\services\riskService에서 가져와야 합니다.
 

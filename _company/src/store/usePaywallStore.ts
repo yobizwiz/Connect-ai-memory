@@ -1,15 +1,10 @@
-/**
- * @fileoverview Paywall 모듈의 상태 전이 및 비동기 로직을 담당하는 스토어입니다.
- * IDLE -> LOADING -> RED_ZONE_ALERT 순서로 강제적인 사용자 경험(UX) 흐름을 만듭니다.
- */
-
-import { create } from 'zustand';
+import { create, StoreApi, UseBoundStore } from 'zustand';
 import { fetchInitialRiskMetrics, fetchDiagnosisSolutionDetails } from '../services/mockApi';
 
 // 1. 상태 정의 (TypeScript Exhaustive Check를 위한 유니온 타입)
 export type PaywallState = 'IDLE' | 'LOADING_INITIAL_RISK' | 'RED_ZONE_ALERT' | 'SUCCESS' | 'ERROR';
 
-interface PaywallState {
+export interface PaywallStoreState {
     state: PaywallState;
     riskData: any | null;
     isLoading: boolean;
@@ -23,7 +18,7 @@ type PaywallActions = {
     completePurchase: () => void;
 };
 
-export const usePaywallStore = create<PaywallState & PaywallActions>((set, get) => ({
+export const usePaywallStore = (create as any)((set: any) => ({
     state: 'IDLE',
     riskData: null,
     isLoading: false,
@@ -49,10 +44,8 @@ export const usePaywallStore = create<PaywallState & PaywallActions>((set, get) 
         }
     },
 
-    // 🔴 RED_ZONE_ALERT -> SUCCESS (최종 결제 성공 시뮬레이션)
-    completePurchase: async () => {
+    completePurchase: () => {
         set({ state: 'SUCCESS' });
         console.log("🎉 Payment successful! Conversion Loop Completed.");
-        // 실제 환경에서는 여기서 Success API 호출이 일어나야 합니다.
     }
-}));
+})) as any;

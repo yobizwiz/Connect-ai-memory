@@ -11,7 +11,11 @@ interface TREScoreDisplayProps {
  * 이 컴포넌트는 단순히 데이터를 보여주는 것이 아니라, '구매해야 할 이유'를 설계하는 무기입니다.
  */
 const TREScoreDisplay: React.FC<TREScoreDisplayProps> = ({ initialData }) => {
-    const [metrics, setMetrics] = useState<InputMetrics>(initialData || { industry: '', staffCount: 0, dataSizeGB: 0 });
+    const [metrics, setMetrics] = useState<InputMetrics>({
+        industry: initialData?.industry || '',
+        staffCount: initialData?.staffCount || 0,
+        dataSizeGB: initialData?.dataSizeGB || 0
+    });
     const [report, setReport] = useState<RiskReport | null>(null);
     const [loading, setLoading] = useState(false);
 
@@ -81,11 +85,11 @@ const TREScoreDisplay: React.FC<TREScoreDisplayProps> = ({ initialData }) => {
                 </div>
                 <div>
                     <label htmlFor="staffCount" className="block text-sm font-medium text-gray-700">직원 수 (명)</label>
-                    <input type="number" id="staffCount" value={metrics.staffCount} onChange={(e) => setMetrics({...metrics, staffCount: e.target.value})} required className="mt-1 block w-full border p-2 rounded-md focus:ring-red-500 focus:border-red-500"/>
+                    <input type="number" id="staffCount" value={metrics.staffCount} onChange={(e) => setMetrics({...metrics, staffCount: Number(e.target.value) || 0})} required className="mt-1 block w-full border p-2 rounded-md focus:ring-red-500 focus:border-red-500"/>
                 </div>
                  <div>
                     <label htmlFor="dataSizeGB" className="block text-sm font-medium text-gray-700">데이터 규모 (GB)</label>
-                    <input type="number" id="dataSizeGB" value={metrics.dataSizeGB} onChange={(e) => setMetrics({...metrics, dataSizeGB: e.target.value})} required className="mt-1 block w-full border p-2 rounded-md focus:ring-red-500 focus:border-red-500"/>
+                    <input type="number" id="dataSizeGB" value={metrics.dataSizeGB} onChange={(e) => setMetrics({...metrics, dataSizeGB: Number(e.target.value) || 0})} required className="mt-1 block w-full border p-2 rounded-md focus:ring-red-500 focus:border-red-500"/>
                 </div>
                 <button 
                     type="submit" 

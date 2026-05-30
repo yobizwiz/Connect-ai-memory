@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { SystemRiskData, RiskStateContext, AlertDetail, RiskAPIResponse } from '../types';
-import { calculateRiskState, getAlertDetail, mockFetchRiskData } from '../services/riskService';
+import { SystemRiskData, RiskStateContext, AlertDetail, RiskAPIResponse } from '../components/types';
+import { calculateRiskState, getAlertDetail, mockFetchRiskData } from '../components/services/riskService';
 
 // -------------------------------------------------
 // API Mockup Endpoint 정의 (Client Side Simulation)
@@ -32,7 +32,7 @@ const fetchRiskDataFromApiMock = async <T>(endpoint: string): Promise<T> => {
     }
 
     // 실제 데이터 구조와 일치하는 Mock Data 반환
-    return mockFetchRiskData(mockScore as unknown as number, 'FSS'); as T;
+    return mockFetchRiskData(mockScore as unknown as number, 'FSS') as unknown as T;
 };
 
 
@@ -86,5 +86,3 @@ export const useRiskData = (initialEndpoint: string) => {
         loadRiskData 
     };
 };
-
-export { useRiskData };

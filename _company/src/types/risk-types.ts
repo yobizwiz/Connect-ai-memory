@@ -21,4 +21,13 @@ export interface SessionContext {
  */
 export type FunnelStage = "CRITICAL" | "WARNING" | "SOLUTION_IMMEDIATE" | "WARNING_HIGH_INTENSITY" | "SOLUTION";
 
-// 기타 타입들... (RiskScore, SessionContext 등)
+export interface RiskParameters {
+    lMaxThreshold: number;
+    initialScore: number;
+}
+
+export interface RiskState {
+    currentScore: number;
+    isCritical: boolean;
+    lastChecked: Date;
+}

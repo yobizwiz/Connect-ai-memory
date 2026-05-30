@@ -44,3 +44,23 @@ export function calculateTRE(data: any): RiskMetrics {
     structuralGapFound: totalRiskExposureUSD >= 15_000,
   };
 }
+
+export interface RiskData {
+    riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+    structuralDeficiencyReport: string;
+    maxPotentialLoss: string;
+}
+
+export interface RiskDataInput {
+    industry: string;
+    duration: number;
+}
+
+export interface AnalysisResult {
+    riskScore: number;
+    status: 'LOW' | 'MEDIUM' | 'HIGH';
+    financialLossEstimate: number;
+    recommendedSolutionCost: number;
+    timeOpportunityCost: number;
+    summaryText: string;
+}

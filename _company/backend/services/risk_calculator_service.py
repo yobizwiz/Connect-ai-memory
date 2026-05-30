@@ -91,4 +91,3 @@ if __name__ == '__main__':
     print(json.dumps(result, indent=2, ensure_ascii=False))
 
 # Required: Type check verification for Python
-<run_command>python -m py_compile backend/services/risk_calculator_service.py</run_command>

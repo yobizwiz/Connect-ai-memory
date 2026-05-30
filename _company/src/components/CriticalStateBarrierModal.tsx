@@ -22,8 +22,8 @@ const CriticalStateBarrierModal: React.FC<ModalProps> = ({ isOpen, onCloseAction
 
                 {/* 2. 공포 조성 섹션 (L_max 임계값 제시) */}
                 <section className={styles.coreMessageContainer}>
-                    <p className={styles.warningText">
-                        현재 귀사의 운영 리스크 점수가 **임계치($L_{max}$)를 초과**했습니다.
+                    <p className={styles.warningText}>
+                        {"현재 귀사의 운영 리스크 점수가 "}<strong>{"임계치($L_{max}$)를 초과"}</strong>{"했습니다."}
                     </p>
                     <div className={styles.riskDisplay}>
                         <span>최대 허용 위험:</span> 
@@ -34,8 +34,8 @@ const CriticalStateBarrierModal: React.FC<ModalProps> = ({ isOpen, onCloseAction
                 {/* 3. 결제 유도 및 CTA */}
                 <div className={styles.ctaSection}>
                     <p className={styles.reasoningText}>
-                        이러한 수준의 구조적 공백(Structural Gap)은 외부 법규 위반이나 재정 손실($L_{max}$)로 즉시 이어질 수 있습니다. 
-                        **yobizwiz의 Gap Analysis 보고서가 유일한 해결책입니다.**
+                        {"이러한 수준의 구조적 공백(Structural Gap)은 외부 법규 위반이나 재정 손실($L_{max}$)로 즉시 이어질 수 있습니다. "}
+                        <strong>yobizwiz의 Gap Analysis 보고서가 유일한 해결책입니다.</strong>
                     </p>
                     <button 
                         className={styles.paywallButton} 

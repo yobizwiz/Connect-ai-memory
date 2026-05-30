@@ -45,12 +45,12 @@ const PaywallModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
             <div className="bg-[#1A1A1A] p-10 border border-[#C0392B]/50 max-w-lg w-full text-center shadow-2xl animate-pulse">
                 <h2 className="text-4xl font-mono text-[#FFD700]">🚨 시스템 경고: 데이터 접근 차단 🚨</h2>
-                <p className="mt-4 text-lg text-gray-300">현재 리스크 점수($L_{max}$)가 임계치를 초과하여, 상세 진단 보고서 열람은 유료 서비스에 국한됩니다.</p>
+                <p className="mt-4 text-lg text-gray-300">{"현재 리스크 점수($L_{max}$)가 임계치를 초과하여, 상세 진단 보고서 열람은 유료 서비스에 국한됩니다."}</p>
                 <div className="mt-8 space-y-4">
                     <button 
                         onClick={() => { alert("결제 모달 호출: Stripe API 연동 필요"); onClose(); }}
                         className="w-full py-3 bg-[#C0392B] hover:bg-[#9A3125] text-white font-bold uppercase transition duration-300 shadow-lg">
-                        진단 보고서 요청 (지금 바로 $L_{max}$ 차단)
+                        {"진단 보고서 요청 (지금 바로 $L_{max}$ 차단)"}
                     </button>
                     <button 
                         onClick={onClose}

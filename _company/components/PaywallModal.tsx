@@ -1,5 +1,5 @@
 import React from 'react';
-import { RiskData } from '../types';
+import { RiskData } from './types';
 // ⚙️ 이 컴포넌트는 useDiagnosisFlow에서 전달받은 props를 통해 데이터를 바인딩합니다.
 
 interface PaywallProps {
@@ -54,7 +54,7 @@ const PaywallModal: React.FC<PaywallProps> = ({ riskData, onClose, onSubscribe }
                         onClick={handleSubscription} 
                         style={{ padding: '15px 30px', fontSize: '1.2em', cursor: 'pointer', background: '#e74c3c', color: 'white', border: 'none', borderRadius: '8px' }}
                     >
-                        🛡️ 리스크 방어 보험 가입 (지금 $L_{max}$를 막으세요)
+                        {"🛡️ 리스크 방어 보험 가입 (지금 $L_{max}$를 막으세요)"}
                     </button>
                 </div>
 

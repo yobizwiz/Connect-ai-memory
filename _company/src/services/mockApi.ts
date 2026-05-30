@@ -4,6 +4,7 @@
  */
 
 import { RiskData } from '../types/riskTypes';
+import { QuizState, DiagnosisResult } from '../types/quizTypes';
 
 /**
  * 초기 리스크 계산에 필요한 데이터를 강제로 비동기적으로 가져옵니다.
@@ -38,5 +39,35 @@ export const fetchDiagnosisSolutionDetails = async (): Promise<{ solutionName: s
     return {
         solutionName: "Systemic Resilience Protocol v2.0",
         price: 4999.99, // 고가 정책 반영
+    };
+};
+
+export const submitQuizData = async (quizState: QuizState): Promise<DiagnosisResult> => {
+    console.log("🚨 [API] Quiz data submission started...");
+    await new Promise(resolve => setTimeout(resolve, 2000)); // 2초 강제 대기
+
+    let riskLevel: 'Low' | 'Medium' | 'High' = 'Low';
+    if (quizState.accumulatedScore >= 25) {
+        riskLevel = 'High';
+    } else if (quizState.accumulatedScore >= 12) {
+        riskLevel = 'Medium';
+    }
+
+    return {
+        totalScore: quizState.accumulatedScore,
+        riskLevel: riskLevel,
+        reportTitle: "yobizwiz 실시간 리스크 자가 진단 보고서",
+        detailedFindings: [
+            {
+                category: 'A',
+                description: `답변 기반 분석 결과 귀사의 법적 무효화 리스크는 ${riskLevel === 'High' ? '치명적' : '주의'} 수준입니다.`,
+                severity: riskLevel === 'High' ? 3 : 1
+            },
+            {
+                category: 'B',
+                description: `통제 실패 대책이 미흡합니다. 프로세스 무결성 보완이 요구됩니다.`,
+                severity: riskLevel === 'High' ? 2 : 1
+            }
+        ]
     };
 };

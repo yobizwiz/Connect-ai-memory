@@ -114,7 +114,7 @@ export class FunnelService {
             conversionAttempted: true
         });
 
-        const callToActionText = `당신의 사업은 현재 '${FunnelService.determineCurrentStage({ structuralGap: 0, provenanceConfidence: 1 })}' 상태입니다. $L_{max}$ 보고서로 공포를 제거하십시오.`;
+        const callToActionText = `당신의 사업은 현재 '${FunnelService.determineCurrentStage({ structuralGap: 0, provenanceConfidence: 1, regulatoryExposureScore: 0 })}' 상태입니다. $L_{max}$ 보고서로 공포를 제거하십시오.`;
 
         return { finalStage: "SOLUTION", callToActionText };
     }

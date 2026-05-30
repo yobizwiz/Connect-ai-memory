@@ -18,7 +18,7 @@ describe('useRiskCalculator Hook (E2E Test)', () => {
 
   it('2. Should simulate loading state and enforce time delay', async () => {
     // Mock the actual calculation function to control timing
-    const mockCalculateAndSetRisk = jest.fn(() => Promise.resolve({ totalRiskExposureUSD: 100, riskLevel: 'LOW' }));
+    const mockCalculateAndSetRisk = jest.fn((data?: any) => Promise.resolve({ totalRiskExposureUSD: 100, riskLevel: 'LOW' }));
 
     // @ts-ignore - mocking requires this temporary ignore
     useRiskCalculator.calculateAndSetRisk = mockCalculateAndSetRisk;
@@ -48,7 +48,7 @@ describe('useRiskCalculator Hook (E2E Test)', () => {
 
   it('3. Should correctly calculate TRE and set CRITICAL level based on input data', async () => {
     const highRiskData = { containsPII: true, hasComplianceGap: false, lacksAuditLog: true }; // Maximum risk triggers
-    const mockCalculateAndSetRisk = jest.fn(() => Promise.resolve(calculateTRE(highRiskData)));
+    const mockCalculateAndSetRisk = jest.fn((data?: any) => Promise.resolve(calculateTRE(data)));
 
     // @ts-ignore - mocking requires this temporary ignore
     useRiskCalculator.calculateAndSetRisk = mockCalculateAndSetRisk;

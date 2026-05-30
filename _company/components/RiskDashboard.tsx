@@ -44,7 +44,7 @@ const RiskDashboard: React.FC = () => {
              parsedValue = parseInt(value, 10) || undefined;
         }
 
-        setInputs(prev => ({ ...prev, [name]: parsedValue !== undefined ? parsedValue : parseFloat(value)});
+        setInputs(prev => ({ ...prev, [name]: parsedValue !== undefined ? parsedValue : parseFloat(value) }));
     };
 
     // --- 조건부 UI 및 Funnel 로직 ---
@@ -75,10 +75,8 @@ const RiskDashboard: React.FC = () => {
                 <p className="text-lg mt-2 text-gray-400">규제 리스크를 정량화하여 시스템적 취약점을 진단합니다. (Lmax Score)</p>
             </header>
 
-            {/* 1. 입력 필드 섹션 */}
             <section className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-                {Object.keys(inputs) as Array<keyof RiskInputs | 'dataRetentionYears'>}.map(key => {
-                    const name = key as keyof RiskInputs | 'dataRetentionYears';
+                {(Object.keys(inputs) as Array<keyof RiskInputs & string>).map(name => {
                     let label = '';
                     let placeholder = '';
 
@@ -119,7 +117,7 @@ const RiskDashboard: React.FC = () => {
                     className="px-10 py-4 text-xl font-bold rounded-lg transition duration-300 shadow-lg 
                                bg-red-700 hover:bg-red-600 active:scale-[0.98] uppercase tracking-widest"
                 >
-                    $L_{max}$ 점수 실시간 계산하기 ⚙️
+                    {"$L_{max}$ 점수 실시간 계산하기 ⚙️"}
                 </button>
 
                 {/* 결과 표시 영역 */}
@@ -132,10 +130,10 @@ const RiskDashboard: React.FC = () => {
             {/* 3. Paywall CTA (Funnel 최종 단계) */}
             <section className={`text-center p-12 rounded-xl transition-all duration-700 ${result?.isCritical ? 'bg-gradient-to-br from-red-900/95 to-black shadow-[0_0_40px_rgba(255,0,0,0.9)]' : 'bg-gray-800/70 border border-red-700/50'}`}>
                 <h2 className="text-3xl font-bold text-red-400 mb-4 uppercase tracking-wider">
-                    🚨 경고: 최대 손실액 임계값($L_{max}$) 초과!
+                    {"🚨 경고: 최대 손실액 임계값($L_{max}$) 초과!"}
                 </h2>
                 <p className="text-xl text-gray-200 max-w-3xl mx-auto mb-8">
-                    현재 진단 점수는 귀사의 시스템이 감당할 수 있는 수준을 넘어섰습니다. 이대로 방치할 경우, 규제 위반 및 운영 마비로 인한 재무적 손실($L_{max}$)이 예상됩니다. 📉
+                    {"현재 진단 점수는 귀사의 시스템이 감당할 수 있는 수준을 넘어섰습니다. 이대로 방치할 경우, 규제 위반 및 운영 마비로 인한 재무적 손실($L_{max}$)이 예상됩니다. 📉"}
                 </p>
 
                 <button

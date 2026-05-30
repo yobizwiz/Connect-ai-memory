@@ -41,7 +41,7 @@ const App: React.FC = () => {
     return (
         <div style={{ padding: '50px', fontFamily: 'Inter, sans-serif' }}>
             <h1>yobizwiz 시스템 리스크 대시보드</h1>
-            <p>시스템 상태를 실시간으로 모니터링하며 $L_{max}$ 임계값 도달 여부를 테스트합니다.</p>
+            <p>{"시스템 상태를 실시간으로 모니터링하며 $L_{max}$ 임계값 도달 여부를 테스트합니다."}</p>
             
             {/* 1. 리스크 게이지 컴포넌트 */}
             <div style={{ maxWidth: '600px', margin: '40px auto' }}>

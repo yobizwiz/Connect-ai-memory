@@ -54,7 +54,7 @@ const PaywallGateComponent: React.FC = () => {
                 return (
                     <AnimatedStage stageName="alert-stage critical-bg">
                         <h2>🚨 [경고] 구조적 위험 노출 임계치 초과!</h2>
-                        <p>최대 잠재 손실액 ($L_{max}$): <strong className="red-text">{riskData.maxPotentialLoss} USD</strong></p>
+                        <p>{"최대 잠재 손실액 ($L_{max}$): "}<strong className="red-text">{riskData.maxPotentialLoss} USD</strong></p>
                         <p>진단 보고서: {riskData.structuralDeficiencyReport}</p>
                         {/* 구매 버튼 클릭 시 completePurchase를 호출하여 성공 상태로 전이 */}
                         <button onClick={() => usePaywallStore.getState().completePurchase()}>솔루션 즉시 확보 (Buy Now)</button>

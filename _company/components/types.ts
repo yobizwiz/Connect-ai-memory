@@ -31,6 +31,17 @@ export interface RiskStateContext {
         warningThreshold: number; // WARNING 진입 임계값 ($L_{max}$ 기준).
         criticalThreshold: number; // CRITICAL 진입 임계값.
     };
+    dataSource: 'FSS' | 'GDPR' | 'INTERNAL';
+}
+
+/**
+ * @typedef {Object} RiskData
+ * @description 진단 완료 시 사용되는 요약 위험 데이터 구조.
+ */
+export interface RiskData {
+    totalRiskExposure: number; // 총 위험 노출액/점수.
+    riskLevel: 'CRITICAL' | 'WARNING' | 'IDLE'; // 위험 레벨.
+    details?: any[]; // 상세 내용 (선택사항).
 }
 
 /** @type {RiskStateContext} */
@@ -54,3 +65,16 @@ export type RiskAPIResponse = {
     data?: SystemRiskData;
     error?: string;
 };
+
+export interface RiskInputs {
+    employeeCount: number;
+    complianceRate: number;
+    aiUsageScope: number;
+    dataRetentionYears?: number;
+}
+
+export interface CalculatedResult {
+    lmaxScore: number;
+    threshold: number;
+    isCritical: boolean;
+}
