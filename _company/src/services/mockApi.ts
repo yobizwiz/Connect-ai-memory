@@ -1,68 +1,42 @@
 /**
- * src/services/mockApi.ts
- * 백엔드 데이터 수집 및 리스크 보고서 생성을 시뮬레이션하는 모킹 API 레이어입니다.
- * 실제로는 GraphQL 또는 REST API 호출이 이루어질 것입니다.
+ * @fileoverview Paywall 시스템에서 사용되는 비동기 데이터 호출을 모킹합니다.
+ * 실제 API가 아닌, 지연 시간(Time Pressure)과 상태 전이를 시뮬레이션하는 것이 목적입니다.
  */
 
-import { QuizState, DiagnosisResult, DiagnosisError, QuizQuestion } from '../types/quizTypes';
-
-// ⚠️ 이 배열은 Writer가 정의한 21개 문항의 일부만 예시로 넣습니다.
-const MOCK_QUIZ_QUESTIONS: Array<QuizQuestion> = [
-  {
-    id: 'Q1', category: 'A', questionText: "회사 프로세스 중 가장 신뢰하는 리스크 검증 방법은 무엇입니까?",
-    options: [
-      { optionKey: 'a', text: "경험이 많은 선배의 경험적 판단과 직관에 의존한다.", pointValue: 2 },
-      { optionKey: 'b', text: "업계 표준 가이드라인 및 체크리스트를 기반으로 점검합니다.", pointValue: 5 },
-      { optionKey: 'c', text: "규정/법규 변경 시 발생하는 잠재적 위협을 예측하고 구조적으로 선제 대응한다.", pointValue: 18 } // 최고 리스크
-    ]
-  },
-  // ... (나머지 20개 질문은 실제 구현에서 여기에 추가됩니다)
-];
+import { RiskData } from '../types/riskTypes';
 
 /**
- * @description 비동기적인 API 호출 지연 및 상태 업데이트를 시뮬레이션합니다.
- * @param state - 현재까지의 퀴즈 응답 상태
- * @returns {Promise<DiagnosisResult>} 최종 진단 보고서 객체
+ * 초기 리스크 계산에 필요한 데이터를 강제로 비동기적으로 가져옵니다.
+ * @param initialInput - 사용자로부터 받은 최초 입력 데이터 (예: 산업군, 직원 수).
+ * @returns Promise<RiskData> - 계산된 가상의 위험 보고서.
  */
-export const submitQuizData = async (state: QuizState): Promise<DiagnosisResult> => {
-  console.log(`[Mock API] Received data submission for score ${state.accumulatedScore}. Simulating network delay...`);
+export const fetchInitialRiskMetrics = async (initialInput: { industry: string; employeeCount: number }): Promise<RiskData> => {
+    console.log("🚨 [API] Initial Risk Metrics fetching started...");
+    // 핵심은 강제적인 시간 지연입니다. 3초는 사용자가 '기다린다'고 느끼게 하는 중요한 장치입니다.
+    await new Promise(resolve => setTimeout(resolve, 3000)); 
 
-  // 네트워크 지연 시뮬레이션 (2초)
-  await new Promise(resolve => setTimeout(resolve, 2000));
+    if (Math.random() < 0.1) { // 10% 실패 시나리오 추가
+        throw new Error("API_FAILURE: 시스템 내부 규정 검증 오류가 발생했습니다. 재시도를 바랍니다.");
+    }
 
-  if (Math.random() < 0.05) { // 5% 확률로 API 실패 시뮬레이션
-    throw new Error("API_FAILURE: 데이터 전송 중 서버 오류가 발생했습니다.");
-  }
+    // 강제적인 위협 수치 반환 (최대 손실액 $L_{max}$ 포함)
+    return {
+        riskLevel: "CRITICAL", // 테스트를 위해 일단 Critical로 고정합니다.
+        structuralDeficiencyReport: `[${initialInput.industry}] 산업군은 현재 ${Math.floor(Math.random() * 10)}%의 구조적 공백(Structural Gap)에 노출되어 있습니다.`,
+        maxPotentialLoss: (Math.random() * 5_000_000 + 10_000).toFixed(2), // 최소 $10,000 ~ 최대 $6,000,000
+    };
+};
 
-  // --- 핵심 로직: 리스크 보고서 생성 ---
-  let totalScore = state.accumulatedScore;
-  let riskLevel: 'Low' | 'Medium' | 'High';
-  let reportTitle: string;
-  let findings: Array<{ category: 'A' | 'B' | 'C', description: string, severity: number}> = [];
+/**
+ * 최종 솔루션 구매 직전에 호출되는 '진단 요청' API를 모킹합니다.
+ * 이 단계에서는 Paywall 진입을 강제하며, 가격 정보를 제공합니다.
+ */
+export const fetchDiagnosisSolutionDetails = async (): Promise<{ solutionName: string; price: number }> => {
+    console.log("✅ [API] Solution Details fetching started...");
+    await new Promise(resolve => setTimeout(resolve, 1500)); // 짧은 지연 시간으로 긴장감 유지
 
-  // 점수 기반으로 리스크 레벨 및 제목 결정 (Writer의 가중치 적용)
-  if (totalScore >= 25) {
-    riskLevel = 'High';
-    reportTitle = "🚨 시스템적 생존 위협 경고: 즉각적인 전면 재점검이 필수입니다.";
-    findings.push({ category: 'A', description: "법규 변경을 예측하지 못하고 사후 대응에 의존하는 구조적 허점이 발견되었습니다.", severity: 3 });
-  } else if (totalScore >= 10) {
-    riskLevel = 'Medium';
-    reportTitle = "⚠️ 주의 단계: 일부 핵심 프로세스의 통제 메커니즘을 강화해야 합니다.";
-    findings.push({ category: 'B', description: "내부 프로세스가 특정 팀이나 시스템에만 의존하는 사각지대가 존재합니다.", severity: 2 });
-  } else {
-    riskLevel = 'Low';
-    reportTitle = "✅ 안정 단계: 현재의 리스크 관리 체계는 기본적으로 건전합니다.";
-    findings.push({ category: 'C', description: "리스크를 비용 관점만으로 바라보는 경향이 있습니다. 장기적 가치와 연결하는 사고가 필요합니다.", severity: 1 });
-  }
-
-  // 최종 결과 객체 반환
-  const result: DiagnosisResult = {
-    totalScore: totalScore,
-    riskLevel: riskLevel,
-    reportTitle: reportTitle,
-    detailedFindings: findings,
-  };
-
-  console.log("[Mock API] Report successfully generated.");
-  return result;
+    return {
+        solutionName: "Systemic Resilience Protocol v2.0",
+        price: 4999.99, // 고가 정책 반영
+    };
 };
