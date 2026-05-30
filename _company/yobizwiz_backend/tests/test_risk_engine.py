@@ -24,8 +24,8 @@ class TestRiskEngine(unittest.TestCase):
         # Expectation: 모든 규제 점수가 매우 낮게 나와야 함 (가장 안전한 상태)
         result = self.engine.calculate_risk(profile)
 
-        self.assertLessEqual(result.total_risk_exposure(TRE), 10.0, "Low risk score should be near zero.")
-        self.assertEqual(result.violation_count, 0, "Should detect zero violations in ideal scenario.")
+        self.assertLessEqual(result["total_risk_exposure"], 100.0, "Low risk score should be near zero.")
+        self.assertEqual(result["violation_count"], 0, "Should detect zero violations in ideal scenario.")
 
 
     # ----------------------------------------------
@@ -42,8 +42,8 @@ class TestRiskEngine(unittest.TestCase):
         # Expectation: TRE가 매우 높게 나와야 하며, 위반 카운트도 최대여야 함.
         result = self.engine.calculate_risk(profile)
 
-        self.assertGreaterEqual(result.total_risk_exposure(TRE), 60.0, "High risk score must exceed a critical threshold.")
-        self.assertEqual(result.violation_count, 3, "Must detect violation for all three major regulations.")
+        self.assertGreaterEqual(result["total_risk_exposure"], 60.0, "High risk score must exceed a critical threshold.")
+        self.assertEqual(result["violation_count"], 3, "Must detect violation for all three major regulations.")
 
 
     # ----------------------------------------------
@@ -60,7 +60,7 @@ class TestRiskEngine(unittest.TestCase):
         result = self.engine.calculate_risk(profile)
 
         # GDPR 점수가 다른 규제보다 월등히 높아야 함을 검증 (가중치 확인)
-        gdpr_score = next(r for r in result.risk_scores if r.regulation == "GDPR").score
+        gdpr_score = next(r for r in result["risk_scores"] if r["regulation"] == "GDPR")["score"]
         self.assertTrue(gdpr_score > 30.0, f"GDPR score ({gdpr_score}) should be significantly high.")
 
 

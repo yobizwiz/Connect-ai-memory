@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Dict, List
+from typing import Dict, List, Any
 
 # --- 1. 입력 데이터 스키마 (User Input Validation) ---
 class UserProfileData(BaseModel):
@@ -19,6 +19,26 @@ class RegulationRiskScore(BaseModel):
 
 class RiskMetricsOutput(BaseModel):
     """전체 리스크 지표를 모아서 반환합니다."""
-    total_risk_exposure(TRE): float = Field(..., ge=0.0, le=100.0, description="총 위험 노출도 (Weighted Average). 0이 가장 안전.")
+    total_risk_exposure: float = Field(..., ge=0.0, le=1000.0, description="총 위험 노출도 (Weighted Average). 0이 가장 안전.")
     violation_count: int = Field(..., ge=0, description="발견된 규제 미준수 사항의 총 개수")
     risk_scores: List[RegulationRiskScore] = Field(..., description="규제별 상세 리스크 점수 목록")
+
+
+# --- 3. B2B 감사 로그 원장 스키마 (Audit Log Schema) ---
+class AuditLogCreate(BaseModel):
+    user_id: str = Field(..., description="감사 로그를 생성하는 사용자 ID")
+    action: str = Field(..., description="수행된 행위 (예: DIAGNOSIS, PAYMENT)")
+    details: Dict[str, Any] = Field(default_factory=dict, description="상세 로그 데이터")
+
+class AuditLogResponse(BaseModel):
+    id: int = Field(..., description="로그 고유 번호")
+    user_id: str = Field(..., description="사용자 ID")
+    action: str = Field(..., description="행위")
+    details: Dict[str, Any] = Field(..., description="상세 데이터")
+    timestamp: str = Field(..., description="로그 기록 시간")
+    previous_hash: str = Field(..., description="이전 블록의 해시값")
+    hash: str = Field(..., description="현재 감사 블록의 해시값")
+
+class VerificationResult(BaseModel):
+    is_valid: bool = Field(..., description="체인 무결성 여부")
+    message: str = Field(..., description="검증 결과 메시지")
