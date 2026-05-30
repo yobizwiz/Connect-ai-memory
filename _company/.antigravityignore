@@ -1,0 +1,29 @@
+# --- 1. 대용량 아카이브 및 과거 고립 데이터 (RAG 성능 저하의 주범) ---
+Knowledge_Base_Archive/
+yobizwiz/research_assets/Failure_Case_Studies/
+Strategy_Documentation/
+
+# --- 2. 에이전트 장기 메모리 백업본 (수십만 라인의 중복 지식 스캔 방지) ---
+_agents/ceo/memory_backup_*
+_agents/developer/verified_backup*
+*_backup.md
+*backup.md
+_agents/**/memory_backup_*
+
+# --- 3. 빌드 파일 및 캐시 디렉터리 ---
+.next/
+.next
+node_modules/
+__pycache__/
+.pytest_cache/
+*.pyc
+*.pyo
+*.pyd
+.vscode/
+.git/
+
+# --- 4. 임시 파일 및 시스템 아웃풋 ---
+temp/
+00_Raw/
+temp*
+*.tmp

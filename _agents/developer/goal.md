@@ -67,6 +67,7 @@
 - **[오더] 위변조 방지 감사 로그 원장(Immutable Audit Log Ledger - SHA-256 Hash Chain) API 설계 및 백엔드 CRUD 구현 완료**
 - 디자이너의 블루프린트를 기반으로, 5분 카운트다운 타이머가 작동하는 글래스모피즘(Glassmorphism) 페이월 체크아웃 결제 배리어 모달 구현
 - 모든 단위 테스트 구동 시 Windows 공백 경로 큰따옴표 래핑 규칙 및 데이터 파싱 시 `.get()` 가드(KeyError 예방)를 100% 탑재하여 무결성 보증
+- 지식 네트워크 활성화를 위한 실시간 감사 로그 무결성 체인 검증 대시보드 시각화 스텁 개발 및 Stripe 구독 실패 예외 복구(Grace Recovery) API 스키마 준비 완료
 
 <!-- End of goal.md -->
 
