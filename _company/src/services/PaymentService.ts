@@ -1,107 +1,70 @@
-// paymentService.ts: 결제 및 위험 평가 통합 비즈니스 로직 처리
-import { PaymentGatewayType } from './interfaces';
+import { PaywallStateController } from '../services/PaywallStateController';
 
 /**
- * @description 외부 API 호출의 안정성을 위한 재시도 횟수 제한 (Exponential Backoff)
- * @param fn 실행할 함수
- * @param maxRetries 최대 재시도 횟수
+ * 결제 트랜잭션을 처리하는 서비스 계층. Stripe/PayPal 등 실제 게이트웨이와의 통신을 담당합니다.
  */
-async function retryWithBackoff<T>(fn: () => Promise<T>, maxRetries: number = 3): Promise<T> {
-    let lastError: Error | null = null;
-    for (let attempt = 0; attempt < maxRetries; attempt++) {
+export class PaymentService {
+    private readonly stripeClient: any; // TODO: @stripe/stripe-node 초기화 및 인증 로직 추가
+    private readonly paywallController: PaywallStateController;
+
+    constructor(paywallController: PaywallStateController) {
+        this.paywallController = paywallController;
+        // TODO: 실제 환경 변수에서 API Key를 가져와 클라이언트를 초기화해야 합니다.
+        // this.stripeClient = require('stripe')(process.env.STRIPE_SECRET_KEY); 
+    }
+
+    /**
+     * 사용자가 결제 버튼을 누르면 호출되는 메인 트랜잭션 실행 함수.
+     * @param paymentMethodToken - 클라이언트 측에서 생성된 토큰 (카드 정보 등).
+     * @param planId - 구매하려는 플랜 ID ('premium-annual' 등).
+     * @returns 성공 시 트랜잭션 결과 객체, 실패 시 에러를 포함한 결과.
+     */
+    public async processPayment(paymentMethodToken: string, planId: string): Promise<{ success: boolean; transactionId?: string; message: string }> {
         try {
-            console.log(`[PaymentService] Attempt #${attempt + 1} 실행 시도...`);
-            return await fn();
-        } catch (e) {
-            lastError = e as Error;
-            // 지수 백오프: 2^attempt * 1000ms 마다 대기 (1s, 2s, 4s...)
-            const delay = Math.pow(2, attempt) * 1000;
-            console.warn(`[PaymentService] 실패 감지. ${delay / 1000}초 후 재시도합니다. 에러: ${e instanceof Error ? e.message : '알 수 없는 오류'}`);
-            await new Promise(resolve => setTimeout(resolve, delay));
+            // 1. 상태 전이: PROCESSING으로 전환 (UI에 로딩 스피너 표시)
+            this.paywallController.transition(PaymentState.PROCESSING);
+
+            console.log(`[API Call] Attempting payment for Plan ${planId} with Token ${paymentMethodToken}...`);
+
+            // **********************************************************
+            // !!! 중요: 이 섹션은 실제 Stripe/PayPal SDK 호출로 대체되어야 합니다.
+            // 예시: const charge = await this.stripeClient.charges.create({ ... });
+            await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate network latency
+
+            const isSuccessSimulated = Math.random() > 0.2; // 80% 성공률 시뮬레이션
+
+            if (!isSuccessSimulated) {
+                throw new Error('Payment gateway declined transaction due to insufficient funds or expired card.');
+            }
+            // **********************************************************
+
+            const successfulTransactionId = `txn_${Date.now()}_${planId}`;
+
+            // 2. 상태 전이 및 로그 기록 (SUCCESS)
+            this.paywallController.transition(PaymentState.SUCCESS, { transactionId: successfulTransactionId });
+            await this.logAuditEvent('PAYMENT_SUCCESS', { transactionId: successfulTransactionId, planId: planId });
+
+            return { success: true, transactionId: successfulTransactionId, message: '✅ 결제에 성공했습니다. 보고서를 즉시 확인하세요.' };
+
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'Unknown API Error';
+            console.error(`[ERROR] Payment failure detected: ${errorMessage}`);
+            
+            // 3. 상태 전이 및 로그 기록 (FAILED)
+            this.paywallController.transition(PaymentState.FAILED);
+            await this.logAuditEvent('PAYMENT_FAILURE', { reason: errorMessage, planId: planId });
+
+            // Writer가 작성한 에러 카피를 여기서 활용하여 사용자에게 노출해야 합니다.
+            return { success: false, message: `❌ 결제에 실패했습니다. 시스템 오류 또는 카드 문제입니다. (${errorMessage})` };
         }
     }
-    // 모든 시도가 실패했을 경우 최종적으로 에러를 던집니다.
-    throw new PaymentError(`결제 게이트웨이 연동에 실패했습니다. 최대 재시도 횟수(${maxRetries}) 초과. 마지막 오류: ${lastError?.message}`);
-}
-
-
-/**
- * @description 최소 보험료 지불을 처리하는 메인 트랜잭션 로직 (Core Business Logic)
- * @param treValue 총 위험 노출액 (Total Risk Exposure). 고객에게 보여주는 핵심 데이터.
- * @param premiumAmount 계산된 최소 보험료 금액.
- * @returns 성공적으로 결제 및 처리가 완료되었음을 나타내는 객체.
- */
-export async function processMinimumPremiumPayment(treValue: number, premiumAmount: number): Promise<{ success: boolean; transactionId: string }> {
-    console.log(`\n[CORE LOGIC] TRE 기반 보험료 지불 프로세스 시작.`);
-
-    // 1. 입력 유효성 검사 (Guard Clause)
-    if (isNaN(treValue) || treValue <= 0 || isNaN(premiumAmount) || premiumAmount <= 0) {
-        throw new PaymentError("TRE 또는 최소 보험료 금액이 유효하지 않습니다. 데이터 흐름을 점검해주세요.");
+    
+    /**
+     * Audit Log Service를 호출하여 이벤트 기록을 보장합니다. (Transaction Guard)
+     */
+    private async logAuditEvent(eventType: string, data: any): Promise<void> {
+        // TODO: 실제 구현 시에는 이 함수 내부에서 SHA-256 해시 체인 로직이 실행되어야 합니다.
+        console.log(`[AUDIT LOG] Recording immutable event: ${eventType} with payload:`, data);
+        // await AuditLogService.recordEvent(eventType, data); 
     }
-
-    // 2. 결제 게이트웨이 호출 (재시도 메커니즘 적용)
-    const paymentResult = await retryWithBackoff(async () => {
-        if (paymentGateway === 'PAYPAL') {
-            return PayPalPaymentService.processPayment({ amount: premiumAmount, token: "mock_token" }); 
-        } else if (paymentGateway === 'STRIPE') {
-            return StripePaymentService.processPayment({ amount: premiumAmount, token: "mock_token" }); 
-        } else {
-             throw new PaymentError("지원되지 않는 결제 게이트웨이입니다.");
-        }
-    });
-
-    // 3. 성공 후 로직 처리 (핵심 가치 부여)
-    console.log(`[CORE LOGIC] ✅ 트랜잭션 ${paymentResult.transactionId} 완료. 고객의 생존 위협 리스크가 해소되었습니다.`);
-    return { success: true, transactionId: paymentResult.transactionId };
-}
-
-// ===============================================
-// MOCK GATEWAY SERVICES (실제 환경에서는 API 클라이언트 호출)
-// ===============================================
-
-const paymentGateway = process.env.PAYMENT_GATEWAY || 'PAYPAL'; // 환경 변수로 게이트웨이 결정 (기본: PayPal)
-
-/** @type {PaymentGateway} */
-interface PaymentGateway {
-    TYPE: "PAYPAL" | "STRIPE";
-}
-
-export const StripePaymentService = {
-    async processPayment(data: { amount: number; token: string }): Promise<{ transactionId: string }> {
-        // 실제로는 axios.post('stripe/api', ...) 등이 들어갑니다.
-        console.log(`[MOCK API] 💰 Stripe를 통해 ${data.amount} 처리 시도...`);
-        await new Promise(resolve => setTimeout(resolve, Math.random() * 50 + 100)); // 네트워크 지연 시뮬레이션
-        if (Math.random() < 0.1) { // 10% 확률로 실패 시뮬레이션
-            throw new PaymentError("Stripe API: 일시적인 서버 과부하 오류 발생.");
-        }
-        return { transactionId: `mock_txn_${Date.now()}_STRIPE` };
-    }
-};
-
-export const PayPalPaymentService = {
-    async processPayment(data: { amount: number; token: string }): Promise<{ transactionId: string }> {
-        // 실제로는 SDK 연동이 들어갑니다.
-        console.log(`[PayPal API] 💳 PayPal을 통해 $${data.amount} 결제 처리 중...`);
-        await new Promise(resolve => setTimeout(resolve, Math.random() * 100 + 200)); // 네트워크 지연 시뮬레이션
-        console.log(`[PayPal API] ✅ 트랜잭션 승인 완료.`);
-        return { transactionId: `pp_txn_${Date.now()}_PAYPAL` };
-    }
-};
-
-// ===============================================
-// INTERFACES AND UTILITIES
-// ===============================================
-
-export class PaymentError extends Error {
-    constructor(message: string) {
-        super(message);
-        this.name = "PaymentError";
-    }
-}
-
-/** @type {PaymentGateway} */
-export type PaymentGateways = PaymentGateway;
-
-export async function executePaymentTransaction(data: { amount: number }): Promise<{ success: boolean; transactionId: string }> {
-    return processMinimumPremiumPayment(100000, data.amount);
 }
