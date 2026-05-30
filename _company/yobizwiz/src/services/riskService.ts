@@ -89,3 +89,73 @@ export const calculateRiskReport = (userData: UserInputData): RiskCalculationRes
     }
   };
 };
+
+/**
+ * @description 단일 진단 테스트 및 통합 리스크 판정을 위한 입력 인터페이스
+ */
+export interface RiskInput {
+  piiLeakageRecords?: number;
+  complianceGapsFound?: number;
+  operationalFailureInstances?: number;
+  score?: number;
+}
+
+/**
+ * @description 리스크 계산 결과와 페이월 트리거 여부를 조합한 통합 리스크 판정 구조체
+ */
+export interface RiskAggregatedResult {
+  level: 'Normal' | 'Warning' | 'Red Zone';
+  isPaywallTriggered: boolean;
+}
+
+/**
+ * @description 비동기적으로 리스크 데이터를 분석하여 리스크 영역(Normal/Warning/Red Zone)과 페이월 트리거 여부를 판정합니다.
+ * @param data - 진단할 리스크 정보
+ * @returns 리스크 영역 등급 및 페이월 트리거 여부
+ */
+export const calculateAggregatedRiskScoreAndGate = async (data: RiskInput): Promise<RiskAggregatedResult> => {
+  // 가드 로직: 데이터가 비어있거나 무효한 스코어 범위인 경우 구조적 예외를 던집니다.
+  if (!data) {
+    throw new Error("RISK_ENGINE_ERROR");
+  }
+
+  if (
+    data.score === undefined &&
+    data.piiLeakageRecords === undefined &&
+    data.complianceGapsFound === undefined &&
+    data.operationalFailureInstances === undefined
+  ) {
+    throw new Error("RISK_ENGINE_ERROR");
+  }
+
+  if (data.score !== undefined && (data.score < 0 || data.score > 1.0)) {
+    throw new Error("RISK_ENGINE_ERROR");
+  }
+
+  let finalScore = 0;
+  if (data.score !== undefined) {
+    finalScore = data.score;
+  } else {
+    // Lmax 점수 기반 계산 후 0.0 - 1.0 범위로 규격화
+    const normalizedInput = {
+      piiLeakageRecords: data.piiLeakageRecords || 0,
+      complianceGapsFound: data.complianceGapsFound || 0,
+      operationalFailureInstances: data.operationalFailureInstances || 0,
+    };
+    finalScore = calculateLmaxScore(normalizedInput) / 100;
+  }
+
+  let level: 'Normal' | 'Warning' | 'Red Zone';
+  let isPaywallTriggered = false;
+
+  if (finalScore < 0.5) {
+    level = 'Normal';
+  } else if (finalScore < 0.85) {
+    level = 'Warning';
+  } else {
+    level = 'Red Zone';
+    isPaywallTriggered = true;
+  }
+
+  return { level, isPaywallTriggered };
+};

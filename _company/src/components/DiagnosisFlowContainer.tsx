@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react';
 import axios from 'axios'; // API 호출 시뮬레이션용
-import { RiskScoreData } from '../lib/api/riskService'; // 가상의 타입 임포트
 import TREScoreDisplay from './TREScoreDisplay';
 
 // --- [가상 API 함수] ---
@@ -89,7 +88,7 @@ export const DiagnosisFlowContainer: React.FC<{ initialInput: any }> = ({ initia
         }
 
         if (riskResult) {
-            return <TREScoreDisplay data={riskResult} />; // 계산된 결과를 보여줌
+            return <TREScoreDisplay initialData={initialInput || {}} />; // 계산된 결과를 보여줌
         }
 
         // 초기 상태
