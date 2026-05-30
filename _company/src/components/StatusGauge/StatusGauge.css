@@ -1,0 +1,117 @@
+/* ----------------------------------- */
+/* M_Complexity Glitch Effect Styling   */
+/* ----------------------------------- */
+
+.status-gauge-container {
+    font-family: 'Courier New', Courier, monospace;
+    padding: 40px;
+    border: 2px solid #333;
+    background-color: #1a1a2e; /* 어두운 배경 */
+    color: #e0e0ff;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
+}
+
+h1 {
+    color: #9370DB; /* Authority Blue Tone */
+    border-bottom: 2px solid #3a3a6e;
+    padding-bottom: 10px;
+}
+
+/* --- Gauge Core Styling --- */
+.status-gauge {
+    margin: 30px 0;
+    padding: 25px;
+    border-radius: 8px;
+    transition: all 0.5s ease-in-out;
+}
+
+/* Stable State (기본) */
+.status-gauge.stable {
+    background-color: #1f3b27; /* 녹색 계열 */
+    border: 2px solid #4caf50;
+}
+
+/* Warning State (주의 단계) */
+.status-gauge.warning {
+    background-color: #3e3d1c; /* 노란/주황 계열 */
+    border: 2px solid #ffc107;
+}
+
+/* Critical State (네온 크림슨 글리치 발동) */
+.status-gauge.critical {
+    background-color: #4a1b1d; /* 어두운 빨강 계열 */
+    border: 3px solid #ff2828; /* 네온 크림슨 */
+    box-shadow: 0 0 15px #ff2828, inset 0 0 10px #ff2828;
+}
+
+/* --- Glitch Animation (네온 글리치 효과) --- */
+.glitch {
+    animation: glitch-anim 0.3s infinite linear alternate;
+    position: relative; /* 애니메이션 오버레이를 위해 필요 */
+}
+
+@keyframes glitch-anim {
+    0% { transform: translate(1px, 1px); opacity: 1; text-shadow: 2px 2px #ff2828, -2px -2px #ff2828; }
+    20% { transform: translate(-1px, 0px); opacity: 0.9; text-shadow: -3px 3px #cc0000, 3px -3px #cc0000; }
+    40% { transform: translate(2px, 2px); opacity: 1; text-shadow: 3px -2px #ff2828, -3px 3px #ff2828; }
+    60% { transform: translate(-2px, -2px); opacity: 0.95; text-shadow: -2px 3px #cc0000, 2px -1px #cc0000; }
+    80% { transform: translate(1px, 1px); opacity: 1; text-shadow: 2px 2px #ff2828, -2px -2px #ff2828; }
+    100% { transform: translate(0px, 0px); opacity: 1; text-shadow: none; }
+}
+
+/* Critical 상태일 때만 글리치 클래스 적용 */
+.status-gauge.critical h2 {
+    animation: glitch-anim 0.3s infinite linear alternate;
+}
+
+
+/* --- Message Styling --- */
+.message {
+    font-size: 1.1em;
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.alert-red {
+    color: #ff2828; /* 네온 크림슨 */
+    background-color: rgba(255, 40, 40, 0.1);
+    font-weight: bold;
+    animation: pulse 1s infinite alternate;
+}
+
+/* --- CTA Button Styling --- */
+.paywall-cta {
+    display: block;
+    width: 90%;
+    margin: 30px auto 0;
+    padding: 20px;
+    font-size: 1.5em;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+/* Critical 상태일 때 CTA 버튼의 시각적 위협 증대 */
+.paywall-cta.active-red {
+    background-color: #8b0000; /* 진한 버건디 */
+    color: white;
+    box-shadow: 0 0 15px rgba(255, 40, 40, 0.7);
+}
+
+.paywall-cta:hover {
+    background-color: #a30000;
+}
+
+/* 기타 상태 */
+.loading-state, .error-state {
+    text-align: center;
+    padding: 50px;
+    font-size: 1.2em;
+    color: #999;
+}
+
+@keyframes pulse {
+    from { opacity: 1; }
+    to { opacity: 0.7; }
+}
