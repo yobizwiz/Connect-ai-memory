@@ -1,0 +1,86 @@
+/* Designer Token 기반 CSS Module */
+:root {
+    --color-background: #1A1A1A;
+    --color-red-zone: #DC2626; 
+    --color-system-text: #A3A3A3;
+    --color-authority-blue: #2980B9;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.85); /* Dimming effect */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modalContent {
+    background-color: var(--color-background);
+    border: 3px solid var(--color-red-zone);
+    box-shadow: 0 0 50px rgba(220, 38, 38, 0.7); /* Intense Glow */
+    width: 90%;
+    max-width: 700px;
+    padding: 40px;
+    text-align: center;
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Key Animation Placeholder - Glitch Effect */
+@keyframes glitch {
+    0% { transform: translate(0); opacity: 1; }
+    20% { transform: translate(-3px, 3px) scaleX(1.01); opacity: 0.95; }
+    40% { transform: translate(3px, -3px) scaleY(0.99); opacity: 1; }
+    60% { transform: translate(-2px, 2px) scaleX(1.02); opacity: 0.85; }
+    80% { transform: translate(2px, -2px) scaleY(1.03); opacity: 0.9; }
+    100% { transform: translate(0); opacity: 1; }
+}
+
+.glitchPlaceholder {
+    margin-top: 40px;
+    padding: 20px;
+    border: 1px dashed var(--color-system-text);
+    font-family: 'Roboto Mono', monospace;
+    animation: glitch 0.1s infinite steps(1) linear, flicker 1s ease-in-out forwards;
+}
+
+@keyframes flicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+    20%, 24%, 55% { opacity: 0.7; }
+}
+
+/* Typography & Layout */
+.header {
+    margin-bottom: 30px;
+}
+.title {
+    color: var(--color-red-zone);
+    font-size: 2em;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+.warningText {
+    font-size: 1.3em;
+    margin-bottom: 10px;
+}
+
+/* CTA Button Styling */
+.paywallButton {
+    background-color: var(--color-authority-blue);
+    color: white;
+    padding: 15px 40px;
+    border: none;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    text-transform: uppercase;
+}
+
+.paywallButton:hover {
+    background-color: #3a98c6;
+    box-shadow: 0 0 20px var(--color-authority-blue);
+}
