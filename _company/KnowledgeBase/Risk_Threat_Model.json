@@ -14,3 +14,4 @@
     "required_controls": ["Full Audit Trail Generation", "Immutable Ledger (SHA-256)", "Provenance Tagging"],
     "recommended_action": "모든 AI 산출물에 대한 출처(Source)와 모델 실행 파라미터를 불변 원장에 기록하고 감사 가능하게 구현."
   }
+}

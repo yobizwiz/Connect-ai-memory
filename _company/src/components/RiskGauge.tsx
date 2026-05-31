@@ -71,7 +71,7 @@ const RiskGauge: React.FC<RiskGaugeProps> = ({ onDiagnosisRequested }) => {
         <div className="w-full md:w-1/2">
           <div className="relative pt-[2rem] pb-[4rem]">
             {/* Gauge Background Circle */}
-            <svg class="w-full transform -rotate-90" viewBox="0 0 200 200">
+            <svg className="w-full transform -rotate-90" viewBox="0 0 200 200">
               {/* Track (Background) */}
               <circle
                 cx="100" cy="100" r="85"
