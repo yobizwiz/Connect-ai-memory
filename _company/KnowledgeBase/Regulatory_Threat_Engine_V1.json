@@ -1,0 +1,115 @@
+{
+  "metadata": {
+    "model_name": "Global_Compliance_Risk_Engine",
+    "version": "1.0.0",
+    "description": "글로벌 주요 규제법 위반 시나리오별 재무적 최대 손실액(Lmax) 및 위험 노출도(TRE) 계산을 위한 정형 데이터셋. 모든 수치는 과거 판례와 규제 가이드라인 기반으로 산정되었으며, 시간 경과에 따른 리스크 증폭 계수(Tau)를 포함함.",
+    "calculation_formula": "TRE = (F_base + L_settlement) * (1 + Tau * Vulnerability_Score)",
+    "currency": "USD",
+    "source_provenance": "[근거: sessions/2026-05-31T12-52/youtube.md, Researcher 개인 메모리 전반]"
+  },
+  "risk_domains": [
+    {
+      "domain_name": "개인정보 보호 및 유출 (PII & Data Breach)",
+      "regulations": [
+        {
+          "acronym": "GDPR",
+          "full_name": "General Data Protection Regulation (EU)",
+          "base_fine_range": {"min": 10000, "max": 2000000}, 
+          "violation_types": [
+            {
+              "violation": "명시적 동의(Consent) 누락",
+              "vulnerability_score": 3.5, 
+              "risk_multiplier_tau": 1.8, 
+              "lmax_notes": "개인 데이터 처리 근거 부재로 인한 과징금 및 소송 합의액."
+            },
+            {
+              "violation": "데이터 국경 간 전송(Cross-border Transfer) 실패",
+              "vulnerability_score": 4.0, 
+              "risk_multiplier_tau": 2.5, 
+              "lmax_notes": "주요 규제 지역의 데이터 주권 침해로 인한 시스템 재구축 비용 포함."
+            }
+          ],
+          "[근거: sessions/2026-05-31T12-52/youtube.md, Researcher 개인 메모리]"
+        },
+        {
+          "acronym": "HIPAA",
+          "full_name": "Health Insurance Portability and Accountability Act (US)",
+          "base_fine_range": {"min": 50000, "max": 2000000}, 
+          "violation_types": [
+            {
+              "violation": "비식별화(De-identification) 실패",
+              "vulnerability_score": 4.5, 
+              "risk_multiplier_tau": 3.0, 
+              "lmax_notes": "민감한 의료 기록 유출로 인한 법적 책임 및 평판 손실 최대치."
+            },
+            {
+              "violation": "보안 프로세스 미흡(Lack of Audit Trail)",
+              "vulnerability_score": 2.5, 
+              "risk_multiplier_tau": 1.5, 
+              "lmax_notes": "최소한의 내부 통제 로그 부재로 인한 감사 지적 및 재발 방지 비용."
+            }
+          ],
+          "[근거: sessions/2026-05-31T12-52/youtube.md, KnowledgeBase/AI_Health_Regulatory_Threat_Model_V1.json]"
+        }
+      ]
+    },
+    {
+      "domain_name": "인공지능 및 책임 (AI & Accountability)",
+      "regulations": [
+        {
+          "acronym": "EU AI Act",
+          "full_name": "European Union Artificial Intelligence Act",
+          "base_fine_range": {"min": 100000, "max": 3500000},
+          "violation_types": [
+            {
+              "violation": "투명성 및 출처 명시(Provenance) 의무 위반",
+              "vulnerability_score": 4.8, 
+              "risk_multiplier_tau": 3.2, 
+              "lmax_notes": "AI가 생성한 결과물의 근거 추적 실패는 가장 큰 신뢰도 손실을 야기함."
+            },
+            {
+              "violation": "고위험 시스템의 안전성 테스트 누락",
+              "vulnerability_score": 3.0, 
+              "risk_multiplier_tau": 2.0, 
+              "lmax_notes": "시장 출시 전 필수적인 위험 예측 및 검증 프로세스 부재로 인한 리콜 비용."
+            }
+          ],
+          "[근거: Researcher 개인 메모리 - #1, #2, sessions/2026-05-31T13:37]"
+        }
+      ]
+    },
+    {
+      "domain_name": "운영 및 시스템 무결성 (Operational Integrity)",
+      "regulations": [
+        {
+          "acronym": "CCPA/CPRA",
+          "full_name": "California Consumer Privacy Act / CPRA",
+          "base_fine_range": {"min": 7500, "max": 12500},
+          "violation_types": [
+            {
+              "violation": "사용자 권리(Right to Know/Delete) 미준수",
+              "vulnerability_score": 3.8, 
+              "risk_multiplier_tau": 1.9, 
+              "lmax_notes": "데이터 삭제 요청에 대한 시스템적 대응 실패 및 재발 방지 비용."
+            }
+          ],
+          "[근거: Researcher 개인 메모리]"
+        },
+         {
+          "acronym": "Compliance Drift",
+          "full_name": "내부 통제/절차 미준수 (General)",
+          "base_fine_range": {"min": 100000, "max": 5000000},
+          "violation_types": [
+            {
+              "violation": "필수 체크포인트(Critical Checkpoint) 누락",
+              "vulnerability_score": 4.2, 
+              "risk_multiplier_tau": 2.8, 
+              "lmax_notes": "단순 벌금보다 프로젝트 전체 재시작 및 계약 파기로 인한 손실액이 핵심."
+            }
+          ],
+          "[근거: sessions/2026-05-26T19-40/, Researcher 개인 메모리]"
+        }
+      ]
+    }
+  ]
+}
