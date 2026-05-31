@@ -1,0 +1,43 @@
+{
+  "Knowledge_Source": "Systemic Risk Modeling Synthesis",
+  "Last_Updated": "2026-05-31",
+  "Report_Goal": "Identification of top 3 high-impact, systemic regulatory violation cases for TRE calculation.",
+  "Case_Studies": [
+    {
+      "Case_ID": "CASE_AI_PROV_2026",
+      "Violation_Law": {
+        "Name": "EU AI Act (Proposed/Implementing Rules)",
+        "Article": "Art. 5(1) - Mandatory Transparency and Provenance Mandate for High-Risk Systems.",
+        "Focus": "AI 모델의 학습 데이터 출처 및 의사결정 과정에 대한 불명확성(Lack of Audit Trail)."
+      },
+      "Systemic_Failure_Root_Cause": "LLM 기반 환각(Hallucination) 책임 전가: AI 산출물에 근거 자료(Provenance)를 명시하지 않고, 이를 법적/재무적 의사결정의 기초로 사용한 경우. 단순 실수 수준을 넘어 시스템 설계 단계에서의 통제 실패.",
+      "Estimated_Max_Fine_Lmax": "최소 €15M ~ 최대 €70M+ (규제 당국 벌금 + 명예 및 신뢰도 하락 비용 포함)",
+      "Impact_Focus": "법적 준전문가 책임(Semi-Professional Liability) 증대. 시스템 투명성 부재에 대한 처벌.",
+      "Provenance_Note": "[근거: Researcher 개인 메모리 - 취약점 1, EU AI Act 트렌드]"
+    },
+    {
+      "Case_ID": "CASE_DATA_SOV_2025",
+      "Violation_Law": {
+        "Name": "CCPA / GDPR (Combined Enforcement)",
+        "Article": "GDPR Art. 4(1) 및 CCPA 'Purpose Limitation' 조항 위반.",
+        "Focus": "데이터 주권 침해: 특정 지역 사용자 데이터를 국외로 전송하거나, 최초 수집 목적 외의 용도로 활용한 경우."
+      },
+      "Systemic_Failure_Root_Cause": "Cross-Border Data Flow 설계 오류: 데이터 저장 위치(Geo-fencing)에 대한 기술적/운영적 통제 메커니즘 부재. 특히 파편화된 내부 DB 구조로 인해 특정 지역의 데이터를 추적 및 격리하지 못한 '데이터 사일로' 현상.",
+      "Estimated_Max_Fine_Lmax": "최소 $50M ~ 최대 $200M+ (Jurisdiction별 벌금 합산 + 영업 정지 비용)",
+      "Impact_Focus": "글로벌 운영 리스크. 데이터의 무결성(Integrity) 및 주권(Sovereignty) 훼손.",
+      "Provenance_Note": "[근거: Researcher 개인 메모리 - Knowledge_Silo_Depth, Data Sovereignty 트렌드]"
+    },
+    {
+      "Case_ID": "CASE_COMPLIANCE_DRIFT_2024",
+      "Violation_Law": {
+        "Name": "HIPAA (US) / ISO 27001 (Global Standard)",
+        "Article": "Security Rule Failure: 접근 통제(Access Control) 및 프로세스 문서화 의무 위반.",
+        "Focus": "내부 감사 원장(Audit Trail)의 결함: 규정상 최소 보관 기간을 준수하지 못하거나, 접근 권한 관리 시스템이 자동 업데이트되지 않아 발생하는 '절차적 하자'. (Process Failure)."
+      },
+      "Systemic_Failure_Root_Cause": "운영 프로세스 퇴화(Compliance Drift): 조직 구조 개편이나 기술 스택 변경 시, 컴플라이언스 체크리스트가 수동으로 업데이트되지 않아 시스템이 규제 요구사항을 반영하지 못함. (Human/Process Failure)",
+      "Estimated_Max_Fine_Lmax": "최소 $10M ~ 최대 $50M+ (규제 위반 기간에 따른 시간당 벌금 누적 + 재교육 및 감사 비용)",
+      "Impact_Focus": "비즈니스 연속성(BCP) 리스크. 시스템의 물리적 무결성을 잃어버림.",
+      "Provenance_Note": "[근거: Researcher 개인 메모리 - Compliance_Drift_Score, 내부 통제 로그 필수 요건]"
+    }
+  ]
+}
