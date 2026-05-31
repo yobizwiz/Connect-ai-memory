@@ -1,0 +1,94 @@
+{
+  "metadata": {
+    "dataset_version": "v1.0.0",
+    "creation_date": "[Current Date]",
+    "description": "실시간 위험 점수(TRE) 계산을 위한 통합 규제 위협 원본 데이터셋. 모든 수치는 재무적 최대 손실액($L_{max}$) 기준으로 정량화되었으며, 개발팀의 API 입력 근거 자료로 사용되어야 함.",
+    "source_provenance": [
+      "[근거: c:\\Users\\jinoh\\Desktop\\Connect AI\\_company\\KnowledgeBase\\Regulatory_Evidence_Bank_v2.md]",
+      "[근거: Researcher 개인 메모리 - DORA, EU AI Act 관련 논의 기록]"
+    ],
+    "schema_version": "JSON-Schema-V3"
+  },
+  "risk_scenarios": [
+    {
+      "scenario_id": "REG-001",
+      "regulation_name": "Digital Operational Resilience Act (DORA)",
+      "jurisdiction": "EU",
+      "primary_threat": "IT 시스템 장애 및 운영 연속성 실패",
+      "failure_vector": "핵심 서비스의 가용성(Availability) 유지 실패 및 공급망 위험 노출.",
+      "risk_category": "운영 리스크 (Operational Risk)",
+      "weighting_score": 0.85,
+      "financial_loss_model": {
+        "base_fine_per_incident": "$1M - $5M",
+        "multiplier_factor": "데이터 처리 규모(Volume) 및 서비스 중요도에 따라 변동.",
+        "recent_trend_volatility": {
+          "description": "금융권 시스템적 위협 발생 시, 규제 기관의 제재 강도가 급증하는 추세 관찰됨. (예: 특정 국가/섹터에서 유사 사례 대비 150% ~ 200% 벌금 증가 경향)",
+          "multiplier_increase_estimate": "1.8x (평균치, 위험도 High 기준)"
+        },
+        "l_max_formula": "$L_{base} + (V \times C) * M$ (V: 데이터 볼륨, C: 위반 건수, M: 1.8x 조정 계수)"
+      },
+      "compliance_gap": "제3자 공급업체에 대한 위험 관리 및 테스트 절차 미비."
+    },
+    {
+      "scenario_id": "REG-002",
+      "regulation_name": "EU AI Act (Artificial Intelligence Act)",
+      "jurisdiction": "EU",
+      "primary_threat": "고위험 AI 시스템의 무분별한 배포 및 출처 비명시.",
+      "failure_vector": "AI 모델의 Hallucination(환각) 또는 Source_Attribution_Deficit (출처 명시 실패).",
+      "risk_category": "준전문가/신뢰 리스크 (Professional Liability)",
+      "weighting_score": 0.95,
+      "financial_loss_model": {
+        "base_fine_per_incident": "$10M - $20M",
+        "multiplier_factor": "피해 규모($L_{max}$)와 명예/신뢰도 하락 가치(Intangible Loss)를 포함. (최대 1% 전 세계 매출액)",
+        "recent_trend_volatility": {
+          "description": "AI 시스템의 법적 책임 인정 범위 확대 추세. 특히, 환각으로 인한 의사결정 오류는 벌금 외의 민사/형사 책임을 동반함.",
+          "multiplier_increase_estimate": "2.0x (최초 사례 대비 공격적인 규제 적용 예상)"
+        },
+        "l_max_formula": "$L_{base} \times M + L_{reputation}$ (L_{reputation}: 명예/신뢰도 손실액)"
+      },
+      "compliance_gap": "AI 모델의 출처 명시(Provenance) 및 투명성(Transparency) 기록 시스템 부재."
+    },
+    {
+      "scenario_id": "DATA-003",
+      "regulation_name": "HIPAA (Health Insurance Portability and Accountability Act)",
+      "jurisdiction": "USA",
+      "primary_threat": "PII Leakage 및 비식별화(De-identification) 실패.",
+      "failure_vector": "환자 기록 수 또는 민감 데이터 필드에 대한 마스킹 누락.",
+      "risk_category": "개인정보보호 리스크 (Privacy Risk)",
+      "weighting_score": 0.75,
+      "financial_loss_model": {
+        "base_fine_per_incident": "$50K - $2M+",
+        "multiplier_factor": "유출된 데이터의 민감도(PHI 등급) 및 유포 범위에 따라 가중치 부여.",
+        "recent_trend_volatility": {
+          "description": "데이터 주권 강화 추세로 인해, 국경 간 데이터 전송 실패 시 벌금 구조가 복합적으로 적용됨. (예: GDPR과 HIPAA의 결합 위협)",
+          "multiplier_increase_estimate": "1.5x"
+        },
+        "l_max_formula": "$L_{base} \times N_{records} + L_{civil\_suit}$ (N_{records}: 유출된 레코드 수, L_{civil\_suit}: 민사 소송 합의 비용)"
+      },
+      "compliance_gap": "데이터 수명 주기(Data Lifecycle) 전반에 걸친 자동화된 PII 마스킹 검증 시스템 부재."
+    },
+    {
+      "scenario_id": "COMP-004",
+      "regulation_name": "GDPR (General Data Protection Regulation)",
+      "jurisdiction": "EU",
+      "primary_threat": "데이터 처리의 목적 위반 및 동의 철회권(Right to Erasure) 미준수.",
+      "failure_vector": "사용자의 데이터 삭제 요청에 대한 시스템적 대응 실패 또는 과도한 데이터 보존 기간.",
+      "risk_category": "법적 운영 리스크 (Legal Operation Risk)",
+      "weighting_score": 0.90,
+      "financial_loss_model": {
+        "base_fine_per_incident": "$20M",
+        "multiplier_factor": "전 세계 매출액 대비 최대 4%까지 적용 가능하며, 위반 행위의 고의성(Intent)에 따라 증폭됨.",
+        "recent_trend_volatility": {
+          "description": "GDPR 기반으로 파생된 '데이터 주권' 요구가 지역별로 상이하게 적용되며, 데이터 전송 경로마다 추가 벌금 발생 가능성이 높음.",
+          "multiplier_increase_estimate": "1.3x"
+        },
+        "l_max_formula": "$L_{base} \times (\frac{Global Revenue}{100}) \times M$ (M: 위반의 고의성 계수)"
+      },
+      "compliance_gap": "데이터 매핑(Data Mapping) 및 처리 근거(Legal Basis)에 대한 실시간 감사 추적 시스템 부재."
+    }
+  ],
+  "scoring_logic_notes": {
+    "TRE_calculation": "총 위험 노출도 (Total Risk Exposure, TRE) = Σ (Weighting Score * L_max_formula 결과). 이 점수가 높을수록 즉각적인 컴플라이언스 투자가 필요함을 의미함.",
+    "Disclaimer": "본 데이터셋은 API 통합의 근거 자료이며, 실제 법적 효력을 갖기 위해서는 해당 관할권 전문 변호사의 최종 검토가 필수입니다."
+  }
+}
