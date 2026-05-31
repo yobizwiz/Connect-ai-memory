@@ -1,0 +1,47 @@
+[
+  {
+    "risk_id": "R-AI-001",
+    "risk_type": "Hallucination Liability (LLM 출처 불명확성)",
+    "regulatory_focus": "Global AI Governance (EU AI Act, Common Law Duty of Care)",
+    "description": "AI가 법적 근거 없이 잘못된 '준법 자문'을 제공하여 기업이 이를 바탕으로 오판/투자 결정을 내릴 경우. 벌금보다 '전문성 상실 및 명예 손실'이 핵심 피해임.",
+    "failure_root_cause": "Provenance Tracking Failure (AI 산출물에 출처 기록 미제공)",
+    "financial_impact_quantification": {
+      "base_fine_range": "$1M - $10M+",
+      "litigation_settlement_estimate": "$5M - $20M+",
+      "non_monetary_loss": "Expert Credibility Loss (재판매 불가능한 지적 자산 손실)",
+      "multiplier": 3.5,
+      "notes": "벌금(Fine) 외에 '신뢰도'와 '법적 방어 비용'이 최대 위험 요소로 작용함."
+    },
+    "compliance_mitigation_key": ["Mandatory Source Attribution (Provenance Layer)", "Audit Trail Implementation", "Human-in-the-Loop Verification"]
+  },
+  {
+    "risk_id": "R-DATA-002",
+    "risk_type": "Cross-Border Data Sovereignty Breach",
+    "regulatory_focus": "Data Localization & Jurisdiction (GDPR, CCPA, DORA)",
+    "description": "국경을 넘는 데이터 전송 시, 수신 국가의 법적 요건(예: 데이터 현지 저장 의무)이나 목적 외 사용 제한 규정을 위반할 경우. 단순 유출보다 '시스템 운영 무효화' 위험이 큼.",
+    "failure_root_cause": "Lack of Data Residency Control (데이터 물리적 위치 및 접근 권한 통제 미흡)",
+    "financial_impact_quantification": {
+      "base_fine_range": "$10M - $50M+",
+      "litigation_settlement_estimate": "$20M - $100M+",
+      "operational_loss_estimate": "System Shutdown Cost (데이터 접근 불가로 인한 비즈니스 중단 비용)",
+      "multiplier": 4.0,
+      "notes": "GDPR/DORA가 강화된 맥락에서 데이터 주권 위반은 최대 벌금액과 함께 '운영 허가 박탈'을 수반함."
+    },
+    "compliance_mitigation_key": ["Geo-Fencing Data Processing", "Encryption Key Management (BYOK)", "Data Flow Mapping"]
+  },
+  {
+    "risk_id": "R-PROC-003",
+    "risk_type": "Operational Failure Due to Procedural Gap",
+    "regulatory_focus": "System Resilience & Governance (DORA, ISO 27001)",
+    "description": "주요 비즈니스 프로세스(예: 결제 승인, 데이터 수정)에 대한 다단계 검증/감사 절차(Critical Checkpoint)가 누락되거나 기록되지 않아 시스템적 공백이 발생할 경우. (프로세스의 '비문서화' 자체가 리스크)",
+    "failure_root_cause": "Procedural Blind Spot (핵심 업무 흐름의 감사 로그 미작성 및 비공개)",
+    "financial_impact_quantification": {
+      "base_fine_range": "$5M - $30M",
+      "litigation_settlement_estimate": "$10M - $50M",
+      "indirect_loss_estimate": "Opportunity Cost (위기 대응 및 시스템 재구축에 들어간 인건비/시간)",
+      "multiplier": 2.8,
+      "notes": "단순한 기술적 오류가 아닌 '경영진의 관리 책임(Governance)' 문제가 되어 막대한 손실로 연결됨."
+    },
+    "compliance_mitigation_key": ["Immutable Audit Log (SHA-256 Trail)", "Mandatory Multi-Factor Approval", "Process Standardization"]
+  }
+]
