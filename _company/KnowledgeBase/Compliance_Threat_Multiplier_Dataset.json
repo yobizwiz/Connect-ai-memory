@@ -1,0 +1,56 @@
+[
+  {
+    "Regulation": "GDPR (General Data Protection Regulation)",
+    "Violation_Type": "PII Leakage / Purpose Limitation",
+    "Timeframe": {
+      "Year_2019_to_2021": {"Base_Fine_Factor": 4, "Multiplier_Trend": 1.5, "Notes": "초기 규제 도입 단계. 벌금은 높았으나, 초기에는 '시스템적 결함'으로 해석되어 $L_{max}$가 명확하지 않았음."},
+      "Year_2022_to_2024": {"Base_Fine_Factor": 5, "Multiplier_Trend": 3.0, "Notes": "AI 시대 데이터 활용 증가로 인해 '의도성' 및 '시스템적 공백(Structural Gap)'에 대한 사법적 의혹 제기 강화. 배상액 급증 추세."}
+    },
+    "Quantified_Loss_Estimate": {
+      "Formula": "(Base_Fine * PII_Count) * Multiplier_Trend + Operational_Downtime_Cost",
+      "Min_Lmax_USD": 500000,
+      "Max_Lmax_USD": "1.5M+"
+    }
+  },
+  {
+    "Regulation": "EU AI Act (Artificial Intelligence Act)",
+    "Violation_Type": "Hallucination / Lack of Provenance",
+    "Timeframe": {
+      "Year_2023_to_2025": {"Base_Fine_Factor": 6, "Multiplier_Trend": 4.5, "Notes": "가장 급증하는 위협 영역. 단순 법적 위반을 넘어 '신뢰성(Trust)' 상실에 대한 벌칙이 추가됨. 출처 명시 실패 시 가중치 극대화."},
+      "Year_2026_and_beyond": {"Base_Fine_Factor": 7, "Multiplier_Trend": 6.0, "Notes": "AI 사용의 '필연적 책임(Mandatory Accountability)' 모델 도입 예상. 예측 불가성 기반 과징금 상한액 $L_{max}$가 폭발적으로 증가할 것."}
+    },
+    "Quantified_Loss_Estimate": {
+      "Formula": "(Base_Fine * AI_Usage_Scale) * Multiplier_Trend + Reputation_Damage_Cost",
+      "Min_Lmax_USD": 1M,
+      "Max_Lmax_USD": "50M+"
+    }
+  },
+  {
+    "Regulation": "CCPA/CPRA (California Consumer Privacy Act)",
+    "Violation_Type": "Cross-Border Data Transfer / Purpose Creep",
+    "Timeframe": {
+      "Year_2018_to_2021": {"Base_Fine_Factor": 3, "Multiplier_Trend": 1.2, "Notes": "주로 '개인정보 처리 동의(Consent)' 확보 여부 위반에 초점."},
+      "Year_2022_to_2024": {"Base_Fine_Factor": 4, "Multiplier_Trend": 2.5, "Notes": "데이터 사용 목적 변경(Purpose Creep)이나 제3국 전송 시 '통제권 상실' 위험에 대한 법적 책임을 강조하는 방향으로 진화."},
+      "Year_2025_and_beyond": {"Base_Fine_Factor": 5, "Multiplier_Trend": 3.8, "Notes": "데이터 주권(Data Sovereignty) 강화 추세 반영. 국가/지역별 데이터 처리 위치 강제."}
+    },
+    "Quantified_Loss_Estimate": {
+      "Formula": "(Base_Fine * Data_Transfer_Volume) * Multiplier_Trend + Remediation_Cost",
+      "Min_Lmax_USD": 200000,
+      "Max_Lmax_USD": "8M+"
+    }
+  },
+  {
+    "Regulation": "Cybersecurity Standards (NIST/ISO)",
+    "Violation_Type": "Supply Chain Vulnerability / Failure to Audit",
+    "Timeframe": {
+      "Year_2019_to_2021": {"Base_Fine_Factor": 2, "Multiplier_Trend": 1.8, "Notes": "주로 침해 사고 발생 후 '최소한의 보안 조치' 미흡에 대한 책임을 물음."},
+      "Year_2022_to_2024": {"Base_Fine_Factor": 3, "Multiplier_Trend": 3.5, "Notes": "공급망 리스크(Supply Chain Risk)가 시스템적 문제로 해석되며, 협력사 감사 의무 및 거버넌스 결함에 대한 벌금이 추가됨."},
+      "Year_2025_and_beyond": {"Base_Fine_Factor": 4, "Multiplier_Trend": 5.0, "Notes": "위협 예측(Predictive Threat) 시스템 도입 의무화가 예상되며, '사후 대응'만으로는 면책받을 수 없음."}
+    },
+    "Quantified_Loss_Estimate": {
+      "Formula": "(Base_Fine * Vulnerability_Count) * Multiplier_Trend + Business_Interruption_Cost",
+      "Min_Lmax_USD": 300000,
+      "Max_Lmax_USD": "12M+"
+    }
+  }
+]
