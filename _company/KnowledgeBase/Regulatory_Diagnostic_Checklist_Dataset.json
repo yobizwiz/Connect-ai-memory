@@ -1,0 +1,63 @@
+{
+  "metadata": {
+    "dataset_name": "Global Regulatory Violation Diagnostic Checklist",
+    "version": "1.0.0",
+    "last_updated": "2026-05-31",
+    "description": "yobizwiz의 리스크 진단 시스템에 사용될, 규제 위반 체크리스트와 정량적 가중치/재무 손실 모델링 데이터셋. 개발자가 직접 TRE 계산 로직을 구현하는 핵심 입력값입니다.",
+    "source_provenance": "Self-RAG 및 Researcher 개인 메모리 기반 통합 분석"
+  },
+  "risk_items": [
+    {
+      "risk_code": "C-001",
+      "name": "PII 비식별화 실패 (Data Leakage)",
+      "description": "개인 식별 정보(PII)를 적절히 마스킹하거나 익명화하지 않고 내부 모델 학습 또는 분석에 사용한 경우. 데이터 주권 침해 리스크가 가장 큼.",
+      "check_question": "처리된 고객 데이터셋에서 계좌번호, 주민등록번호 등 민감 PII가 비식별화 과정을 거치지 않은 원본 형태로 남아있습니까?",
+      "weight": 5.0,
+      "lmax_components": {
+        "regulatory_fine_range": "$50,000 ~ $2M+",
+        "litigation_settlement_cost_range": "추가 배상액 발생 (PII 개수 비례)",
+        "indirect_operational_loss_estimate": "영업 정지 또는 시스템 재구축 비용 ($1억 이상 가능)"
+      },
+      "provenance": "[근거: sessions/2026-05-26T19-59, Self-RAG (PII_Leakage_Index)]"
+    },
+    {
+      "risk_code": "C-002",
+      "name": "AI 환각 및 출처 불명확성 (Hallucination & Provenance Deficit)",
+      "description": "LLM이 법적 근거가 없는 허위 정보를 생성하거나, 답변의 원본 자료(Provenance)를 명시하지 않아 의사결정자가 잘못된 판단을 내린 경우. 준전문가 책임에 해당.",
+      "check_question": "제공된 모든 규제/법률 자문 보고서마다 사용된 근거 조항 및 내부 문서를 100% 추적하여 제시할 수 있습니까?",
+      "weight": 4.5,
+      "lmax_components": {
+        "regulatory_fine_range": "$25,000 ~ $10M+",
+        "litigation_settlement_cost_range": "전문가 배상 책임 (신뢰도 하락에 따른 손해배상)",
+        "indirect_operational_loss_estimate": "명예 및 신뢰도 하락으로 인한 투자 손실액 ($500만 ~ $2,000만)"
+      },
+      "provenance": "[근거: Researcher 개인 메모리 (Source_Attribution_Deficit), Self-RAG]"
+    },
+    {
+      "risk_code": "C-003",
+      "name": "규제 범위 위반 자문 제공 (Scope Violation)",
+      "description": "서비스가 전문적으로 다루지 않는 영역(예: 법률사무소의 금융 투자 조언)에 대해 답변을 하거나 판단을 내리는 경우. 책임 회피 논란 발생.",
+      "check_question": "현재 서비스 범위 밖의 규제나 자문 요청이 들어왔을 때, 시스템적으로 사용자에게 명확한 '면책 고지(Disclaimer)' 및 한계선을 제시하고 있습니까?",
+      "weight": 3.5,
+      "lmax_components": {
+        "regulatory_fine_range": "$75,000 ~ $3M",
+        "litigation_settlement_cost_range": "광고/법적 책임 및 공신력 훼손에 대한 배상액",
+        "indirect_operational_loss_estimate": "서비스 재설계 비용 (Legal Guardrail 구축)"
+      },
+      "provenance": "[근거: Researcher 개인 메모리, Self-RAG (Scope_Violation_Flag)]"
+    },
+    {
+      "risk_code": "C-004",
+      "name": "절차적 컴플라이언스 누락 (Compliance Drift)",
+      "description": "필수적인 내부 절차(예: 2단계 승인, 감사 기록)가 미흡하여 시스템적으로 규정을 준수하지 못한 경우. 프로세스 무결성 문제입니다.",
+      "check_question": "핵심 비즈니스 로직 실행마다 필수 감점 체크포인트(Critical Checkpoint)를 강제하고 그 이력(Audit Trail)을 불변하게 기록하고 있습니까?",
+      "weight": 2.5,
+      "lmax_components": {
+        "regulatory_fine_range": "미흡한 내부 통제에 대한 감독 당국의 벌금",
+        "litigation_settlement_cost_range": "계약 이행 지연 또는 중단으로 인한 위약금 및 손실액",
+        "indirect_operational_loss_estimate": "프로젝트 재시작 비용 (재검증 및 감사 대응)"
+      },
+      "provenance": "[근거: Researcher 개인 메모리, Self-RAG (Compliance_Drift_Score)]"
+    }
+  ]
+}
