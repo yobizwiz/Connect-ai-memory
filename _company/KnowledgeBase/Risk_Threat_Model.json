@@ -1,110 +1,16 @@
 {
-  "model_description": "yobizwiz 핵심 컴플라이언스 위험 모델 데이터셋 (v1.0). 모든 재무적 손실액($L_{max}$)은 다음 요소들의 가중 합산으로 산정됨: 규제 벌금(Regulatory Fines) + 소송/합의 비용(Litigation Costs) + 운영 중단 손실(Operational Downtime Loss) + 평판 손상 비용(Reputational Damage Cost).",
-  "timestamp": "2026-05-31T<현재시간>",
-  "datasets": [
-    {
-      "regulation_id": "GDPR",
-      "name": "General Data Protection Regulation (EU)",
-      "focus": "데이터 주권 및 개인 정보 처리의 근본적 원칙 위반.",
-      "violation_scenarios": [
-        {
-          "risk_index": "PII_Leakage_Index",
-          "description": "비식별화 실패로 인한 민감 데이터(Health/Finance) 유출 및 목적 외 사용.",
-          "loss_components": {
-            "regulatory_fine": {"range": "$15M - $20M+", "basis": "글로벌 최대 벌금 상한액 (총 매출 대비 4%)", "provenance": "[근거: sessions/2026-05-19T04:23/secretary.md]"},
-            "litigation_cost": {"range": "$5M - $10M+", "basis": "집단 소송 합의금 및 배상액", "provenance": "[근거: Researcher 개인 메모리]"},
-            "operational_loss": {"range": "$2M - $5M", "basis": "데이터 처리 중단/시스템 재구축 비용", "provenance": "[근거: Research_Artifacts/Compliance_Threat_Report_V1.md 가정]" }
-          },
-          "total_estimated_max_loss": {"range": "$22M - $35M+", "basis": "최악의 시나리오 합산 (Critical Weighting)", "provenance": "[근거: Researcher 개인 메모리]"}
-        },
-        {
-          "risk_index": "Compliance_Drift_Score",
-          "description": "필수 절차(예: 데이터 처리 동의, 2단계 승인) 누락 및 문서화 미비.",
-          "loss_components": {
-            "regulatory_fine": {"range": "$1M - $5M", "basis": "행정 처분 벌금", "provenance": "[근거: Researcher 개인 메모리]"},
-            "litigation_cost": {"range": "$300K - $2M", "basis": "계약 위약금 및 프로젝트 지연 비용", "provenance": "[근거: Researcher 개인 메모리]"}
-          },
-          "total_estimated_max_loss": {"range": "$1M - $7M+", "basis": "절차적 하자로 인한 기회비용 손실", "provenance": "[근거: Researcher 개인 메모리]"}
-        }
-      ]
-    },
-    {
-      "regulation_id": "EU_AI_ACT",
-      "name": "Artificial Intelligence Act (EU)",
-      "focus": "고위험 AI 시스템의 투명성 및 책임 소재 불분명.",
-      "violation_scenarios": [
-        {
-          "risk_index": "Source_Attribution_Deficit",
-          "description": "AI 출처 공백(Hallucination)으로 인한 법적 근거 없는 리스크 예측 보고서 생성 및 사용.",
-          "loss_components": {
-            "regulatory_fine": {"range": "$5M - $20M", "basis": "제조사/배포자 책임 벌금 (고위험군)", "provenance": "[근거: Researcher 개인 메모리]"},
-            "litigation_cost": {"range": "$10M - $30M+", "basis": "잘못된 예측으로 인한 투자 손실액 및 전문가 배상 책임", "provenance": "[근거: Researcher 개인 메모리]"}
-          },
-          "total_estimated_max_loss": {"range": "$15M - $50M+", "basis": "가장 높은 잠재적 피해 (Reputational + Financial)", "provenance": "[근거: Research_Artifacts/Compliance_Threat_Report_V1.md]"}
-        },
-        {
-          "risk_index": "Knowledge_Silo_Depth",
-          "description": "LLM에 통합된 파편화된 지식으로 인한 모순적이고 불완전한 의사결정 근거 제시.",
-          "loss_components": {
-            "regulatory_fine": {"range": "$50K - $1M", "basis": "AI 거버넌스 미비 벌금", "provenance": "[근거: Researcher 개인 메모리]"},
-            "operational_loss": {"range": "$500K - $3M", "basis": "결정 오류로 인한 기회비용 및 재작업 비용 (Conflicting Data Source Count)"}
-          },
-          "total_estimated_max_loss": {"range": "$600K - $4.1M+", "basis": "장기적 시스템 비효율성으로 인한 손실", "provenance": "[근거: Researcher 개인 메모리]"}
-        }
-      ]
-    },
-    {
-      "regulation_id": "CCPA/CPRA",
-      "name": "California Consumer Privacy Act (US)",
-      "focus": "소비자 데이터의 통제권 및 투명성 위반.",
-      "violation_scenarios": [
-        {
-          "risk_index": "PII_Leakage_Index",
-          "description": "민감 정보(예: 생체 인식, 위치) 처리 과정에서의 마스킹 누락 또는 부적절한 이용.",
-          "loss_components": {
-            "regulatory_fine": {"range": "$10K - $75K/위반", "basis": "CA 소비자 보호국 기준 (최근 개정)", "provenance": "[근거: sessions/2026-05-19T04:23/secretary.md]"},
-            "litigation_cost": {"range": "$5M - $15M", "basis": "민사소송 배상액 및 집단 소송 합의금 (미국 사법 환경 반영)", "provenance": "[근거: Researcher 개인 메모리]"}
-          },
-          "total_estimated_max_loss": {"range": "$20M - $30M+", "basis": "주요 시장 단위의 데이터 유출 시", "provenance": "[근거: Researcher 개인 메모리]"}
-        }
-      ]
-    },
-    {
-      "regulation_id": "HIPAA",
-      "name": "Health Insurance Portability and Accountability Act (US)",
-      "focus": "보호 대상 건강 정보(PHI)의 기밀성 및 무결성 위반.",
-      "violation_scenarios": [
-        {
-          "risk_index": "PII_Leakage_Index",
-          "description": "의료 기록 데이터(PHR)의 비식별화 실패 또는 접근 통제 미흡.",
-          "loss_components": {
-            "regulatory_fine": {"range": "$50K - $2M+", "basis": "HIPAA Tier 4 (최악의 위반 시)", "provenance": "[근거: sessions/2026-05-19T04:23/secretary.md]"},
-            "litigation_cost": {"range": "$5M - $15M", "basis": "환자 개인 피해 배상액 및 소송 합의금", "provenance": "[근거: Researcher 개인 메모리]"}
-          },
-          "total_estimated_max_loss": {"range": "$10M - $30M+", "basis": "핵심 생명 정보가 노출되는 최악의 시나리오", "provenance": "[근거: sessions/2026-05-19T04:23/secretary.md]"}
-        }
-      ]
-    },
-    {
-      "regulation_id": "DORA",
-      "name": "Digital Operational Resilience Act (EU)",
-      "focus": "금융 기관의 운영 리스크 관리 및 시스템 연속성 위협.",
-      "violation_scenarios": [
-        {
-          "risk_index": "Compliance_Drift_Score",
-          "description": "사이버 공격 또는 시스템적 결함으로 인한 핵심 기능 중단 (Operational Downtime).",
-          "loss_components": {
-            "regulatory_fine": {"range": "$1M - $5M", "basis": "금융권 특화 벌금 및 감독 기관 제재", "provenance": "[근거: Researcher 개인 메모리]"},
-            "operational_loss": {"range": "$20M - $100M+", "basis": "시스템 중단에 따른 시간당 매출 손실(Worst-Case Estimate)", "provenance": "[근거: Research_Artifacts/Compliance_Threat_Report_V1.md]"}
-          },
-          "total_estimated_max_loss": {"range": "$23M - $105M+", "basis": "비즈니스 연속성 자체에 대한 위협", "provenance": "[근거: Researcher 개인 메모리]"}
-        }
-      ]
-    }
-  ],
-  "model_summary": {
-    "핵심지표": "재무적 최대 손실액 (TRE)",
-    "주요논점": "법규 위반의 공포를 극대화하기 위해 벌금(Fine)보다 '운영 중단으로 인한 재정적 손실'과 '평판/신뢰도 하락($L_{max}$)'을 주력 지표로 사용해야 함. (Provenance Mandate)",
-    "주의사항": "본 데이터셋은 정량적 모델링 목적이며, 최종 법적 자문이 아님. 모든 수치는 위기감 조성과 서비스 판매 필연성 구조에 활용되어야 합니다."
+  "risk_id": "AI_PROVENANCE_FAILURE",
+  "risk_name": "Provenance Mandate Violation (출처 추적성 의무 위반)",
+  "regulatory_scope": ["EU AI Act Article 13/14 (Transparence & Traceability)", "GDPR Art. 5(2)"],
+  "threat_level": "Critical",
+  "severity_score": 9.5,
+  "description": "AI 산출물에 대한 검증 가능한 출처(Source Attribution) 및 참조 프로세스 기록 실패로 인한 준전문가 책임.",
+  "quantifiable_impact": {
+    "base_fine_range": "$10M ~ $30M+",
+    "increase_factor": 2.5,
+    "formula_notes": "위반한 의사결정의 금전적 영향(Loss amount)을 기준으로 기하급수적으로 증가함."
+  },
+  "mitigation_strategy": {
+    "required_controls": ["Full Audit Trail Generation", "Immutable Ledger (SHA-256)", "Provenance Tagging"],
+    "recommended_action": "모든 AI 산출물에 대한 출처(Source)와 모델 실행 파라미터를 불변 원장에 기록하고 감사 가능하게 구현."
   }
-}
