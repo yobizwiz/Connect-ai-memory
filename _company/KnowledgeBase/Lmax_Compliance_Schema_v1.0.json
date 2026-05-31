@@ -1,0 +1,16 @@
+{
+  "schema_name": "Lmax_Compliance_Model",
+  "description": "Final structured data model for calculating maximum financial loss due to regulatory non-compliance.",
+  "core_variables": {
+    "PII_Leakage_Index": {"formula": "Baseline + (0.5 * log(N) * S)", "source": "sessions/2026-05-19T04-23/secretary.md", "notes": "Exponential increase in penalty based on data volume."},
+    "Source_Attribution_Deficit": {"formula": "(Investment Loss Factor) * (AI Complexity Score)", "source": "Researcher 개인 메모리", "notes": "Quantifies reputational and intellectual loss due to hallucination."}
+  },
+  "regulatory_dataset": [
+    {"reg_id": "GDPR", "risk_type": "PII Leakage", "weighting": "Max(4% of Global Revenue, €20M)", "criticality": "Critical"},
+    {"reg_id": "HIPAA", "risk_type": "PHI Breach", "weighting": "Breach Category + Litigation Settlement", "criticality": "High"},
+    {"reg_id": "EUAIAct", "risk_type": "Systemic Failure/Provenance", "weighting": "Max(7% of Global Revenue, Operational Ban)", "criticality": "Severe"}
+  ],
+  "manual_systemic_risks": [
+    {"risk_name": "Data Sovereignty Violation", "penalty_trigger": "Operational Halt Cost", "minimum_loss_estimate": "$100M+"}
+  ]
+}
