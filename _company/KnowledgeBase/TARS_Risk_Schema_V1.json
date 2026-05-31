@@ -1,0 +1,68 @@
+{
+  "title": "Time-Adjusted Risk Schema for B2B Compliance",
+  "description": "글로벌 규제 위반 리스크를 정량화하고 시간 경과에 따른 위험 증폭(TARS)을 계산하기 위한 데이터 구조 스키마.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "risk_id": {
+        "description": "고유 리스크 식별자 (예: PII_Leakage_HIPAA)",
+        "type": "string"
+      },
+      "violation_category": {
+        "description": "위반 유형의 상위 범주 (예: Data Integrity, Operational Failure, Scope Violation).",
+        "type": "string",
+        "enum": ["Data Breach", "Compliance Drift", "Scope Overreach", "Systemic Failure"]
+      },
+      "primary_regulations": {
+        "description": "적용되는 주요 규제 목록 및 가중치 (예: GDPR: 4.0, CCPA: 3.5). 높은 숫자가 더 큰 위협을 의미함.",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "regulation_code": {"type": "string"},
+            "weighting_factor": {"type": "number", "description": "해당 규제가 야기하는 초기 법적 가중치 (1.0 ~ 5.0)"}
+          },
+          "required": ["regulation_code", "weighting_factor"]
+        }
+      },
+      "data_parameters": {
+        "description": "재무적 손실 계산에 사용되는 정량적 데이터 지표.",
+        "type": "object",
+        "properties": {
+          "pii_count_estimate": {"type": "integer", "description": "유출되거나 위반된 PII의 추정 개수 (Critical Weighting)."},
+          "data_volume_gb": {"type": "number", "description": "위반과 관련된 데이터 볼륨 (GB 단위)."},
+          "system_downtime_hours": {"type": "number", "description": "운영 정지로 인한 추정 비즈니스 중단 시간(Hours)."}
+        },
+        "required": ["pii_count_estimate", "data_volume_gb"]
+      },
+      "financial_impact": {
+        "description": "위반으로 인해 발생 가능한 재무적 최대 손실액 ($L_{max}$) 계산에 필요한 구성 요소.",
+        "type": "object",
+        "properties": {
+          "base_fine_estimate_usd": {"type": "number", "description": "규제 기반의 초기 벌금 추정치 (USD)."},
+          "litigation_settlement_range_min": {"type": "integer", "description": "최소 소송 합의 비용 범위 ($L_{min}$)."},
+          "litigation_settlement_range_max": {"type": "integer", "description": "최대 소송 합의 비용 범위 ($L_{max}$)."}
+        },
+        "required": ["base_fine_estimate_usd"]
+      },
+      "risk_modeling": {
+        "description": "TARS 모델 계산에 필요한 핵심 매개변수.",
+        "type": "object",
+        "properties": {
+          "time_acceleration_factor": {"type": "number", "description": "시간 경과에 따른 위험 증폭 계수 (τ). (1.0 > 1.0: 빠르게 증가, < 1.0: 완만하게 감소)."},
+          "severity_multiplier": {"type": "number", "description": "위반의 심각성 가중치 (예: 조직적 은폐 시 2.5 배수 적용)."}
+        },
+        "required": ["time_acceleration_factor"]
+      }
+    },
+    "required": [
+      "risk_id",
+      "violation_category",
+      "primary_regulations",
+      "data_parameters",
+      "financial_impact",
+      "risk_modeling"
+    ]
+  }
+}
