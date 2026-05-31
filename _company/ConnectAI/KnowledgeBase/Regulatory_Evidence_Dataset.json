@@ -1,0 +1,76 @@
+{
+  "dataset_name": "Global_Compliance_Risk_Matrix_Q2_2026",
+  "description": "최근 글로벌 규제 강화 추세(GDPR, CCPA 등)를 반영하여 모델링된 B2B 최고 위험 시나리오 데이터셋. 각 항목은 재무적 손실액($L$)이 정량화되어 Mockup API의 'Crisis Trigger' 단계에 활용 가능합니다.",
+  "provenance_note": "[근거: sessions/2026-05-19T04-23/secretary.md, Researcher 개인 메모리 (PII Leakage Index), Advanced Regulatory Trend Analysis]",
+  "risk_scenarios": [
+    {
+      "case_id": "C-001",
+      "violation_type": "PII 비식별화 실패 및 국외 전송 위반",
+      "primary_regulation": "GDPR (Article 32 & Chapter V)",
+      "violating_entity_profile": "대규모 의료/금융 데이터 처리 기업 (B2B SaaS 제공자)",
+      "violation_detail": "고객의 민감 PII(건강 기록, 금융 정보)를 적절한 마스킹이나 가명처리 없이 AI 모델 학습에 사용하고 국경을 넘어 전송. '목적 외 활용'으로 간주됨.",
+      "estimated_financial_loss_range": {
+        "min": "$50,000,000",
+        "max": "$250,000,000+",
+        "details": "벌금(최대 4% 전 세계 매출) + 소송 합의 비용 (민사배상액)."
+      },
+      "api_flagging_trigger": "Exposure_Type: PII; Gap_Score > 85",
+      "regulatory_action": "시스템 서비스 중단 및 데이터 접근 영구 차단."
+    },
+    {
+      "case_id": "C-002",
+      "violation_type": "AI Hallucination 기반의 법률 자문 책임 전가",
+      "primary_regulation": "Sector-Specific Professional Liability Law (예: AI Act의 준전문가 조항)",
+      "violating_entity_profile": "LLM 기반 법무 컨설팅 플랫폼/자문 서비스",
+      "violation_detail": "AI 모델이 출처(Provenance)를 명시하지 않은 잘못된 법적 근거(Hallucination)를 제공하여, 고객사(의뢰인)가 이를 기반으로 투자 결정 및 계약 체결을 함. '준전문가 책임' 발생.",
+      "estimated_financial_loss_range": {
+        "min": "$5,000,000",
+        "max": "$20,000,000+",
+        "details": "직접적인 투자 손실액 배상 + 명예 및 신뢰도 하락에 대한 전문 배상 책임."
+      },
+      "api_flagging_trigger": "Exposure_Type: Knowledge; Gap_Score > 70",
+      "regulatory_action": "서비스 판매 중단 명령, 관련 자격증 박탈 가능성."
+    },
+    {
+      "case_id": "C-003",
+      "violation_type": "데이터 주권 침해 및 컴플라이언스 절차 누락 (Compliance Drift)",
+      "primary_regulation": "CCPA/CPRA 또는 산업별 감사 규정 (Sarbanes-Oxley 등)",
+      "violating_entity_profile": "내부 시스템 변경을 외부 고객에게 적용한 기업",
+      "violation_detail": "필수 내부 통제 절차(예: 2단계 승인, 데이터 무결성 검증)를 생략하고 서비스를 배포하여 대규모 운영적 오류 발생. '프로세스적 하자'가 재무 손실로 직결됨.",
+      "estimated_financial_loss_range": {
+        "min": "$100,000,000",
+        "max": "$500,000,000+",
+        "details": "프로젝트 재시작 비용 + 계약 위약금 (배상) + 운영 손실(Downtime Loss)."
+      },
+      "api_flagging_trigger": "Exposure_Type: Operational; Gap_Score > 80",
+      "regulatory_action": "계약 파기, 법적 감사 착수 및 시장 신뢰도 급락."
+    },
+    {
+      "case_id": "C-004",
+      "violation_type": "제3자/타사 지식재산권(IP) 침해를 활용한 모델 학습 (TDM Violation)",
+      "primary_regulation": "국가별 저작권법 및 데이터 마이닝 규정",
+      "violating_entity_profile": "경쟁사의 독점 데이터를 무단으로 수집/모델링한 AI 기업",
+      "violation_detail": "공개된 텍스트나 코드가 아닌, 보호받는 형태의 산업별 고유 데이터셋을 비윤리적으로 활용하여 모델 학습에 사용. '지식재산권 침해'로 간주됨.",
+      "estimated_financial_loss_range": {
+        "min": "$10,000,000",
+        "max": "$75,000,000+",
+        "details": "합의금(손해배상) + 라이선스료 소급 적용액."
+      },
+      "api_flagging_trigger": "Exposure_Type: Intellectual; Gap_Score > 65",
+      "regulatory_action": "특허/저작권 침해 소송 및 시장 퇴출 위협."
+    },
+    {
+      "case_id": "C-005",
+      "violation_type": "민감한 산업군 데이터(ICS) 보안 취약점 노출",
+      "primary_regulation": "NIST/산업 제어 시스템 보안 가이드라인 (Critical Infrastructure Protection)",
+      "violating_entity_profile": "에너지, 통신 등 필수 인프라를 관리하는 시스템 운영사",
+      "violation_detail": "운영 기술(OT) 환경의 데이터를 LLM으로 전송하거나, 취약한 인터페이스를 통해 외부 공격자에게 노출. 국가 안보 및 공공 안전과 직결된 위협.",
+      "estimated_financial_loss_range": {
+        "min": "$500,000,000",
+        "max": "무제한 (국가적 피해)",
+        "details": "시스템 복구 비용 + 국가/사회적 운영 손실액. 이는 가장 높은 위험 경고를 요구함."
+      },
+      "api_flagging_trigger": "Exposure_Type: Critical; Gap_Score > 95",
+      "regulatory_action": "정부 기관의 직접적인 개입 및 보안 감사 명령."
+    }
+  ]
