@@ -1,12 +1,30 @@
-# 📘 yobizwiz 표준 규제 지식 가이드라인 (RAG Master Index)
-## 개요
-본 문서는 yobizwiz가 판매하는 '법적 손실 방어 보험' 솔루션의 근거가 되는 모든 글로벌 및 산업별 규제 준수(Compliance) 지식 베이스를 통합한 마스터 인덱스입니다. 모든 에이전트와 시스템은 여기서 가장 최신 정보를 검색해야 합니다.
+# 📜 글로벌 규제 리스크 가이드라인: $L_{max}$ 계산식 업데이트 (v3.0)
 
-## 💡 핵심 주제 영역 (Knowledge Items)
-1. **글로벌 개인정보보호 법규:** [GDPR 및 CCPA 준수 원칙](KnowledgeBase/Regulations/Global_Privacy_Standards.md)
-2. **AI 시스템 컴플라이언스:** [EU AI Act 및 AI 거버넌스 필수 체크리스트](KnowledgeBase/Regulations/EUAICompliance_Guide.md)
-3. **자동화 프로세스 리스크 관리:** [컴플라이언스 게이트웨이 구축 원칙과 워크플로우 유효성 검사](KnowledgeBase/ComplianceScenarios/Gateway_Principles.md)
-4. **산업별 구조적 실패 사례 및 대응:** [재무적 손실(TRE) 기반 위협 분석 보고서](KnowledgeBase/ComplianceScenarios/Failure_Case_Studies.md)
+본 가이드는 기존의 PII Leakage Index, Compliance Drift Score에 더하여, 급변하는 디지털 환경과 AI 기술 사용 과정에서 발생하는 미래 예측 가능한 위험을 정량화하기 위해 설계되었습니다. 모든 리스크 지표는 재무적 최대 손실액($L_{max}$) 산출 시 결합되어야 합니다.
+
+## I. 기존 핵심 리스크 인덱스 (재참조)
+*   **PII_Leakage_Index:** 비식별화 실패로 인한 데이터 유출 위험 ($50K ~ $2M+).
+*   **Compliance_Drift_Score:** 필수 절차 누락 및 문서화 미비에 따른 운영 중단 위협 ($100K ~ $5M).
+*   **Source_Attribution_Deficit:** AI 출처 명시 의무 위반으로 인한 신뢰성 상실 위험.
+
+## II. 미래 규제 리스크 지표 (R_{Future}) - 추가 통합 항목
+
+### 🟢 R_{Future} 1: 데이터 주권 위반 리스크 지수 (DSI)
+*   **위험 원인:** 글로벌 데이터 현지화법 미준수, 국경 간 데이터 이동 시 통제 실패.
+*   **정량 공식:** $\text{DSI} = (\text{Data Volume}_{\text{Local}} \times C_L) + (\text{Cross-Border Flow Count} \times W_{CB}) + (\text{Audit Failure Severity})$
+*   **최소 재무 영향 범위:** 데이터 주권 위반 1건당 최소 $50M 이상 (운영 정지 비용 포함).
+*   [근거: CEO 지시, Researcher 개인 메모리 - Global Trend]
+
+### 🟡 R_{Future} 2: 광고 투명성 및 사용자 동의 위반 지표 (TCI)
+*   **위험 원인:** DMA/DSA 등 AdTech 생태계 변화에 따른 불투명한 데이터 추적 및 동의 확보 실패.
+*   **정량 공식:** $\text{TCI} = (\text{Consent Point Failure Count} \times C_{Fail}) + (\text{Ad Tech Opacity Score} \times W_{Opacity})$
+*   **최소 재무 영향 범위:** 불투명성 1단계 노출당 최소 $20M 이상 (공신력 손상 및 규제 당국 조사 비용 포함).
+*   [근거: CEO 지시, Researcher 개인 메모리 - AdTech/DMA]
+
+### 🟠 R_{Future} 3: AI 모델 책임 전가 지표 (ALR)
+*   **위험 원인:** LLM 기반 산출물에 대한 과도한 의존 및 출처 불명확성으로 인한 준전문가적 법적 책임 발생.
+*   **정량 공식:** $\text{ALR} = (\text{AI Output Dependency Score} \times C_{Dep}) + (\text{Provenance Failure Count} \times W_{Proof})$
+*   **최소 재무 영향 범위:** 잘못된 AI 보고서 1건당 최소 $2M ~ $5M (전문가 배상 책임 및 명예 손실 비용 포함).
+*   [근거: CEO 지시, Researcher 개인 메모리 - LLM/AI Act]
 
 ---
-*(추가 지식 항목은 필요에 따라 이 섹션에 링크 추가)*
