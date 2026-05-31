@@ -1,56 +1,87 @@
-[
-  {
-    "Regulation": "GDPR (General Data Protection Regulation)",
-    "Violation_Type": "PII Leakage / Purpose Limitation",
-    "Timeframe": {
-      "Year_2019_to_2021": {"Base_Fine_Factor": 4, "Multiplier_Trend": 1.5, "Notes": "초기 규제 도입 단계. 벌금은 높았으나, 초기에는 '시스템적 결함'으로 해석되어 $L_{max}$가 명확하지 않았음."},
-      "Year_2022_to_2024": {"Base_Fine_Factor": 5, "Multiplier_Trend": 3.0, "Notes": "AI 시대 데이터 활용 증가로 인해 '의도성' 및 '시스템적 공백(Structural Gap)'에 대한 사법적 의혹 제기 강화. 배상액 급증 추세."}
+{
+  "model_name": "Total_Risk_Exposure_Model_v1.0",
+  "description": "yobizwiz 서비스가 실시간으로 고객사의 규제 위반 및 시스템 취약점을 정량화하여 '최대 재무적 손실액($L_{max}$)'을 산출하기 위한 표준 JSON 스키마.",
+  "target_metric": "Total Risk Exposure (TRE) - 총 위험 노출도 지수",
+  "formula_logic": "TRE = Σ [ (Severity Score * Regulatory Weight) * Compliance Multiplier ] + Operational Loss Estimate",
+  "schema_version": "1.0.0-beta",
+  "regulatory_domains": [
+    {
+      "domain_id": "REG_GDPR",
+      "name": "데이터 보호 및 주권 (General Data Protection Regulation)",
+      "risk_area": "개인 식별 정보(PII)의 무단 처리 및 국경 간 전송 실패.",
+      "base_weighting": 0.45, // 높은 가중치: 유럽 시장 접근 필수
+      "core_risks": [
+        {
+          "risk_type": "PII_Leakage",
+          "severity_score": 8.5, // (Critical Weighting)
+          "metric": "Masked/Unmasked Records Count",
+          "compliance_multiplier": 1.2, // 미흡할 경우 가중치 상승 배율
+          "estimated_loss_range_usd": "$50,000 ~ $2M+"
+        },
+        {
+          "risk_type": "Data_Sovereignty",
+          "severity_score": 7.8,
+          "metric": "Non-EU Storage Location Count",
+          "compliance_multiplier": 1.15,
+          "estimated_loss_range_usd": "$10M ~ $30M+" // 시스템 재구축 비용 포함
+        }
+      ]
     },
-    "Quantified_Loss_Estimate": {
-      "Formula": "(Base_Fine * PII_Count) * Multiplier_Trend + Operational_Downtime_Cost",
-      "Min_Lmax_USD": 500000,
-      "Max_Lmax_USD": "1.5M+"
-    }
-  },
-  {
-    "Regulation": "EU AI Act (Artificial Intelligence Act)",
-    "Violation_Type": "Hallucination / Lack of Provenance",
-    "Timeframe": {
-      "Year_2023_to_2025": {"Base_Fine_Factor": 6, "Multiplier_Trend": 4.5, "Notes": "가장 급증하는 위협 영역. 단순 법적 위반을 넘어 '신뢰성(Trust)' 상실에 대한 벌칙이 추가됨. 출처 명시 실패 시 가중치 극대화."},
-      "Year_2026_and_beyond": {"Base_Fine_Factor": 7, "Multiplier_Trend": 6.0, "Notes": "AI 사용의 '필연적 책임(Mandatory Accountability)' 모델 도입 예상. 예측 불가성 기반 과징금 상한액 $L_{max}$가 폭발적으로 증가할 것."}
+    {
+      "domain_id": "REG_HIPAA",
+      "name": "의료 정보 보호 (Health Insurance Portability and Accountability Act)",
+      "risk_area": "Protected Health Information (PHI) 취급 및 보안 프로토콜 미준수.",
+      "base_weighting": 0.35, // 의료 산업 특화 가중치
+      "core_risks": [
+        {
+          "risk_type": "PHI_Breach",
+          "severity_score": 9.2, // 최상위 위협: 건강 정보는 최고 민감도
+          "metric": "Number of PHI access points without audit trail",
+          "compliance_multiplier": 1.3, // 규제 당국 감시 강화에 따른 배율 증가 가정
+          "estimated_loss_range_usd": "$2M ~ $50M+"
+        }
+      ]
     },
-    "Quantified_Loss_Estimate": {
-      "Formula": "(Base_Fine * AI_Usage_Scale) * Multiplier_Trend + Reputation_Damage_Cost",
-      "Min_Lmax_USD": 1M,
-      "Max_Lmax_USD": "50M+"
-    }
-  },
-  {
-    "Regulation": "CCPA/CPRA (California Consumer Privacy Act)",
-    "Violation_Type": "Cross-Border Data Transfer / Purpose Creep",
-    "Timeframe": {
-      "Year_2018_to_2021": {"Base_Fine_Factor": 3, "Multiplier_Trend": 1.2, "Notes": "주로 '개인정보 처리 동의(Consent)' 확보 여부 위반에 초점."},
-      "Year_2022_to_2024": {"Base_Fine_Factor": 4, "Multiplier_Trend": 2.5, "Notes": "데이터 사용 목적 변경(Purpose Creep)이나 제3국 전송 시 '통제권 상실' 위험에 대한 법적 책임을 강조하는 방향으로 진화."},
-      "Year_2025_and_beyond": {"Base_Fine_Factor": 5, "Multiplier_Trend": 3.8, "Notes": "데이터 주권(Data Sovereignty) 강화 추세 반영. 국가/지역별 데이터 처리 위치 강제."}
+    {
+      "domain_id": "REG_AIACT",
+      "name": "AI 거버넌스 (EU AI Act)",
+      "risk_area": "고위험 AI 시스템의 투명성 및 출처 증명이 불가능함.",
+      "base_weighting": 0.25, // 신규 규제에 대한 높은 가중치 부여
+      "core_risks": [
+        {
+          "risk_type": "Hallucination_Responsibility",
+          "severity_score": 9.5, // 가장 예측 불가하고 파괴력이 큰 리스크 (근거: Researcher 개인 메모리)
+          "metric": "Lack of Provenance Layer on LLM output",
+          "compliance_multiplier": 1.4, // AI 책임 범위 확대로 인한 배율 증가 가정
+          "estimated_loss_range_usd": "$5M ~ $20M+"
+        },
+        {
+          "risk_type": "Lack_of_Auditability",
+          "severity_score": 8.0,
+          "metric": "Non-logging of model inputs/outputs",
+          "compliance_multiplier": 1.2,
+          "estimated_loss_range_usd": "$1M ~ $5M+"
+        }
+      ]
     },
-    "Quantified_Loss_Estimate": {
-      "Formula": "(Base_Fine * Data_Transfer_Volume) * Multiplier_Trend + Remediation_Cost",
-      "Min_Lmax_USD": 200000,
-      "Max_Lmax_USD": "8M+"
+    {
+      "domain_id": "SYS_GAP",
+      "name": "시스템 운영 공백 (Operational & Process Gap)",
+      "risk_area": "내부 프로세스의 문서화/승인 누락 및 감사 추적(Audit Trail) 부재.",
+      "base_weighting": 0.15, // 시스템의 근본적인 결함을 나타내는 지표
+      "core_risks": [
+        {
+          "risk_type": "Compliance_Drift",
+          "severity_score": 8.2,
+          "metric": "Critical Checkpoint Failure Count",
+          "compliance_multiplier": 1.0, // 자체 프로세스 위반의 초기 단계 리스크
+          "estimated_loss_range_usd": "$100K ~ $5M+"
+        }
+      ]
     }
-  },
-  {
-    "Regulation": "Cybersecurity Standards (NIST/ISO)",
-    "Violation_Type": "Supply Chain Vulnerability / Failure to Audit",
-    "Timeframe": {
-      "Year_2019_to_2021": {"Base_Fine_Factor": 2, "Multiplier_Trend": 1.8, "Notes": "주로 침해 사고 발생 후 '최소한의 보안 조치' 미흡에 대한 책임을 물음."},
-      "Year_2022_to_2024": {"Base_Fine_Factor": 3, "Multiplier_Trend": 3.5, "Notes": "공급망 리스크(Supply Chain Risk)가 시스템적 문제로 해석되며, 협력사 감사 의무 및 거버넌스 결함에 대한 벌금이 추가됨."},
-      "Year_2025_and_beyond": {"Base_Fine_Factor": 4, "Multiplier_Trend": 5.0, "Notes": "위협 예측(Predictive Threat) 시스템 도입 의무화가 예상되며, '사후 대응'만으로는 면책받을 수 없음."}
-    },
-    "Quantified_Loss_Estimate": {
-      "Formula": "(Base_Fine * Vulnerability_Count) * Multiplier_Trend + Business_Interruption_Cost",
-      "Min_Lmax_USD": 300000,
-      "Max_Lmax_USD": "12M+"
-    }
+  ],
+  "calculation_guide": {
+    "Lmax_Calculation": "위험 데이터셋 기반으로, 각 규제 영역별(Domain) 최대 벌금액과 예상 소송 비용을 합산하며, 가장 큰 금액이 최종 $L_{max}$로 제시되어야 함.",
+    "Actionable_Insight": "최종 TRE 점수가 높을수록 (높은 $L_{max}$) 즉각적인 '운영 보험료(OIP)' 구매를 강제해야 함."
   }
-]
+}
