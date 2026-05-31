@@ -18,7 +18,9 @@ interface RegulatoryRiskDataset {
     [caseId: string]: RegulatoryRiskCase;
 }
 
-const RISK_DATASET: RegulatoryRiskDataset = {}; // 임시 placeholder
+import { mockRiskDataset } from '../data/mockRiskDataset';
+
+const RISK_DATASET: RegulatoryRiskDataset = mockRiskDataset;
 
 /**
  * 규제 데이터셋을 로드하고, 입력된 지표들을 기반으로 최대 재무적 손실액(Lmax)과 종합 위험 점수를 계산하는 순수 함수.

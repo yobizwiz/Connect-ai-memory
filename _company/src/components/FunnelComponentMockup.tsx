@@ -90,7 +90,7 @@ const FunnelComponentMockup: React.FC = () => {
             <h3>🛠️ 시스템 제어 및 테스트 인터페이스</h3>
             <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
                 <button onClick={triggerCrisisState} disabled={currentState !== 'IDLE'} style={{ background: '#F59E0B', padding: '10px 20px' }}>
-                    ▶️ 리스크 시뮬레이션 시작 (IDLE -> CRISIS)
+                    {'▶️ 리스크 시뮬레이션 시작 (IDLE → CRISIS)'}
                 </button>
             </div>
 
