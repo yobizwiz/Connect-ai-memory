@@ -1,0 +1,63 @@
+{
+  "metadata": {
+    "version": "0.9",
+    "description": "AI가 처리할 수 있는 산업별, 시나리오 기반의 구조적 위험 데이터셋 청사진. 개발자가 API에 바로 적용 가능하도록 설계됨.",
+    "dependencies": ["GDPR_v2", "DORA_Act", "EU_AI_Act"] 
+  },
+  "risk_scenarios": [
+    {
+      "scenario_id": "SCN-001",
+      "title": "LLM 기반 자문 보고서의 출처 미제시 오류 (Hallucination)",
+      "industry": "금융/법무",
+      "root_cause": "AI 모델이 근거 자료(Source) 없이 법적 선례를 조합하여 제시함.",
+      "failure_type": "Provenance Deficit",
+      "regulatory_violation": ["EU AI Act (Transparency Mandate)", "Common Law Negligence"],
+      "impact_parameters": {
+        "severity_score": 0.95,
+        "likelihood_index": 0.7,
+        "financial_loss_estimate": {
+          "min_usd": 2500000,  // 최소 벌금 + 배상 책임 (Source_Attribution_Deficit)
+          "max_usd": 15000000, // 최대 손실액 (명예 및 법적 소송 포함)
+          "loss_component": ["Regulatory Fine", "Litigation Settlement", "Reputational Damage"]
+        }
+      },
+      "mitigation_action": "모든 LLM 출력물에 참조된 '근거 파일명'과 '페이지/조항 번호'를 강제 명시화(Mandatory Citation)."
+    },
+    {
+      "scenario_id": "SCN-002",
+      "title": "비식별화 실패로 인한 고객 데이터 유출 (PII Leakage)",
+      "industry": "헬스케어/의료",
+      "root_cause": "AI 학습 과정에서 마스킹 처리되지 않은 환자의 계좌 정보 또는 진단 기록이 노출됨.",
+      "failure_type": "Data Sovereignty Violation",
+      "regulatory_violation": ["HIPAA", "GDPR (Art. 9)"],
+      "impact_parameters": {
+        "severity_score": 1.0,
+        "likelihood_index": 0.85,
+        "financial_loss_estimate": {
+          "min_usd": 2000000,  // 최소 벌금 (PII_Leakage_Index)
+          "max_usd": 10000000, // 최대 손실액 (영업 정지 및 시스템 재구축 비용 포함)
+          "loss_component": ["Regulatory Fine", "Operational Halt Loss", "Class Action Lawsuit"]
+        }
+      },
+      "mitigation_action": "데이터 파이프라인에 'PII Masking Gate'를 필수로 설치하고, 모든 데이터 입출력 기록을 감사 추적(Audit Trail)해야 함."
+    },
+    {
+      "scenario_id": "SCN-003",
+      "title": "복수 규제 준수 절차 누락으로 인한 운영 중단 (Compliance Drift)",
+      "industry": "금융/핀테크",
+      "root_cause": "신규 법률(예: DORA)에 대응하는 내부 승인 절차나 문서화가 누락되어, 핵심 비즈니스 기능을 수행할 수 없게 됨.",
+      "failure_type": "Procedural Failure",
+      "regulatory_violation": ["DORA (Digital Operational Resilience Act)", "Basel III"],
+      "impact_parameters": {
+        "severity_score": 0.9,
+        "likelihood_index": 0.65,
+        "financial_loss_estimate": {
+          "min_usd": 1000000,  // 최소 벌금 및 위약금 (Compliance_Drift_Score)
+          "max_usd": 8000000, // 최대 손실액 (운영 중단으로 인한 시간당 운영 손실 $C_{op\_loss}$ 반영)
+          "loss_component": ["Operational Halt Loss", "Contract Penalty", "Audit Failure Cost"]
+        }
+      },
+      "mitigation_action": "핵심 업무 흐름(Critical Business Process)에 대한 다단계 승인/감사 체크포인트(Checkpoint)를 시스템에 의무화해야 함."
+    }
+  ]
+}
