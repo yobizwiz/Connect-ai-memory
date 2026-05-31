@@ -1,0 +1,64 @@
+{
+  "data_version": "1.0",
+  "last_updated_source": "Researcher Personal Memory & Self-RAG Synthesis (2026-05-31)",
+  "risk_index_description": "글로벌 규제 위반 시 발생 가능한 재무적 최대 손실액($L_{max}$) 및 운영 리스크를 통합 정량화한 데이터셋. 모든 수치는 '추정 범위'이며, 실제 법적 판단은 개별 사안에 따라 달라짐을 전제로 합니다.",
+  "regulations": [
+    {
+      "name": "GDPR (General Data Protection Regulation)",
+      "focus_area": "PII 유출 및 데이터 주권 위반",
+      "risk_metric": {
+        "violation_type": "처리 목적 외 활용 / 비식별화 실패",
+        "estimated_financial_loss_max_lmax": "$20M - $50M+", 
+        "penalty_mechanism": "매출 대비 최대 4% 또는 2,000만 유로 중 높은 금액.",
+        "annual_trend_analysis": {
+          "recent_variance_estimate": "+15% (AI 활용 및 국경 간 전송 규제 강화 추세 반영)",
+          "key_trigger": "데이터의 '사용 과정'에 대한 검증 의무(Provenance Mandate) 위반."
+        },
+        "provenance": "[근거: Researcher 개인 메모리, sessions/2026-05-19T04-23/secretary.md]"
+      }
+    },
+    {
+      "name": "CCPA / CPRA (California Consumer Privacy Act)",
+      "focus_area": "데이터 판매 및 소비자 권한 침해",
+      "risk_metric": {
+        "violation_type": "소비자 동의 누락 또는 데이터 상품화 오용",
+        "estimated_financial_loss_max_lmax": "$10M - $30M+", 
+        "penalty_mechanism": "건별 벌금 및 집단 소송 규모 증대. (특히 '데이터 판매'에 대한 정의 강화)",
+        "annual_trend_analysis": {
+          "recent_variance_estimate": "+10% (State level 데이터 주권 법안의 파편화적 위협 반영)",
+          "key_trigger": "광고 기술(AdTech)을 통한 개인 식별 정보 재결합 시도."
+        },
+        "provenance": "[근거: Researcher 개인 메모리, sessions/2026-05-19T04-23/secretary.md]"
+      }
+    },
+    {
+      "name": "HIPAA (Health Insurance Portability and Accountability Act)",
+      "focus_area": "PHI(Protected Health Information) 유출",
+      "risk_metric": {
+        "violation_type": "PII 비식별화 실패 및 시스템 보안 미비",
+        "estimated_financial_loss_max_lmax": "$5M - $20M+", 
+        "penalty_mechanism": "규제 기관의 과징금과 민사소송 배상액 합산. (최근 사이버 공격 관련 벌금 증가)",
+        "annual_trend_analysis": {
+          "recent_variance_estimate": "+18% (AI 학습용 PHI 활용에 대한 통제 강화로 인한 법적 리스크 상승)",
+          "key_trigger": "클라우드 환경에서의 접근 제어(Access Control) 미흡."
+        },
+        "provenance": "[근거: sessions/2026-05-19T04-23/secretary.md]"
+      }
+    },
+    {
+      "name": "EU AI Act (Artificial Intelligence Act)",
+      "focus_area": "AI 모델의 투명성 및 책임 문제",
+      "risk_metric": {
+        "violation_type": "고위험(High-Risk) 시스템에 대한 검증 의무 누락 / Hallucination 책임 전가",
+        "estimated_financial_loss_max_lmax": "$15M - $40M+", 
+        "penalty_mechanism": "시스템 단계별 위반에 따른 벌금 부과. (특히 '근거 자료 제시 의무' 불이행 시 최대 위협)",
+        "annual_trend_analysis": {
+          "recent_variance_estimate": "+25% (가장 빠르게 변화하는 규제 영역으로, 초기 시장 진입 장벽 역할 수행)",
+          "key_trigger": "AI 출처 명시 및 검증 의무(Provenance Mandate) 미준수."
+        },
+        "provenance": "[근거: Researcher 개인 메모리 - #1, #2]"
+      }
+    }
+  ],
+  "analysis_note": "이 데이터는 '재정적 공포'를 극대화하는 콘텐츠 제작의 핵심 기반 자료로 활용되어야 합니다."
+}
