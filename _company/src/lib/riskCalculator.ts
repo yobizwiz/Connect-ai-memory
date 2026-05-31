@@ -1,15 +1,23 @@
 // src/lib/riskCalculator.ts
 
-import { RegulatoryRiskDataset } from '../data/regulatory_risk_dataset'; // 가상의 타입 정의 파일 가정
-
 /**
  * @typedef {object} RiskInput - 사용자가 입력하는 개별 리스크 지표
  * @property {string} id - 리스크 ID (예: GDPR-2019-A)
  * @property {number} score - 현재 준수 점수 (0~100)
  */
 
-/** @type {import('./../data/regulatory_risk_dataset.json')} */
-// 실제 JSON 데이터를 타입으로 정의하고 가져온다고 가정합니다.
+/** 규제 리스크 데이터셋의 개별 항목 구조 */
+interface RegulatoryRiskCase {
+    estimatedMinLoss: number;
+    severityWeighting: number;
+    [key: string]: any;
+}
+
+/** 규제 리스크 데이터셋 전체 구조 (case_id -> 상세 데이터) */
+interface RegulatoryRiskDataset {
+    [caseId: string]: RegulatoryRiskCase;
+}
+
 const RISK_DATASET: RegulatoryRiskDataset = {}; // 임시 placeholder
 
 /**
@@ -78,5 +86,3 @@ export const logABTestEvent = async (experimentGroup: 'A' | 'B', riskScore: numb
     await new Promise(resolve => setTimeout(resolve, 300)); // 네트워크 지연 시뮬레이션
     return true;
 };
-
-export { calculateRiskExposure, logABTestEvent };
