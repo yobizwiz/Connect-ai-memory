@@ -7,7 +7,7 @@
 // A/B 테스트가 측정할 주요 이벤트 타입 정의 (TypeScript 엄격화)
 export type AttentionEvent = {
     userId: string; // 실제 환경에서는 인증된 사용자 ID 사용 권장
-    eventType: 'VIEW_CTA' | 'CLICK_BUTTON' | 'SCROLL_DEPTH' | 'INPUT_FIELD_FOCUS';
+    eventType: 'VIEW_CTA' | 'CLICK_BUTTON' | 'SCROLL_DEPTH' | 'INPUT_FIELD_FOCUS' | 'TRANSITION';
     funnelState: 'IDLE' | 'ALERT_YELLOW' | 'CRISIS_RED' | 'LOCKED_PAYWALL';
     experimentVariant?: string; // A 또는 B 변이 테스트 그룹
     dataPayload?: Record<string, any>; // 추가 데이터 (예: 입력 값)

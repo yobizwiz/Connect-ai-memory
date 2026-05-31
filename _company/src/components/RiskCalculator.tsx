@@ -8,7 +8,7 @@ import { calculateTREScore } from '@/services/RiskGatewayService';
  */
 interface RiskInputProps {
     riskId: string;
-    name: string; // JSON 데이터셋의 risk_id와 일치해야 함
+    name?: string; // JSON 데이터셋의 risk_id와 일치해야 함
     description: string;
     onGapChange: (riskId: string, score: number) => void;
     currentScore: number;

@@ -45,7 +45,7 @@ const PaywallModal = () => {
             {/* 🚨 시스템적 공포를 유도하는 UI 구조 */}
             <div style={styles.modalContent}>
                 <h2 style={styles.header}>[SYSTEM ALERT] 접근 권한 위협 감지</h2>
-                <p style={styles.subHeader}>당신의 시스템은 현재 $M_{Complexity}$ 임계치를 초과하여 운영 위험에 처했습니다.</p>
+                <p style={styles.subHeader}>{"당신의 시스템은 현재 $M_{Complexity}$ 임계치를 초과하여 운영 위험에 처했습니다."}</p>
 
                 {/* Interdiction Message */}
                 <div style={styles.warningBox}>
@@ -78,7 +78,7 @@ const PaywallModal = () => {
 };
 
 // 기본적인 스타일 정의 (실제로는 CSS/Styled-Components 사용 권장)
-const styles = {
+const styles: Record<string, React.CSSProperties> = {
     overlay: {
         position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
         backgroundColor: 'rgba(0, 0, 0, 0.8)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000

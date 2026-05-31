@@ -1,4 +1,4 @@
-import { RiskScoreResult } from '../types/paywall-state';
+import { RiskScoreResult, PaywallEventLog } from '../types/paywall-state';
 
 /**
  * [Mock API] 백엔드에서 실시간 리스크 점수를 비동기적으로 계산하는 함수를 시뮬레이션합니다.

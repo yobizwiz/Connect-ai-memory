@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { PaywallState, RiskScoreResult, PaywallEventLog } from '../../types/paywall-state';
 // Assume StatusGauge is imported and ready to display current risk score
 import StatusGauge from '../StatusGauge/StatusGauge'; 
+import { fetchRiskScore } from '../../api/risk-api';
 
 interface PaywallGatekeeperProps {
     userId: string;
@@ -67,8 +68,8 @@ const PaywallGatekeeper: React.FC<PaywallGatekeeperProps> = ({ userId }) => {
                 return (
                     <div className="paywall-barrier">
                         <h2>🚨 시스템적 위험 경고: 행동 강제 섹션</h2>
-                        <p>현재 데이터 무결성 점검 결과, $M_{Complexity}$ 임계치를 초과했습니다.</p>
-                        <StatusGauge result={riskResult} />
+                        <p>{"현재 데이터 무결성 점검 결과, $M_{Complexity}$ 임계치를 초과했습니다."}</p>
+                        <StatusGauge />
                         <button onClick={handleActivatePaywall}>🛡️ 생존 보험 가입 (Silver Tier)</button>
                     </div>
                 );

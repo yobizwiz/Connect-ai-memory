@@ -1,4 +1,6 @@
 import { MasterRiskDataset, ComplexityScore } from "./risk-types";
+export { fetchMasterRiskDataset } from "./risk-types";
+export type { ComplexityScore };
 
 /**
  * @description 마스터 구조적 리스크 데이터셋을 기반으로 M_Complexity 점수를 계산합니다.

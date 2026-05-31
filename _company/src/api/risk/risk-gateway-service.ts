@@ -9,11 +9,10 @@ import { AuditRecord, createAuditRecord, saveAuditRecord } from './audit-ledger'
 const CRITICAL_THRESHOLD = 5000; // $L_{max}가 5000 USD를 넘으면 경고 발동
 const INITIAL_PREVIOUS_HASH = 'GENESIS_HASH_V1';
 
-/**
- * @typedef {object} UserInputData - 사용자로부터 입력받는 데이터 구조.
- * @property {number} inputA - 첫 번째 리스크 관련 변수 (예: 규제 준수 점수)
- * @property {number} inputB - 두 번째 리스크 관련 변수 (예: 시스템 복잡도 지표)
- */
+export interface UserInputData {
+    inputA: number;
+    inputB: number;
+}
 
 /**
  * 1단계: 초기화 및 상태 확인.

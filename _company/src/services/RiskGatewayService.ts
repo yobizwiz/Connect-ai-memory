@@ -103,3 +103,43 @@ export const riskGatewayService = {
         }
     }
 };
+
+/**
+ * @description 종합 리스크 지표 연산 및 경고 등급 결정을 수행하는 핵심 헬퍼 함수
+ */
+export function calculateTREScore(inputs: Array<{ riskId: string; gapScore: number }>): {
+    riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+    treScore: number;
+    message: string;
+} {
+    if (!inputs || inputs.length === 0) {
+        return {
+            riskLevel: 'LOW',
+            treScore: 0,
+            message: '규제 리스크 평가 매개변수가 감지되지 않았습니다.'
+        };
+    }
+
+    const totalGap = inputs.reduce((sum, item) => sum + item.gapScore, 0);
+    const treScore = parseFloat((totalGap / inputs.length).toFixed(2));
+
+    let riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' = 'LOW';
+    let message = '시스템 규제 준수 아키텍처가 안정적인 녹색 구역에 있습니다. 현재 수준의 예방적 모니터링을 지속하십시오.';
+
+    if (treScore >= 80) {
+        riskLevel = 'CRITICAL';
+        message = '위험: 시스템이 극도로 파괴적인 규제 벌금 및 법적 제재(L_max 임계치 초과)에 직접적으로 노출되었습니다. 즉시 B2B 컴플라이언스 무결성 패치를 시행하고 게이트웨이 무제한 라이선스를 취득해야 합니다.';
+    } else if (treScore >= 50) {
+        riskLevel = 'HIGH';
+        message = '경고: 다수의 잠재적 법률 위반 공백이 감지되었습니다. 감사 시 소송 패소 및 고객 이탈 가능성이 높습니다. 시스템 엔지니어링 리팩토링 권장.';
+    } else if (treScore >= 20) {
+        riskLevel = 'MEDIUM';
+        message = '주의: 일부 운영 흐름에서 규제 컴플라이언스 비정상 상태(Compliance Drift)가 관측됩니다. 위험 방어벽 강화를 검토하십시오.';
+    }
+
+    return {
+        riskLevel,
+        treScore,
+        message
+    };
+}

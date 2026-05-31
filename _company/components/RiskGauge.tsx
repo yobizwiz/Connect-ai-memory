@@ -74,8 +74,8 @@ const RiskGauge: React.FC = () => {
                 <span className="ml-3 text-lg font-normal text-red-600/70">(V1.0 - Initial Build)</span>
             </h2>
             <p className="text-sm mb-8 text-gray-400">
-                사용자 입력 변수가 변경될 때마다 실시간으로 $L_{max}$ (재무적 최대 손실액)가 계산됩니다. 
-                위험도가 높을수록 네온 크림슨 글리치 애니메이션이 트리거됩니다.
+                {"사용자 입력 변수가 변경될 때마다 실시간으로 $L_{max}$ (재무적 최대 손실액)가 계산됩니다."} <br/>
+                {"위험도가 높을수록 네온 크림슨 글리치 애니메이션이 트리거됩니다."}
             </p>
 
             {/* 1. INPUT CONTROL PANEL */}
@@ -107,7 +107,7 @@ const RiskGauge: React.FC = () => {
                                                                     hazardColor === 'orange-warning' ? 'bg-yellow-900/30 border-4 border-amber-600' : 'bg-blue-900/30 border-4 border-blue-600'}`}>
                 <div className="flex justify-between items-center mb-2">
                     <h3 className="text-xl font-bold uppercase tracking-wide text-red-100">
-                        총 위험 노출도 ($\mathbf{TRE}$)
+                        {"총 위험 노출도 ($\\mathbf{TRE}$)"}
                     </h3>
                     <span className={`text-lg font-semibold px-4 py-1 rounded ${riskLevel === 'HIGH' ? 'bg-red-700' : riskLevel === 'MEDIUM' ? 'bg-yellow-700' : 'bg-blue-700'} text-white`}>
                         위험 레벨: {riskLevel}
@@ -122,7 +122,7 @@ const RiskGauge: React.FC = () => {
                     >
                         ₩ {riskResult.lmax.toLocaleString()} 만원
                     </div>
-                    <p className="absolute top-2 right-3 text-sm font-mono opacity-70">($L_{max}$)</p>
+                    <p className="absolute top-2 right-3 text-sm font-mono opacity-70">{"($L_{max}$)"}</p>
                 </div>
 
                 {/* 텍스트 피드백 (CTA Funnel 강화) */}
@@ -130,12 +130,12 @@ const RiskGauge: React.FC = () => {
                     <p className="font-semibold text-lg mb-2">⚠️ 시스템 경고 (System Alert)</p>
                     {riskLevel === 'HIGH' && (
                         <p className="text-red-300 font-medium">
-                            [CRITICAL] $L_{max}$ 임계치 초과. 현재 위험 조합은 비선형적이며, 즉각적인 외부 개입(진단) 없이는 재무 구조가 붕괴할 수 있습니다.
+                            {"[CRITICAL] $L_{max}$ 임계치 초과. 현재 위험 조합은 비선형적이며, 즉각적인 외부 개입(진단) 없이는 재무 구조가 붕괴할 수 있습니다."}
                         </p>
                     )}
                     {riskLevel === 'MEDIUM' && (
                         <p className="text-yellow-300 font-medium">
-                            [WARNING] 위험 요소들이 감지되었습니다. 복합성 계수($M_{Complexity}$)가 높아지고 있어, 구조적 점검이 필요합니다.
+                            {"[WARNING] 위험 요소들이 감지되었습니다. 복합성 계수($M_{Complexity}$)가 높아지고 있어, 구조적 점검이 필요합니다."}
                         </p>
                     )}
                     {riskLevel === 'LOW' && (

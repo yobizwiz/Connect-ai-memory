@@ -1,5 +1,5 @@
 // src/services/__tests__/riskGatewayService.test.ts
-import { calculateTRE, loadRegulatoryData } from '../riskGatewayService';
+import { calculateTRE, loadRegulatoryData, riskGatewayService } from '../RiskGatewayService';
 import { IncidentEvent, RegulatoryRiskParameters, RiskProfile } from '../../types/regulatoryTypes';
 
 // --- Mock Data Setup ---
