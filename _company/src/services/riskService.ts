@@ -1,110 +1,133 @@
-// src/services/riskService.ts
-
 /**
- * @typedef {Object} RiskInputData - 외부에서 들어오는 시뮬레이션 원시 데이터 (Raw Data)
- * @property {number} regulatoryNonComplianceScore - 미준수 영역 점수 (0~100)
- * @property {number} dataCompletenessIndex - 데이터 완전성 지표 (0.0~1.0)
- * @property {boolean} systemAnomalyDetected - 시스템적 이상 징후 감지 여부
+ * @fileoverview Risk Exposure Service: 규제 위협 데이터를 TRE 점수로 변환하고 시스템 상태(State)를 결정하는 코어 모듈.
+ * 이 서비스는 프론트엔드(React/Vue 등)와 연동될 Mock API 백엔드 로직을 시뮬레이션합니다.
  */
 
-/**
- * @typedef {Object} RiskOutputData - API가 최종적으로 반환하는 구조화된 위험 보고서
- * @property {'GREEN' | 'YELLOW' | 'RED'} riskLevel - 현재 시스템의 종합 위험 레벨 (State Machine 결과)
- * @property {number} treValue - 최대 재무 손실액 추정치 ($TRE$)
- * @property {Record<string, number>} kpiScores - 6대 KPI별 계산 점수
- * @property {Array<{kpi: string, value: number}>} warningIndicators - 경고를 유발하는 주요 지표 목록
- */
+import { RegulatoryScenario, RiskDataset } from '../types/riskTypes'; // 가정된 타입 정의 파일
 
 /**
- * 6대 핵심 위험 지표(KPI)의 가상 수학적 모델을 계산합니다.
- * 이 로직들은 yobizwiz의 독점적인 리스크 온톨로지에 기반하여 설계되었습니다.
- * @param {RiskInputData} data - 시뮬레이션 입력 데이터
- * @returns {Record<string, number>} 6대 KPI 점수 객체
+ * 시스템의 위험 상태를 나타내는 Enum (Type-safe state management)
+ * Normal: 정상 범위 - 아무 조치 불필요.
+ * Warning: 주의 단계 - 모니터링 및 대비 필요.
+ * Critical: 위기 단계 - 즉각적인 해결책(Paywall/Action)이 필수.
  */
-export function calculateKpis(data: any) {
-    // --- [KPI Calculation Logic] ---
-
-    // TRE (Total Risk Exposure): 미준수와 시스템 불안정성의 곱에 비례
-    const treValue = data.regulatoryNonComplianceScore * (1 + Math.random() * 0.2);
-
-    // PIG (Predictive Integrity Gap): 데이터 완전성 지표가 낮을수록 위험 증가
-    const pigScore = (1 - data.dataCompletenessIndex) * 85; // 최대 85점
-
-    // ARS (Anomaly Risk Score): 시스템 이상 감지 여부에 따라 급격히 상승
-    const arsScore = data.systemAnomalyDetected ? Math.min(100, treValue / 2 + 30) : Math.random() * 20;
-
-    // CDR (Compliance Drift Ratio): 규제 점수와 비준수 점수의 차이로 계산
-    const cdrScore = Math.abs(data.regulatoryNonComplianceScore - 50);
-
-    // AIL (Assurance Index Loss): 데이터 완전성 지표가 낮을수록 손실 증가
-    const ailScore = data.dataCompletenessIndex * 10; // 최대 10점
-
-    // KSD (Knowledge Structure Decay): 시스템 이상 감지에 연동하여 계산
-    const ksdScore = data.systemAnomalyDetected ? 75 : Math.random() * 30;
-
-
-    return {
-        treValue: parseFloat(treValue.toFixed(2)),
-        pigScore: parseFloat(pigScore.toFixed(2)),
-        arsScore: parseFloat(arsScore.toFixed(2)),
-        cdrScore: parseFloat(cdrScore.toFixed(2)),
-        ailScore: parseFloat(ailScore.toFixed(2)),
-        ksdScore: parseFloat(ksdScore.toFixed(2)),
-    };
+export enum SystemState {
+    NORMAL = 'Normal',
+    WARNING = 'Warning',
+    CRITICAL = 'Critical',
 }
 
 /**
- * 계산된 KPI와 입력 데이터를 바탕으로 종합 위험 레벨을 판단하는 상태 머신 로직입니다.
- * @param {Record<string, number>} kpis - calculateKpis가 반환한 6대 KPI 점수
- * @param {RiskInputData} data - 시뮬레이션 입력 데이터
- * @returns {{riskLevel: 'GREEN' | 'YELLOW' | 'RED', indicators: Array<{kpi: string, value: number}>}}
+ * 위험 평가 결과를 담는 구조체 (API 응답 표준화)
  */
-export function determineRiskState(kpis: any, data: any) {
-    let riskLevel = 'GREEN';
-    const warningIndicators = [];
+interface RiskAssessmentResult {
+    score: number; // 최종 TRE 점수 (0-100)
+    state: SystemState;
+    isPaywallRequired: boolean; // Paywall 전환 강제 여부 플래그
+    glitchTriggered: boolean;   // Glitch 시각 효과 발생 지침 플래그
+    message: string;            // 사용자에게 보여줄 명확한 메시지
+}
 
-    // 🚨 RED ZONE 체크 (치명적 위협 조건): TRE > 80 이거나 ARS가 임계치를 넘을 경우
-    if (kpis.treValue >= 80 || kpis.arsScore >= 70) {
-        riskLevel = 'RED';
-        warningIndicators.push({ kpi: 'TRE', value: kpis.treValue });
-        warningIndicators.push({ kpi: 'ARS', value: kpis.arsScore });
-    } 
-    // 🟡 YELLOW ZONE 체크 (경계 단계 조건): PIG가 임계치를 넘거나 미준수 점수가 높을 경우
-    else if (kpis.pigScore >= 50 || data.regulatoryNonComplianceScore > 60) {
-        riskLevel = 'YELLOW';
-        warningIndicators.push({ kpi: 'PIG', value: kpis.pigScore });
-        if (data.regulatoryNonComplianceScore > 60) {
-            warningIndicators.push({ kpi: 'ComplianceCheck', value: data.regulatoryNonComplianceScore });
-        }
-    } 
-    // ✅ GREEN ZONE (안정 조건): 모든 지표가 낮은 경우
-    else {
-        riskLevel = 'GREEN';
+/**
+ * 1. TRE 점수 계산 로직 (핵심 비즈니스 로직)
+ * @param dataset - Researcher가 제공한 구조화된 위험 데이터셋
+ * @returns 총 위험 노출 점수 (Total Risk Exposure Score)
+ */
+const calculateTRE = (dataset: RiskDataset): number => {
+    let totalScore = 0;
+    // 시뮬레이션 로직: 모든 시나리오의 '위협 강도'와 '법적 벌금 $L_{max}$ 크기'에 가중치를 부여하여 점수 산출.
+    for (const scenario of dataset.risk_scenarios) {
+        // 예시 계산: Threat Severity * Lmax / Time Sensitivity Coefficient
+        const severityWeight = Math.random() * 0.3 + 0.5; // 0.5 ~ 0.8 사이 무작위 가중치 적용 (실제로는 복잡한 공식 필요)
+        const scoreContribution = scenario.primary_threat_impact * severityWeight * (scenario.estimated_max_fine / 1e6);
+
+        totalScore += Math.min(scoreContribution, 30); // 개별 시나리오 점수는 최대 30점 제한
     }
+    // 최종 점수를 100점 만점으로 정규화 및 반올림 처리 (무결성 확보)
+    return Math.round(Math.min(totalScore / 3, 95)); // 예시 상한선 설정
+};
 
-    return { riskLevel, indicators: warningIndicators };
-}
+/**
+ * 2. 시스템 상태 판별 로직 (State Machine Transition)
+ * @param score - 계산된 TRE 점수
+ * @returns SystemState 및 UI 지침이 포함된 객체
+ */
+const getSystemState = (score: number): { state: SystemState; paywallRequired: boolean; glitchTriggered: boolean; message: string } => {
+    if (score >= 85) { // Critical Threshold Check (Designer Spec V3.0 기준)
+        return {
+            state: SystemState.CRITICAL,
+            paywallRequired: true,
+            glitchTriggered: true,
+            message: "🚨 [RED ZONE ALERT] 시스템적 리스크가 임계치 초과! 즉각적인 전문가 검토(유료 서비스)가 필요합니다."
+        };
+    } else if (score >= 50) { // Warning Threshold Check
+        return {
+            state: SystemState.WARNING,
+            paywallRequired: false,
+            glitchTriggered: true, // 경고 시에는 Glitch 효과를 주어 긴장감 유지
+            message: "⚠️ [NOTICE] 주의 단계 진입. 일부 리스크 요인이 감지되었습니다. 자세한 분석이 필요합니다."
+        };
+    } else {
+        return {
+            state: SystemState.NORMAL,
+            paywallRequired: false,
+            glitchTriggered: false,
+            message: "✅ 시스템 정상 작동 범위입니다. 주기적인 모니터링을 권장합니다."
+        };
+    }
+};
 
 
 /**
- * 메인 API 엔드포인트 시뮬레이션 함수. E2E 통합 로직을 수행합니다.
- * @param {RiskInputData} input - 사용자가 제공하는 원시 데이터
- * @returns {Promise<RiskOutputData>} 구조화된 위험 보고서 객체
+ * 🌐 Mock API 엔드포인트 시뮬레이션 (메인 진입점)
+ * @param riskDataset - 입력 데이터셋
+ * @returns RiskAssessmentResult - 최종 분석 결과 및 UI 지침
  */
-export async function getSystemicRiskReport(input: any) {
-    console.log(`[INFO] Analyzing risk report for Non-Compliance Score: ${input.regulatoryNonComplianceScore}`);
+export const assessRiskAndGetState = async (riskDataset: RiskDataset): Promise<RiskAssessmentResult> => {
+    try {
+        // 1. 점수 계산 단계
+        const score = calculateTRE(riskDataset);
 
-    // 1. KPI 계산 (Core Business Logic)
-    const kpiScores = calculateKpis(input);
+        // 2. 상태 판별 및 UI 지침 결정
+        const stateInfo = getSystemState(score);
 
-    // 2. 위험 상태 판단 (State Machine Logic)
-    const { riskLevel, indicators } = determineRiskState(kpiScores, input);
+        // 3. 최종 결과 객체 반환 (프론트엔드가 이 구조를 읽어 모든 로직을 처리)
+        return {
+            score: score,
+            state: stateInfo.state,
+            isPaywallRequired: stateInfo.paywallRequired,
+            glitchTriggered: stateInfo.glitchTriggered,
+            message: stateInfo.message
+        };
 
-    // 3. 최종 보고서 구조화 및 반환
-    return {
-        riskLevel: riskLevel,
-        treValue: kpiScores.treValue,
-        kpiScores: kpiScores,
-        warningIndicators: indicators,
-    };
-}
+    } catch (error) {
+        console.error("🚨 Critical Error during risk assessment:", error);
+        // Defensive Coding: 실패 시에도 시스템이 무너지지 않도록 안전한 폴백 상태 반환
+        return {
+            score: 0,
+            state: SystemState.NORMAL,
+            isPaywallRequired: false,
+            glitchTriggered: false,
+            message: "❌ 데이터 처리 중 오류가 발생했습니다. 데이터를 확인해 주세요."
+        };
+    }
+};
+
+// --- 테스트용 더미 데이터셋 (실제 호출 시에는 외부에서 주입됨) ---
+const DUMMY_RISK_DATASET: RiskDataset = {
+    metadata: { dataset_version: "v1.0.0", creation_date: new Date().toISOString(), description: "" },
+    risk_scenarios: [
+        // ... (실제 데이터 로직이 주입될 부분)
+    ]
+};
+
+/**
+ * @example
+ * // Mock API 호출 예시
+ * const result = await assessRiskAndGetState(DUMMY_RISK_DATASET);
+ * console.log(`TRE Score: ${result.score}, State: ${result.state}`);
+ */
+
+export default {
+    assessRiskAndGetState,
+};
