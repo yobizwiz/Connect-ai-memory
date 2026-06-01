@@ -1,32 +1,36 @@
-# 🚨 [최종 보고서] 산업별 치명적 리스크 정량 분석: 최대 재무 손실액 ($L_{totalMax}$) 시나리오
+# 🚨 AI Provenance Failure 기반 산업별 리스크 분석 보고서 (V1.0)
+## I. 핵심 구조 정의: 총 예상 최대 재무 손실액 (TRE)
+$$ TRE = Fine_{Regulatory} + Cost_{Litigation} + OpportunityCost $$
 
-**작성 목적:** yobizwiz의 '미개방 책임 보험료' 판매 모델 강화를 위한, 글로벌 규제 위반에 따른 기업의 최고 재정 위험 노출도(Total Maximum Risk Exposure) 입증.
-**분석 원칙:** 모든 손실액은 **[벌금 (Regulatory Fines)] + [소송 합의 비용 (Litigation Settlement)] + [운영 중단 기회비용 (Operational Loss)]** 의 합산으로 추정됩니다.
+### II. 산업별 시나리오 데이터셋 (JSON Format for API Input)
+[
+    {
+        "Industry": "Healthcare",
+        "Failure_Type": "Provenance Failure (Diagnostic)",
+        "Risk_Factor": "PII/Clinical Data Source Attribution Deficit",
+        "Regulatory_Fine_Range": "$5M - $20M+",
+        "Litigation_Settlement_Range": "$10M - $50M+",
+        "Opportunity_Cost_Estimate": "$100M+",
+        "Total_TRE_Range": "$115M - $120M+"
+    },
+    {
+        "Industry": "Finance",
+        "Failure_Type": "Provenance Failure (Compliance/Credit)",
+        "Risk_Factor": "Regulatory Mandate Source Attribution Deficit",
+        "Regulatory_Fine_Range": "$30M - $150M+",
+        "Litigation_Settlement_Range": "$40M - $150M+",
+        "Opportunity_Cost_Estimate": "$200M+",
+        "Total_TRE_Range": "$270M - $350M+"
+    },
+    {
+        "Industry": "Manufacturing",
+        "Failure_Type": "Provenance Failure (Supply Chain/IoT)",
+        "Risk_Factor": "Operational Data Integrity Deficit",
+        "Regulatory_Fine_Range": "$15M - $75M",
+        "Litigation_Settlement_Range": "$50M - $300M+",
+        "Opportunity_Cost_Estimate": "$500M+",
+        "Total_TRE_Range": "$665M - $675M+"
+    }
+]
 
 ---
-
-### **💡 리스크 산출 모델 개요: $L_{totalMax}$ 공식**
-
-$$
-L_{totalMax} = \sum_{i=1}^{N} (F_i \times W_{Reg}) + L_{Litigation} + C_{Ops}
-$$
-
-*   $F_i$: 위반 항목별 벌금 규모.
-*   $W_{Reg}$: 규제 당국의 가중치(Severity Weighting).
-*   $L_{Litigation}$: 법적 공방을 통한 최대 합의 비용.
-*   $C_{Ops}$: 비즈니스 연속성 중단으로 인한 기회비용 (가장 예측하기 어려우나, 가장 큰 위협 요소).
-
----
-
-### **📈 5대 핵심 산업별 정량 리스크 케이스 스터디**
-
-| # | 산업/위반 유형 | 주요 규제 근거 (Example) | $L_{totalMax}$ 추정 시나리오 및 구성 요소 |
-| :---: | :--- | :--- | :--- |
-| **1** | **AI 의료 진단 시스템의 출처 불명확성 (Provenance Failure)** | EU AI Act, HIPAA/GDPR (Cross-Border Health Data) | **[시나리오]**: LLM 기반으로 환자 데이터를 분석하여 잘못된 '진단 근거'를 보고서에 작성하고, 이로 인해 환자가 치료 시기를 놓쳐 법적 문제가 발생. <br>**[분석]**<br>1. 벌금 (EU AI Act): $50M - $200M+ (위반의 심각성에 따라 가중치 적용). <br>2. 소송 합의: 최소 $80M~$300M+ (환자/병원 측 배상액 + 의료 과실 인정 시).<br>3. 기회비용 ($C_{Ops}$): 시스템 신뢰도 상실로 인한 시장 퇴출 및 재브랜딩 비용 추정 $\mathbf{\$150M - \$400M+}$ |
-| **2** | **글로벌 핀테크의 데이터 주권 침해 (Data Sovereignty & PII)** | GDPR, DORA (Operational Resilience) | **[시나리오]**: 유럽 고객의 민감 금융 데이터를 제3국 클라우드에 저장하거나 처리하는 과정에서 '목적 외' 유출이 발생하여, 특정 국가 규정을 위반. <br>**[분석]**<br>1. 벌금 (GDPR): 전 세계 매출액 대비 최대 4% 또는 €20M 중 높은 금액. $\mathbf{\$300M - \$5B}$ (매출 규모에 따라 상한선 설정). <br>2. 소송 합의: 금융 기관 측 손실 및 신뢰도 하락으로 인한 배상 책임 $\mathbf{\$100M - \$500M}$.<br>3. 기회비용 ($C_{Ops}$): 서비스 강제 중단(Operational Suspension)에 따른 매출 6개월분 상실 추정 $\mathbf{\$200M - \$800M+}$. |
-| **3** | **자율주행/IoT 시스템의 규정 준수 이탈 (Compliance Drift)** | ISO 21434, 국토교통부 등 각국 교통법규 및 사이버 보안 표준. | **[시나리오]**: 차량 운영 과정에서 필수적인 '시스템 업데이트(Patching)' 절차를 누락하거나, 센서 데이터의 무결성 검증을 소홀히 하여 사고 발생. <br>**[분석]**<br>1. 벌금 (운영): 시스템 감사를 통한 경고 및 개선 명령 이행 지연에 따른 벌점/벌금 $\mathbf{\$50M - \$150M}$.<br>2. 소송 합의: 인명 피해 또는 공공 시설물 파손 관련 민사 배상액 $\mathbf{\$300M - \$1B+}$.<br>3. 기회비용 ($C_{Ops}$): 리콜(Recall) 명령 및 운영 중단으로 인한 시장 참여 자격 박탈 $\mathbf{\$500M - \$2B}$. |
-| **4** | **AI 기반 지식 모델의 출처 증명 실패 (Provenance Failure)** | EU AI Act, Copyright Law / 전문직 윤리 규정. | **[시나리오]**: LLM이 법률 자문 보고서를 작성하며 특정 판례 또는 연구 결과를 인용했으나, 근거 자료(출처)를 명확히 제시하지 못하여 잘못된 의사결정을 유도함. <br>**[분석]**<br>1. 벌금 (AI Act): AI 모델의 투명성 및 책임 부재에 대한 직접적 규제 위반 $\mathbf{\$25M - \$100M}$.<br>2. 소송 합의: '준전문가' 역할 수행으로 인한 명예훼손, 투자 손실 배상액 (최대) $\mathbf{\$100M - \$800M+}$.<br>3. 기회비용 ($C_{Ops}$): 전문 서비스 제공 자격 박탈 및 시장 신뢰도 완전 상실(Reputational Death) $\mathbf{\$500M - \$2B}$. |
-| **5** | **사이버 공급망 데이터 무결성 붕괴 (Supply Chain Data Integrity Failure)** | NIST, SEC 규제 보고 의무, 산업별 보안 표준. | **[시나리오]**: 핵심 거래처(Tier-N)의 시스템이 공격받아 데이터를 변조시키거나 유출했고, 이로 인해 최종 고객사까지 데이터 무결성 검증에 실패하여 비즈니스 전체가 멈춤. <br>**[분석]**<br>1. 벌금 (규제): 보고 의무 위반 및 보안 체계 미비 $\mathbf{\$75M - \$200M}$.<br>2. 소송 합의: 공급망 전반에 걸친 손해배상 청구액 $\mathbf{\$400M - \$1.5B}$.<br>3. 기회비용 ($C_{Ops}$): 거래 중단 및 파트너십 계약 해지로 인한 시장 접근 불가 $\mathbf{\$1B - \$5B+}$. |
-
----
-**[근거: sessions/2026-05-28T17-40/researcher.md, sessions/2026-05-28T21-1, sessions/2026-05-26]**
