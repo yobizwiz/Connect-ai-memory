@@ -1,0 +1,45 @@
+{
+  "model_version": "v3.1 (Operational Risk Focus)",
+  "last_updated": "2026-06-01",
+  "variables": [
+    {
+      "variable_id": "L_residency",
+      "name": "Data Residency Violation Loss",
+      "description": "국가가 요구하는 물리적 데이터 저장 위치(Geo-Fencing) 위반 시 발생하는 시스템 가동 중단 및 운영 비용.",
+      "metric": "Operational Downtime Cost + Market Access Penalty (Annual Revenue Stream)",
+      "formula_component": "L_residency = (Downtime_Days * Daily_Operating_Loss) + L_market_loss",
+      "example_scenario": {
+        "jurisdiction": "China, Russia (Example)",
+        "root_cause": "Global Cloud Service provider failure to maintain local data center/access.",
+        "estimated_Lmax": "$50M - $1B+"
+      },
+      "provenance": "[근거: Researcher 개인 메모리 및 국제 규제 동향]"
+    },
+    {
+      "variable_id": "L_transfer",
+      "name": "Cross-Border Data Transfer Mechanism Failure Loss",
+      "description": "국경 간 데이터 전송을 보장하는 법적 메커니즘(SCC, Adequacy Decision)의 무효화 또는 차단으로 발생하는 규제 리스크.",
+      "metric": "Regulatory Penalty + Revenue Blockage (Blocked Market Size)",
+      "formula_component": "W_transfer = L_transfer / Annual_Data_Transfer_Volume",
+      "example_scenario": {
+        "jurisdiction": "EU to US (Example: Data Sovereignty Dispute)",
+        "root_cause": "법적 프레임워크의 갑작스러운 변경 또는 정부 개입.",
+        "estimated_Lmax": "$10M - $500M+"
+      },
+      "provenance": "[근거: sessions/2026-05-28T19-55/researcher.md]"
+    },
+    {
+      "variable_id": "L_algorithmic",
+      "name": "Localized Algorithmic Bias Loss",
+      "description": "AI 모델이 특정 지역의 법적, 문화적 편향(Bias)을 무시하고 작동하여 발생하는 시스템적 차별 및 명예훼손으로 인한 소송 비용.",
+      "metric": "Litigation Settlement Cost + Market Share Reduction (due to Trust Deficit)",
+      "formula_component": "L_algorithmic = L_settlement + (Market_Share_Loss * Annual_Revenue)",
+      "example_scenario": {
+        "jurisdiction": "Germany/France (Anti-Discrimination Law Violation)",
+        "root_cause": "모델 학습 데이터의 문화적 편향 또는 법률 미반영.",
+        "estimated_Lmax": "$2M - $10M+"
+      },
+      "provenance": "[근거: Research_Artifacts\Compliance_Threat_Report_V1.md]"
+    }
+  ]
+}
