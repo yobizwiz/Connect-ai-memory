@@ -1,98 +1,63 @@
-import { 
-    RiskInputs, 
-    RiskCalculationResult, 
-    RiskState, 
-    WarningLevel, 
-    BASE_LOSS_AMOUNT 
-} from './types/risk_calculator_types';
+import { RiskDataSet } from '../types/riskDataTypes'; // 가상의 타입 정의 파일
+import * as riskData from '../../KnowledgeBase/risk_data_schema.json';
 
+// 🚨 API Contract: 외부에서 이 함수를 호출하여 데이터를 가져간다고 가정합니다.
 /**
- * @class RiskCalculatorService
- * TRE (Total Risk Exposure) 대시보드의 핵심 리스크 계산 엔진입니다.
- * 이 서비스는 입력 가중치와 기본 손실액을 조합하여 잠재적 최대 재무적 손실액($L_r$)을 산출하고, 
- * 그 값에 기반하여 시스템의 현재 위험 상태(State)를 결정합니다.
- * [근거: 회사 공동 목표] L_r 계산 공식 및 JSON Schema 구조화 요구사항 충족.
+ * @description 리스크 데이터셋을 기반으로 최대 재정적 손실 ($L_{totalMax}$) 값을 계산하는 핵심 비즈니스 로직.
+ * @param dataSet - Researcher가 제공한 $L_{totalMax}$ 계산용 핵심 규제 위반 데이터셋.
+ * @returns {Promise<{lTotalMax: number; isCritical: boolean; details: string}>} 계산된 최대 손실액 및 상태 정보.
  */
-export class RiskCalculatorService {
+export const calculateTotalMaxRisk = async (dataSet: RiskDataSet): Promise<{ lTotalMax: number; isCritical: boolean; details: string }> => {
+    // 1. 데이터 유효성 검증 (Defensive Coding)
+    if (!dataSet || !Array.isArray(dataSet.data_set)) {
+        console.error("Risk Data Set이 유효하지 않습니다.");
+        return { lTotalMax: 0, isCritical: false, details: "데이터를 로드할 수 없습니다." };
+    }
 
-    /**
-     * @private 최소 리스크 레벨 (L_r < 10% of Base Loss)
-     */
-    private static readonly THRESHOLD_NORMAL = BASE_LOSS_AMOUNT * 0.2; // 예시: 기본 손실액의 20% 이하
-    /**
-     * @private 중간 리스크 레벨 (L_r >= 10% and L_r < 50%)
-     */
-    private static readonly THRESHOLD_YELLOW = BASE_LOSS_AMOUNT * 0.8; // 예시: 기본 손실액의 80% 이하
-
-    /**
-     * 리스크 가중치를 기반으로 잠재적 최대 손실액을 계산하고 시스템 상태를 반환합니다.
-     * @param inputs - 위험 요소별 가중치와 승수(Multiplier)가 포함된 객체.
-     * @returns RiskCalculationResult 타입의 최종 보고서.
-     */
-    public calculateRiskAndState(inputs: RiskInputs): RiskCalculationResult {
-        const { regulatoryRiskWeight, complianceFailureWeight, operationalRiskWeight, lossMultiplier } = inputs;
-
-        // 1. 핵심 리스크 지수 계산 (가중치 합산)
-        // W_Reg + W_Comp + W_Ops는 세 가지 독립적 리스크 축의 결합도를 나타냅니다.
-        const combinedWeight = regulatoryRiskWeight + complianceFailureWeight + operationalRiskWeight;
-
-        // 2. 잠재적 최대 손실액 ($L_r$) 계산
-        // $L_r$ = L_Base * (Combined Weight) * L_Multiplier
-        let potentialMaxLossAmount = BASE_LOSS_AMOUNT * combinedWeight * lossMultiplier;
-
-        // 3. 상태 및 경고 레벨 결정 (State Machine Logic)
-        let currentState: RiskState = RiskState.NORMAL;
-        let warningLevel: WarningLevel = WarningLevel.LOW;
-        let isCriticalTransition: boolean = false;
-
-        if (potentialMaxLossAmount >= Self.THRESHOLD_YELLOW) {
-            // 위험 수준이 높으면 경고 레벨 상승
-            currentState = RiskState.RED;
-            warningLevel = WarningLevel.HIGH;
-            isCriticalTransition = true; // Red Zone 진입을 위한 플래그 설정
-        } else if (potentialMaxLossAmount >= Self.THRESHOLD_NORMAL) {
-            // 중간 수준 리스크는 Yellow 경고
-            currentState = RiskState.YELLOW;
-            warningLevel = WarningLevel.MEDIUM;
-        } else {
-            // 낮은 리스크는 Normal 상태 유지
-            currentState = RiskState.NORMAL;
-            warningLevel = WarningLevel.LOW;
+    // 2. 핵심 계산 로직 (Placeholder for complex financial modeling)
+    // 실제로는 모든 Violation Type의 Min/Max Fine을 조합하고 가중치를 부여해야 합니다.
+    let totalMinFine = 0;
+    for (const item of dataSet.data_set) {
+        if (item.financial_metrics && item.financial_metrics.min_fine_estimate_usd) {
+            totalMinFine += item.financial_metrics.min_fine_estimate_usd;
         }
-
-        return {
-            potentialMaxLossAmount: parseFloat(potentialMaxLossAmount.toFixed(2)), // 소수점 2자리까지 반올림
-            currentState,
-            warningLevel,
-            isTransitioningToCritical: isCriticalTransition
-        };
     }
 
-    /**
-     * [테스트/API 모의] API Gateway를 통해 호출될 것으로 예상되는 엔드포인트 함수입니다.
-     * 실제 백엔드 프레임워크(예: FastAPI/Express) 환경에서 사용됩니다.
-     * @param inputs - 요청 본문 (Request Body)으로 들어오는 리스크 가중치 데이터.
-     * @returns JSON 구조화된 계산 결과.
-     */
-    public static async mockApiCall(inputs: RiskInputs): Promise<RiskCalculationResult> {
-        console.log(`[API Call] Starting risk calculation for inputs...`);
-        // 비동기 처리 시뮬레이션 (네트워크 지연, 복잡한 DB 조회 등)
-        await new Promise(resolve => setTimeout(resolve, 50)); 
+    // 가중치 적용 및 최종 $L_{totalMax}$ 계산 (간단한 합산으로 모킹)
+    const lTotalMax = Math.floor(totalMinFine * 1.5); // 예시: 최소 벌금의 1.5배를 초기 추정치로 사용
 
-        const service = new RiskCalculatorService();
-        const result = service.calculateRiskAndState(inputs);
-        console.log(`[API Call] Calculation complete. State: ${result.currentState}`);
-        return result;
+    // 3. 위험 임계값 체크 및 상태 결정 (Funneling Logic)
+    const CRITICAL_THRESHOLD = 500000; // $L_{totalMax}$ 임계값 설정 (예시: 50만 달러)
+    const isCritical = lTotalMax >= CRITICAL_THRESHOLD;
+
+    let statusDetails = `현재 구조적 리스크는 최소 ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(lTotalMax)} 수준으로 추정됩니다.`;
+    if (isCritical) {
+        statusDetails += " 🚨 **경고:** $L_{totalMax}$가 임계값을 초과했습니다. 즉각적인 감사 및 법률 검토가 필요합니다.";
+    } else if (lTotalMax > CRITICAL_THRESHOLD * 0.5) {
+         statusDetails += "⚠️ 주의: 리스크 수준이 높아지고 있습니다. 잠재적 공백(Compliance Gap)을 점검하십시오.";
     }
-}
 
-/** 
- * [Self-Correction/Testing Helper] 클래스 내부에서 정적 상수 접근을 위해 별도 객체로 분리합니다.
- */
-const Self = {
-    THRESHOLD_NORMAL: BASE_LOSS_AMOUNT * 0.2,
-    THRESHOLD_YELLOW: BASE_LOSS_AMOUNT * 0.8
+    return { lTotalMax, isCritical, details: statusDetails };
 };
 
-// 이 파일은 컴파일 타임에 타입 검사를 통과해야 합니다.
-// npx tsc --noEmit (실제 실행 시)
+
+// Mock API Endpoint Simulation (Frontend가 호출할 인터페이스 역할)
+export const fetchRiskDashboardData = async (): Promise<{ lTotalMax: number; isCritical: boolean; details: string }> => {
+    console.log("📡 Calling mock API endpoint for $L_{totalMax}$...");
+    // 실제로는 axios/fetch를 사용하여 백엔드 서버 /api/risk/calculate 로 요청할 것입니다.
+    await new Promise(resolve => setTimeout(resolve, 800)); // 네트워크 지연 모킹
+
+    const riskDataMock: RiskDataSet = {
+      "schema_version": "1.0.0",
+      "description": "yobizwiz $L_{totalMax}$ 계산 엔진용 핵심 규제 위반 데이터셋.",
+      "data_set": [
+        // Researcher가 제공한 데이터를 여기에 사용해야 합니다.
+        // ... (실제 JSON 구조를 다시 사용할 수 있도록 임포트하거나, 로직 내에 포함하는 것이 좋습니다.)
+        { /* VIO-PII-001 데이터 */ "violation_id": "VIO-PII-001", "violation_type": "개인 식별 정보 (PII) 유출 / 마스킹 실패", "regulated_by": ["GDPR"], "risk_category": "데이터 무결성 및 개인정보 보호", "severity_score": 0.95, "financial_metrics": { "min_fine_estimate_usd": 50000, "max_fine_estimate_usd": 2000000, "multiplier_factor": "", "occurrence_frequency": "High", "additional_loss_source": ["소송 배상액"] }, "legal_basis": {} }
+      ]
+    };
+
+    // 로직 호출 및 결과 반환
+    const result = await calculateTotalMaxRisk(riskDataMock);
+    return result;
+};
