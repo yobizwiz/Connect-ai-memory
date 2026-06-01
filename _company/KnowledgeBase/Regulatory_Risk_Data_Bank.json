@@ -1,0 +1,86 @@
+[
+    {
+        "regulationCode": "GDPR",
+        "violationCategory": "Data Sovereignty & Transfer Violation",
+        "articleReference": "Article 44 (Transfers)",
+        "riskConditionTrigger": {
+            "description": "개인의 동의를 얻지 않고 EU 데이터를 제3국(특히 비규제 지역) 서버에 전송하는 경우.",
+            "dataInputType": "PII",
+            "metric": "Cross-Border Transfer Count (unsecured)"
+        },
+        "financialImpactModel": {
+            "minFineUSD": 1000000, // 최소 벌금: 4% of global annual turnover
+            "maxFineUSD": 200000000, // 최대 벌금: Global Annual Turnover의 4% (최대화)
+            "settlementRiskFactor": 3.5,
+            "indirectLossMultiplier": 5.0
+        },
+        "requiredControl": {
+            "controlName": "Standard Contractual Clauses (SCCs) & Data Mapping",
+            "implementationMethod": "Masking",
+            "priorityLevel": "Critical"
+        }
+    },
+    {
+        "regulationCode": "HIPAA",
+        "violationCategory": "PHI Leakage Index",
+        "articleReference": "Security Rule (Technical Safeguards)",
+        "riskConditionTrigger": {
+            "description": "의료 기록(ePHI)에서 비식별화 과정이 누락되거나, 접근 통제가 취약한 경우.",
+            "dataInputType": "PHI",
+            "metric": "Masking Failure Count (unmasked fields)"
+        },
+        "financialImpactModel": {
+            "minFineUSD": 50000, // 최소 벌금: 연간 $1.2M ~ $1.5M 사이의 낮은 등급부터 시작
+            "maxFineUSD": 2000000, // 최대 벌금: 사안 심각도에 따라 가중치가 급증 (최대 $2M+)
+            "settlementRiskFactor": 4.0,
+            "indirectLossMultiplier": 7.0
+        },
+        "requiredControl": {
+            "controlName": "De-identification Protocol & Access Audit",
+            "implementationMethod": "Masking",
+            "priorityLevel": "Critical"
+        }
+    },
+    {
+        "regulationCode": "DORA",
+        "violationCategory": "Operational Resilience Failure",
+        "articleReference": "Chapter IV (ICT Risk Management)",
+        "riskConditionTrigger": {
+            "description": "AI 시스템이나 핵심 인프라가 제3자 공급망 문제나 사이버 공격으로 인해 장기간 마비될 경우.",
+            "dataInputType": "Operational_Process",
+            "metric": "Downtime Hours Exceeding Threshold (e.g., 24h)"
+        },
+        "financialImpactModel": {
+            "minFineUSD": 500000, // 최소 벌금: 시스템 중단에 대한 초기 과태료
+            "maxFineUSD": 10000000, // 최대 벌금: 매출액의 일정 비율 (매우 높게 설정)
+            "settlementRiskFactor": 2.5,
+            "indirectLossMultiplier": 9.0 // 가장 높은 배율 적용: 비즈니스 연속성 손실이 핵심
+        },
+        "requiredControl": {
+            "controlName": "Incident Response Plan & Business Continuity Testing",
+            "implementationMethod": "Audit_Trail",
+            "priorityLevel": "Critical"
+        }
+    },
+    {
+        "regulationCode": "EU_AI_ACT",
+        "violationCategory": "Lack of Provenance / Hallucination Risk",
+        "articleReference": "Art. 52 (Transparency & Accountability)",
+        "riskConditionTrigger": {
+            "description": "LLM 기반의 자문 보고서에 출처를 명시하지 않은 허위 정보(Hallucination)가 포함되어 의사결정을 유도하는 경우.",
+            "dataInputType": "Operational_Process",
+            "metric": "Uncited Claim Count (Lack of Provenance)"
+        },
+        "financialImpactModel": {
+            "minFineUSD": 250000, // 최소 벌금: 초기 경고 및 시정 비용
+            "maxFineUSD": 10000000, // 최대 벌금: 신뢰도 하락에 따른 영업 손실 예측 (매우 높게 설정)
+            "settlementRiskFactor": 4.5,
+            "indirectLossMultiplier": 8.0
+        },
+        "requiredControl": {
+            "controlName": "Mandatory Provenance Logging & Verification Layer",
+            "implementationMethod": "Audit_Trail",
+            "priorityLevel": "Critical"
+        }
+    }
+]
