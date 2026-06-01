@@ -1,0 +1,90 @@
+[
+    {
+        "risk_id": "R001",
+        "regulation": "PII Leakage (HIPAA/GDPR)",
+        "violation_type": "비식별화 실패로 인한 데이터 유출 (PII Masking Failure)",
+        "severity_level": "Critical",
+        "financial_impact": {
+            "min_fine_usd": 50000,
+            "max_fine_usd": 2000000,
+            "source": "규제 당국 벌금 및 민사소송 배상액 종합 (sessions/2026-05-19T04-23/secretary.md)"
+        },
+        "opportunity_cost_usd": {
+            "min": 500000,
+            "max": 10000000,
+            "description": "시스템 신뢰도 하락 및 재구축 비용 (Compliance_Drift_Score 반영)"
+        },
+        "affected_items": [
+            "환자 기록 데이터(PHI)",
+            "개인 식별 정보(PII)",
+            "계좌 번호, 주민등록번호 등 마스킹 누락 필드"
+        ],
+        "compliance_mandate": "데이터 주권 및 사용 목적 제한 강화 (Data Sovereignty)"
+    },
+    {
+        "risk_id": "R002",
+        "regulation": "AI Accountability / Hallucination",
+        "violation_type": "LLM 기반 환각(Hallucination) 책임 전가 및 출처 부재",
+        "severity_level": "Critical",
+        "financial_impact": {
+            "min_fine_usd": 25000,
+            "max_fine_usd": 10000000,
+            "source": "전문가 배상 책임 및 명예 실추 비용 포함 (Researcher 개인 메모리)"
+        },
+        "opportunity_cost_usd": {
+            "min": 5000000,
+            "max": 20000000,
+            "description": "잘못된 리스크 예측 보고서로 인한 투자 손실액 추정 (신뢰도 하락 비용)"
+        },
+        "affected_items": [
+            "법률 자문 보고서",
+            "재무 분석 자료",
+            "규제 해석 근거 제시 문서"
+        ],
+        "compliance_mandate": "AI 출처 명시 및 검증 의무 강화 (Provenance Mandate)"
+    },
+    {
+        "risk_id": "R003",
+        "regulation": "Procedural Compliance Failure",
+        "violation_type": "필수 절차(Critical Checkpoint) 누락 및 문서화 미비 (Compliance Drift)",
+        "severity_level": "High",
+        "financial_impact": {
+            "min_fine_usd": 100000,
+            "max_fine_usd": 5000000,
+            "source": "프로젝트 재시작 비용 및 계약 위약금 (Researcher 개인 메모리)"
+        },
+        "opportunity_cost_usd": {
+            "min": 1000000,
+            "max": 20000000,
+            "description": "프로젝트 지연에 따른 기회비용 손실 (Systemic Weighting 반영)"
+        },
+        "affected_items": [
+            "승인 프로세스(Approval Flow)",
+            "내부 감사 기록",
+            "핵심 의사결정 문서화"
+        ],
+        "compliance_mandate": "비즈니스 연속성 확보 및 절차적 투명성 유지 (BCP/Audit Trail)"
+    },
+    {
+        "risk_id": "R004",
+        "regulation": "Scope Violation / Unauthorized Advice",
+        "violation_type": "서비스 제공 범위를 벗어난 자문이나 판단 시도 (Jurisdiction Overreach)",
+        "severity_level": "High",
+        "financial_impact": {
+            "min_fine_usd": 75000,
+            "max_fine_usd": 3000000,
+            "source": "광고/법적 책임 및 공신력 훼손 (Researcher 개인 메모리)"
+        },
+        "opportunity_cost_usd": {
+            "min": 500000,
+            "max": 1000000,
+            "description": "시장 신뢰도 하락으로 인한 잠재 고객 유입 감소 (공신력 손실)"
+        },
+        "affected_items": [
+            "금융 컨설팅 서비스",
+            "법적 조언 제공 영역",
+            "전문성 경계가 불명확한 모든 콘텐츠"
+        ],
+        "compliance_mandate": "서비스 전문 영역의 명확한 정의 및 고지 (Disclaimer Mandate)"
+    }
+]
