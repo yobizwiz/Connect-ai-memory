@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0.0",
+  "description": "yobizwiz $L_{totalMax}$ 계산 엔진용 핵심 규제 위반 데이터셋. 모든 재정적 수치는 추정치(Estimated)이며, 실제 벌금은 관할권 및 상황에 따라 변동됨.",
+  "data_set": [
+    {
+      "violation_id": "VIO-PII-001",
+      "violation_type": "개인 식별 정보 (PII) 유출 / 마스킹 실패",
+      "regulated_by": ["GDPR", "CCPA", "HIPAA"],
+      "risk_category": "데이터 무결성 및 개인정보 보호",
+      "severity_score": 0.95,
+      "financial_metrics": {
+        "min_fine_estimate_usd": 50000,
+        "max_fine_estimate_usd": 2000000,
+        "multiplier_factor": "개인 정보 건수 * $10~100",
+        "occurrence_frequency": "높음 (High)",
+        "additional_loss_source": ["소송 배상액", "시스템 재구축 비용"]
+      },
+      "legal_basis": {
+        "primary_clause": "GDPR Art. 32/Art. 83",
+        "reference_note": "PII 유출 규모 및 목적 외 사용 여부에 따라 벌금 증가율(Multiplier)이 기하급수적으로 상승함."
+      },
+      "source_provenance": "[근거: sessions/2026-05-19T04-23/secretary.md, Researcher 개인 메모리]"
+    },
+    {
+      "violation_id": "VIO-SOV-002",
+      "violation_type": "데이터 주권 침해 및 관할권 위반 (Data Sovereignty Breach)",
+      "regulated_by": ["국가별 데이터 국외 이전 법규"],
+      "risk_category": "운영 리스크 / 지리적 컴플라이언스",
+      "severity_score": 0.90,
+      "financial_metrics": {
+        "min_fine_estimate_usd": 750000,
+        "max_fine_estimate_usd": "매출액의 4%",
+        "multiplier_factor": "관할권 수 * (데이터 국외 이전 건수)",
+        "occurrence_frequency": "중간~높음",
+        "additional_loss_source": ["시장 진입 금지 벌금", "영업 정지 기간 손실"]
+      },
+      "legal_basis": {
+        "primary_clause": "국가별 데이터 주권 법규 (예: 중국 CSL, 러시아 법)",
+        "reference_note": "특정 국가의 데이터를 해당 국가 내에만 저장/처리하지 못할 경우, 사업 모델 전체의 효력이 정지됨."
+      },
+      "source_provenance": "[근거: Researcher 개인 메모리 - 2026-05-28 T19:55, CEO 지시]"
+    },
+    {
+      "violation_id": "VIO-AI-003",
+      "violation_type": "LLM 기반 출처 불명확성 및 환각 (Hallucination & Lack of Provenance)",
+      "regulated_by": ["EU AI Act", "전문가 자문 윤리 규정"],
+      "risk_category": "지식 신뢰도 / 지적 책임 리스크",
+      "severity_score": 0.85,
+      "financial_metrics": {
+        "min_fine_estimate_usd": 25000,
+        "max_fine_estimate_usd": "투자 손실액의 10% 이상 (추정)",
+        "multiplier_factor": "잘못된 자문 보고서 건수 * 평균 예측 손실액",
+        "occurrence_frequency": "높음 (기술 발전 속도에 비례)",
+        "additional_loss_source": ["명예 실추 비용", "전문가 배상 책임"]
+      },
+      "legal_basis": {
+        "primary_clause": "EU AI Act, 준전문가 책임 법규",
+        "reference_note": "AI 산출물에 대한 '출처 명시 및 검증 의무(Provenance Mandate)' 위반이 핵심이며, 벌금 외의 신뢰도 손실이 가장 큼."
+      },
+      "source_provenance": "[근거: Researcher 개인 메모리 - 2026-05-26, 세션 logs/2026-05-28T17-55]"
+    }
+  ]
+}
