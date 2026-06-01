@@ -1,0 +1,38 @@
+{
+  "dataset_title": "Global Regulatory Violation Simulation Data Set v2.0",
+  "purpose": "C-Level 의사결정을 유도하는 재무적 최대 위협(Maximum Financial Threat) 수치화.",
+  "data_fields": [
+    "Regulatory_Area",
+    "Violation_Type",
+    "Base_Fine_Category",
+    "RMM_Multiplier (Risk Maturity Multiplier)",
+    "Operational_Loss_Factor",
+    "Total_Max_Estimate_Lmax_USD"
+  ],
+  "risk_scenarios": [
+    {
+      "Regulatory_Area": "EU AI Act / GDPR (AI Governance)",
+      "Violation_Type": "Hallucination 및 Provenance 실패 (LLM 책임 전가)",
+      "Base_Fine_Category": "$5M - $10M+",
+      "RMM_Multiplier": 3.5,
+      "Operational_Loss_Factor": "$8M - $20M+",
+      "Total_Max_Estimate_Lmax_USD": "최소 $45M 이상 (시스템 무효화 리스크 포함)"
+    },
+    {
+      "Regulatory_Area": "GDPR / CCPA (Data Sovereignty)",
+      "Violation_Type": "PII 비식별화 실패 및 목적 외 전송",
+      "Base_Fine_Category": "$10M - $25M+",
+      "RMM_Multiplier": 2.8,
+      "Operational_Loss_Factor": "$10M - $30M+",
+      "Total_Max_Estimate_Lmax_USD": "최소 $60M 이상 (영업 정지 및 시스템 재구축 비용 포함)"
+    },
+    {
+      "Regulatory_Area": "산업 표준/시스템 무결성 (Audit Trail Failure)",
+      "Violation_Type": "불변 감사 원장(SHA-256) 부재로 인한 컴플라이언스 고의성 판명",
+      "Base_Fine_Category": "$7M - $15M+",
+      "RMM_Multiplier": 4.0,
+      "Operational_Loss_Factor": "$15M - $40M+",
+      "Total_Max_Estimate_Lmax_USD": "최소 $90M 이상 (법적 방어 실패 및 신뢰도 상실 비용 포함)"
+    }
+  ]
+}
