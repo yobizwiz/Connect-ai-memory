@@ -1,38 +1,149 @@
 {
-  "dataset_title": "Global Regulatory Violation Simulation Data Set v2.0",
-  "purpose": "C-Level 의사결정을 유도하는 재무적 최대 위협(Maximum Financial Threat) 수치화.",
-  "data_fields": [
-    "Regulatory_Area",
-    "Violation_Type",
-    "Base_Fine_Category",
-    "RMM_Multiplier (Risk Maturity Multiplier)",
-    "Operational_Loss_Factor",
-    "Total_Max_Estimate_Lmax_USD"
-  ],
-  "risk_scenarios": [
-    {
-      "Regulatory_Area": "EU AI Act / GDPR (AI Governance)",
-      "Violation_Type": "Hallucination 및 Provenance 실패 (LLM 책임 전가)",
-      "Base_Fine_Category": "$5M - $10M+",
-      "RMM_Multiplier": 3.5,
-      "Operational_Loss_Factor": "$8M - $20M+",
-      "Total_Max_Estimate_Lmax_USD": "최소 $45M 이상 (시스템 무효화 리스크 포함)"
-    },
-    {
-      "Regulatory_Area": "GDPR / CCPA (Data Sovereignty)",
-      "Violation_Type": "PII 비식별화 실패 및 목적 외 전송",
-      "Base_Fine_Category": "$10M - $25M+",
-      "RMM_Multiplier": 2.8,
-      "Operational_Loss_Factor": "$10M - $30M+",
-      "Total_Max_Estimate_Lmax_USD": "최소 $60M 이상 (영업 정지 및 시스템 재구축 비용 포함)"
-    },
-    {
-      "Regulatory_Area": "산업 표준/시스템 무결성 (Audit Trail Failure)",
-      "Violation_Type": "불변 감사 원장(SHA-256) 부재로 인한 컴플라이언스 고의성 판명",
-      "Base_Fine_Category": "$7M - $15M+",
-      "RMM_Multiplier": 4.0,
-      "Operational_Loss_Factor": "$15M - $40M+",
-      "Total_Max_Estimate_Lmax_USD": "최소 $90M 이상 (법적 방어 실패 및 신뢰도 상실 비용 포함)"
+  "document_metadata": {
+    "name": "Regulatory Threat Matrix v2 (Risk Exposure Calculation Engine)",
+    "version": "2.0",
+    "purpose": "Client-facing diagnostic report input for L_totalMax calculation.",
+    "date_generated": "2026-06-01",
+    "metric_definition": {
+      "RMM": "Risk Management Metric Score. 1~5점 (높을수록 위험). 각 항목의 취약성 지수와 영향도 가중치(Weight)를 곱하여 산출.",
+      "L_totalMax": "Total Maximum Financial Loss Estimate. [규제 벌금] + [소송 합의 비용] + [운영 중단 손실]. 모든 점수는 USD 기반으로 환산됨."
     }
+  },
+  "checklist_items": [
+    {
+      "id": 1,
+      "item_name": "AI 출력의 출처 및 근거 명시 (Provenance)",
+      "risk_factor": "LLM 생성 콘텐츠에 대한 법적/윤리적 책임 전가 위험. 근거 없는 답변(Hallucination) 사용.",
+      "regulatory_gap": "EU AI Act (Transparency Mandate), 일반 전문가 책임 원칙",
+      "lmax_contribution": {
+        "type": "명예 및 신뢰도 손실",
+        "estimate": "$5M - $20M+",
+        "description": "잘못된 리스크 예측으로 인한 투자/의사결정 실패 비용."
+      },
+      "severity_score": 5,
+      "explanation": "가장 높은 위험. 근거 자료(Provenance)가 없으면 시스템적 무효화 리스크 발생."
+    },
+    {
+      "id": 2,
+      "item_name": "PII 데이터의 국경 간 전송 및 마스킹",
+      "risk_factor": "개인 식별 정보(PII) 처리 과정에서의 비식별화 실패. 데이터 주권 침해.",
+      "regulatory_gap": "GDPR, CCPA (Data Sovereignty & Masking)",
+      "lmax_contribution": {
+        "type": "규제 벌금 및 소송 비용",
+        "estimate": "$2M - $10M+",
+        "description": "데이터 유출 규모와 피해자 수에 비례하여 증가."
+      },
+      "severity_score": 5,
+      "explanation": "최소한의 방어선. 마스킹 및 목적 제한(Purpose Limitation)이 필수적."
+    },
+    {
+      "id": 3,
+      "item_name": "핵심 업무 절차의 문서화 및 감사 기록 (Audit Trail)",
+      "risk_factor": "필수 내부 승인/검토 단계 누락. 시스템 오류로 인한 프로세스적 하자.",
+      "regulatory_gap": "DORA (Operational Resilience), 산업 표준 컴플라이언스",
+      "lmax_contribution": {
+        "type": "운영 중단 손실 및 위약금",
+        "estimate": "$100K - $5M",
+        "description": "시스템 장애가 비즈니스 연속성을 위협할 때의 간접 비용."
+      },
+      "severity_score": 4,
+      "explanation": "사후 책임 증명 및 고의성 면책(Safe Harbor)을 위해 불변 기록이 필요함."
+    },
+    {
+      "id": 4,
+      "item_name": "외부 법규 변화 모니터링 시스템 구축",
+      "risk_factor": "글로벌/지역별 규제 변화를 놓치거나 해석 오류. 미발견 리스크 Gap 발생.",
+      "regulatory_gap": "EU AI Act (Future Compliance), 다중 관할권 위반",
+      "lmax_contribution": {
+        "type": "미래 예측 벌금 및 재설계 비용",
+        "estimate": "$5M - $15M+",
+        "description": "규제 변경에 선제적으로 대응하지 못했을 때의 구조적 손실."
+      },
+      "severity_score": 4,
+      "explanation": "가장 예측하기 어렵지만 가장 파괴력이 큰 위험. 능동적인 모니터링 필수."
+    },
+    {
+      "id": 5,
+      "item_name": "데이터 처리 주체(Role) 및 책임 정의",
+      "risk_factor": "AI 모델 사용의 최종 책임 소재 불명확성. 내부 분쟁 및 법적 공백 발생.",
+      "regulatory_gap": "산업 표준 거버넌스 체계 (Governance)",
+      "lmax_contribution": {
+        "type": "내부 소송 비용 및 지연 손실",
+        "estimate": "$1M - $3M",
+        "description": "책임 소재가 불명확하여 프로젝트 자체가 중단되는 경우."
+      },
+      "severity_score": 3,
+      "explanation": "조직 내부의 시스템적 비효율성을 제거하는 것이 최우선."
+    },
+    {
+      "id": 6,
+      "item_name": "시스템 장애에 대한 복구 계획(BCP) 확보",
+      "risk_factor": "핵심 서비스 다운타임. 재무 활동의 중단으로 인한 직접적인 매출 손실.",
+      "regulatory_gap": "DORA (Digital Operational Resilience Act)",
+      "lmax_contribution": {
+        "type": "직접 운영 중단 손실",
+        "estimate": "$500K - $10M+",
+        "description": "시간당 매출 규모에 비례. 24/7 서비스의 경우 매우 치명적."
+      },
+      "severity_score": 4,
+      "explanation": "운영 복원력을 최우선으로 확보해야 하는 핵심 영역."
+    },
+    {
+      "id": 7,
+      "item_name": "데이터 소스 및 입력값의 무결성 검증",
+      "risk_factor": "잘못된/오염된 데이터(Garbage In)를 기반으로 의사결정을 내리는 구조적 오류.",
+      "regulatory_gap": "AI 모델 학습 데이터 품질 관리 (Data Quality)",
+      "lmax_contribution": {
+        "type": "의사결정 오류로 인한 기회비용 손실",
+        "estimate": "$50K - $1M",
+        "description": "작은 실수가 반복되어 큰 시장 기회를 놓치는 비용."
+      },
+      "severity_score": 3,
+      "explanation": "데이터의 '출처'와 '정확성'을 검증하는 것이 필수적."
+    },
+    {
+      "id": 8,
+      "item_name": "제3자 공급망 리스크 관리",
+      "risk_factor": "협력사 또는 외부 API 의존성 문제로 인한 서비스 전체 마비. (공급망 단절 위험)",
+      "regulatory_gap": "DORA (Third-Party Risk Management)",
+      "lmax_contribution": {
+        "type": "외부 의존성으로 인한 운영 중단",
+        "estimate": "$1M - $5M",
+        "description": "핵심 기능을 제공하는 외부 파트너의 실패가 직접적인 타격을 줌."
+      },
+      "severity_score": 3,
+      "explanation": "단일 장애점(Single Point of Failure)을 사전에 제거해야 함."
+    },
+    {
+      "id": 9,
+      "item_name": "국가별 데이터 저장 위치 준수 (Data Localization)",
+      "risk_factor": "데이터를 특정 국가의 법적 요구사항에 맞춰 물리적으로 저장하지 못하는 위반.",
+      "regulatory_gap": "특정 국가의 데이터 거버넌스 규제",
+      "lmax_contribution": {
+        "type": "시장 접근 제한 및 벌금",
+        "estimate": "$10M+",
+        "description": "국가별 시장 진입 자체가 불가능해지는 치명적 리스크."
+      },
+      "severity_score": 5,
+      "explanation": "글로벌 확장 시 가장 먼저 검토해야 할 필수 항목."
+    },
+    {
+      "id": 10,
+      "item_name": "정보보안 취약점의 정기적 패치 및 테스트",
+      "risk_factor": "시스템/인프라 레벨의 해킹 또는 악성코드 감염. (기술 시스템 투명성 부재)",
+      "regulatory_gap": "ISO 27001 등 산업 보안 표준, 법적 의무 이행",
+      "lmax_contribution": {
+        "type": "정보 유출 및 운영 손실",
+        "estimate": "$50K - $3M",
+        "description": "취약점을 통한 침입은 항상 금전적 피해로 직결됨."
+      },
+      "severity_score": 4,
+      "explanation": "기술적 방어는 기본 중의 기본이며, 가장 자주 발생하는 리스크 유형."
+    }
+  ],
+  "structured_checklist_summary": [
+    {"Risk Score (1-5)": 5, "Criticality": "시스템 생존 필수", "Focus Area": "규제 준수 및 신뢰성"},
+    {"Risk Score (1-5)": 4, "Criticality": "높은 주의 필요", "Focus Area": "운영 연속성 및 예측 리스크"},
+    {"Risk Score (1-5)": 3, "Criticality": "개선 권고", "Focus Area": "거버넌스 및 효율성"}
   ]
 }
