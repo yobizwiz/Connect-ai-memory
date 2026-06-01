@@ -1,56 +1,71 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import { RiskInputs, getTarsApiEndpoint, determineRiskLevel } from '../services/riskCalculationService';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 
-// 🚨 전역 리스크 상태 정의 (State Machine)
-type RiskStatus = 'NORMAL' | 'WARNING' | 'CRITICAL';
+// --- 🚨 시스템 상태 정의 (Design Token & State Machine) ---
+export type RiskStatus = 'NORMAL' | 'WARNING' | 'CRITICAL' | 'PAYWALL_ACTIVE';
 
-interface TarsContextType {
+interface RiskContextType {
+    status: RiskStatus;
     currentRiskScore: number;
-    currentRiskStatus: RiskStatus;
-    isLoading: boolean;
-    calculateTars: (inputs: RiskInputs) => Promise<{ score: number; status: RiskStatus }>;
+    setRiskLevel: (score: number) => void; // 리스크 점수를 받아 상태를 업데이트하는 핵심 함수
+    enterPanicState: () => void;          // 패닉 모드를 강제 진입시키는 함수
 }
 
-const TARS_CONTEXT = createContext<TarsContextType | undefined>(undefined);
+const RiskContext = createContext<RiskContextType | undefined>(undefined);
 
-export const RiskContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [currentRiskScore, setCurrentRiskScore] = useState(0);
-    const [currentRiskStatus, setCurrentRiskStatus] = useState<'NORMAL' | 'WARNING' | 'CRITICAL'>('NORMAL');
-    const [isLoading, setIsLoading] = useState(false);
-
-    // TARS 계산을 실행하고 상태를 업데이트하는 함수 (핵심)
-    const calculateTars = async (inputs: RiskInputs): Promise<{ score: number; status: RiskStatus }> => {
-        setIsLoading(true);
-        try {
-            // Mock API 호출 대신, 서비스 레이어의 로직을 직접 사용합니다.
-            const result = await getTarsApiEndpoint(inputs);
-
-            setCurrentRiskScore(result.tarsScore);
-            setCurrentRiskStatus(result.riskLevel);
-            return { score: parseFloat(result.tarsScore), status: result.riskLevel };
-
-        } catch (error) {
-            console.error("TARS 계산 실패:", error);
-            // 폴백 처리: 오류 발생 시 가장 보수적인 상태로 설정합니다.
-            setCurrentRiskStatus('WARNING');
-            alert('⚠️ TARS 계산 서비스에 연결 문제가 발생했습니다. 경고 레벨로 기본 설정됩니다.');
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    return (
-        <TARS_CONTEXT.Provider value={{ currentRiskScore, currentRiskStatus, isLoading, calculateTars }}>
-            {children}
-        </TARS_CONTEXT.Provider>
-    );
-};
-
-// 사용 편의성을 위한 Hook 제공
-export const useTarsContext = () => {
-    const context = useContext(TARS_CONTEXT);
-    if (context === undefined) {
-        throw new Error('useTarsContext must be used within a RiskContextProvider');
+export const useRiskContext = (): RiskContextType => {
+    const context = useContext(RiskContext);
+    if (!context) {
+        throw new Error('useRiskContext must be used within a PanicGateProvider');
     }
     return context;
 };
+
+// --- 🛡️ 리스크 게이트 제공자 (PanicGate Provider) ---
+export const PanicGateProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const [status, setStatus] = useState<RiskStatus>('NORMAL');
+    const [currentRiskScore, setCurrentRiskScore] = useState(0);
+
+    // 리스크 점수를 받아 상태를 업데이트하는 핵심 로직 (Single Source of Truth)
+    const setRiskLevel = useCallback((score: number) => {
+        setCurrentRiskScore(score);
+        let newStatus: RiskStatus;
+
+        if (score < 50) {
+            newStatus = 'NORMAL';
+        } else if (score >= 50 && score < 85) {
+            newStatus = 'WARNING';
+        } else { // score >= 85
+            console.warn(`[SYSTEM ALERT] Critical Risk Threshold (${score}) exceeded! Transitioning to CRITICAL.`);
+            // 임계치 초과 시, 즉시 패닉 상태로 전환하고 외부 요소를 차단합니다.
+            newStatus = 'CRITICAL';
+            setTimeout(() => {
+                enterPanicState();
+            }, 500); // 짧은 지연 후 강제 진입
+        }
+        setStatus(newStatus);
+    }, []);
+
+    // 패닉 상태로 강제 전환 (DOM Lockout 및 Paywall 준비)
+    const enterPanicState = useCallback(() => {
+        if (status !== 'CRITICAL') {
+            console.log("[SYSTEM PANIC] Full System Lockdown Initiated.");
+            setStatus('PAYWALL_ACTIVE');
+            // 실제 환경에서는 여기서 전역 스크롤 리스너를 붙여 Body/Window의 기본 동작을 막아야 합니다.
+        }
+    }, [status]);
+
+    const value = {
+        status,
+        currentRiskScore,
+        setRiskLevel,
+        enterPanicState,
+    };
+
+    return (
+        <RiskContext.Provider value={value}>
+            {children}
+        </RiskContext.Provider>
+    );
+};
+
+export default PanicGateProvider;
