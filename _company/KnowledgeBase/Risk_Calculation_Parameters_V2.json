@@ -1,0 +1,48 @@
+{
+  "metadata": {
+    "version": "2.0",
+    "description": "TRE (Threat Resilience Exposure) 계산을 위한 정량적 입력 파라미터 및 시나리오 데이터셋.",
+    "source": "Researcher Quant Analysis | 2026-06-01"
+  },
+  "parameters": {
+    "L_base": {"unit": "USD", "description": "기본 규제 미준수 패널티 (DORA, EU AI Act 등)."},
+    "L_residency": {"unit": "USD", "description": "운영 공간/관할권 격리 실패 비용. 시스템적 위협."},
+    "L_transfer": {"unit": "USD", "description": "데이터 전송 무결성 및 비식별화 실패 비용. 기술적 위협."},
+    "alpha_multiplier": {"unit": "Dimensionless", "description": "시스템 무효화 계수 (Alpha). 변수 간 결합 시 폭발 승수 역할을 함."}
+  },
+  "scenarios": [
+    {
+      "name": "Scenario A: Low Risk (SOP 미비)",
+      "inputs": {
+        "L_base": 800000,
+        "L_residency": 20000000,
+        "L_transfer": 30000000,
+        "alpha_multiplier": 1.5
+      },
+      "narrative_focus": "경고: 내부 절차의 미비로 인한 통제력 상실.",
+      "expected_outcome_scale": "수천만 원대 (재발 방지 의무)"
+    },
+    {
+      "name": "Scenario B: Medium Risk (구조적 공백 노출)",
+      "inputs": {
+        "L_base": 8000000,
+        "L_residency": 250000000,
+        "L_transfer": 1200000000,
+        "alpha_multiplier": 3.5
+      },
+      "narrative_focus": "경고: 시스템 설계 단계부터 내재된 취약점(Structural Gap)으로 인한 법적 책임.",
+      "expected_outcome_scale": "수백억 원대 (핵심 진단 필요)"
+    },
+    {
+      "name": "Scenario C: Extreme Risk (시스템 무효화)",
+      "inputs": {
+        "L_base": 4000000000,
+        "L_residency": 20000000000,
+        "L_transfer": 80000000000,
+        "alpha_multiplier": 8.5
+      },
+      "narrative_focus": "🚨 CRITICAL: 근본적 시스템 아키텍처의 실패 및 법적 존립 위협.",
+      "expected_outcome_scale": "수천억 원대 (즉각적인 보험/보호 장치 필수)"
+    }
+  ]
+}
