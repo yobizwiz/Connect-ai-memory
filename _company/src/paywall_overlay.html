@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>SYSTEM ALERT: Access Restricted</title>
+    <style>
+        /* 1. Global Reset & Variables (Self-RAG Tokens) */
+        :root {
+            --bg-dark: #1A1A1A;
+            --color-red-alert: #DC2626; /* Neon Red */
+            --color-blue-authority: #2980B9; /* Deep Slate Blue */
+            --color-text-muted: #AAAAAA;
+            --color-system-bg: rgba(15, 25, 40, 0.9); /* Dark Navy for Overlay box */
+            --font-mono: 'Roboto Mono', monospace;
+            --font-sans: 'Inter', sans-serif;
+        }
+
+        /* 2. Global Styles & Overlays (Visual Anchor) */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-dark);
+            color: #E0E0E0;
+            font-family: var(--font-sans);
+            /* 스크롤 방지 장치 (Visual Anchor) */
+            overflow: hidden; 
+        }
+
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95); /* Full screen blackout */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+            /* 경고 노이즈 효과 추가 (Self-RAG - Noise/Chromatic Aberration) */
+            background-image: linear-gradient(to right, rgba(255, 0, 0, 0.01), transparent),
+                              linear-gradient(to bottom, rgba(0, 0, 255, 0.01), transparent);
+            background-size: 300% 300%;
+            animation: noise-bg 6s linear infinite;
+        }
+
+        @keyframes noise-bg {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+
+        /* 3. Core Components */
+        .alert-header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: blinker 1s linear infinite; /* 깜빡이는 경고 효과 */
+        }
+
+        .alert-header h1 {
+            font-size: 3em;
+            color: var(--color-red-alert);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            [/* 추가 글리치 애니메이션은 JS나 고급 CSS로 구현해야 하나, 여기서는 색상으로 대체 */]
+        }
+
+        .system-body {
+            max-width: 1000px;
+            margin-bottom: 50px;
+            background-color: var(--color-system-bg);
+            border: 2px solid var(--color-red-alert);
+            padding: 40px;
+            box-shadow: 0 0 30px rgba(220, 38, 38, 0.5); /* Red Glow */
+        }
+
+        .system-body p {
+            line-height: 1.6;
+            font-size: 1.1em;
+            color: #CCC;
+        }
+        
+        /* 데이터/리스트 섹션 스타일 (Monospace, 권위적 느낌) */
+        .data-panel {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.6);
+            border: 1px dashed var(--color-red-alert);
+        }
+
+        .data-panel h3 {
+            font-family: var(--font-mono);
+            color: #FFD700; /* Gold/Amber for system title */
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dotted #333;
+        }
+
+        .metric strong {
+            font-family: var(--font-mono);
+            color: var(--color-red-alert); /* L_totalMax 강조 */
+        }
+
+
+        /* 4. CTA / Paywall Section (Tension & Trust Contrast) */
+        .paywall-card {
+            max-width: 600px;
+            text-align: center;
+            padding: 50px;
+            border: 5px solid var(--color-blue-authority); /* 신뢰도 대비 (Trust) */
+            background: linear-gradient(145deg, #2980B9, #3A6EA5); /* 고급 글래스모피즘 광원 느낌 */
+            box-shadow: 0 0 20px rgba(41, 128, 185, 0.7);
+        }
+
+        .paywall-card h2 {
+            color: #FFF;
+            font-size: 2em;
+            margin-bottom: 30px;
+        }
+
+        /* 가격 표기 방식 (Monospace + Glow) */
+        .price-display {
+            font-family: var(--font-mono);
+            font-size: 4em;
+            color: #FFD700; /* Gold/Premium color */
+            margin: 20px 0;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+        }
+
+        /* 최종 CTA 버튼 (Visual Anchor - Pulsing) */
+        #ctaButton {
+            background-color: var(--color-red-alert); /* 공포 기반 CTA */
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.3em;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: transform 0.2s, box-shadow 0.2s;
+            /* Pulsing 효과를 위한 애니메이션 */
+            animation: pulse-glow 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+        }
+
+        #ctaButton:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px var(--color-red-alert);
+        }
+
+        /* Keyframe Animations */
+        @keyframes blinker {
+            50% { opacity: 0; }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 8px var(--color-red-alert); }
+            50% { box-shadow: 0 0 20px var(--color-red-alert), 0 0 30px rgba(220, 38, 38, 0.7); }
+        }
+
+    </style>
+</head>
+<body>
+
+<div id="overlay">
+    <!-- Header: 경고 메시지 (Attention Capture) -->
+    <header class="alert-header">
+        <h1>🚨 SYSTEM ALERT: 진단 결과 접근 제한 (ACCESS RESTRICTED)</h1>
+    </header>
+
+    <!-- System Body: 분석 및 문제점 제시 -->
+    <div class="system-body">
+        <h2>[ANALYSIS REPORT SUMMARY]</h2>
+        <p style="color: var(--color-text-muted);">[Diagnosis Report Generation Complete - Status Code: 403.1]</p>
+        
+        <p>
+            **경고:** 무료 진단 결과는 '표면적 취약성(Surface Vulnerabilities)'만을 식별했습니다. 이는 시스템의 최소한의 경고일 뿐, 귀사가 직면한 **총체적 법률 및 재정 리스크($L_{totalMax}$)**를 반영하지 못합니다.
+        </p>
+
+        <div class="data-panel">
+            <h3>[CRITICAL RISK METRICS]</h3>
+            <!-- 데이터/코드 섹션 -->
+            <div class="metric">
+                <span>위반 조항 식별 개수:</span> <span>12 / 75 (Normal)</span>
+            </div>
+            <div class="metric">
+                <span>규제 공백(Compliance Gap) 발견율:</span> <strong style="color: #FFD700;">38%</strong>
+            </div>
+            <hr style="border-top: 1px dashed #333; margin: 15px 0;">
+            <!-- 핵심 위험 지표 -->
+            <div class="metric">
+                <span>잠재적 최대 재정 손실 ($L_{totalMax}$):</span> <strong style="color: var(--color-red-alert);">$2,450,000 - $8,900,000</strong>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Paywall Card: 해결책 제시 (Tension & Trust Contrast) -->
+    <div class="paywall-card">
+        <h2>🛡️ 생존을 위한 유일한 방어벽 아키텍처가 필요합니다.</h2>
+        <p style="font-size: 1.2em; color: #FFF;">
+            $L_{totalMax}$를 정확히 계산하고, 복수 관할권 충돌에 대비하는 법적 보험은 **Premium Tier**에서만 접근 가능합니다.
+        </p>
+
+        <!-- 가격 영역 (Visual Anchor) -->
+        <div class="price-display">
+            $990 <span style="font-size: 0.3em; vertical-align: top;">/월</span>
+        </div>
+
+        <button id="ctaButton">
+            지금, $L_{totalMax}$ 보고서 접근 및 방어벽 구축 시작하기
+        </button>
+    </div>
+
+</div>
+
+<script>
+    // 자바스크립트는 단순한 인터랙티브 느낌을 주기 위함 (실제로는 서버 요청 필요)
+    document.getElementById('ctaButton').addEventListener('click', function() {
+        alert("✅ 시스템에 접속합니다... [Premium Tier 인증 요청]");
+        // 실제 환경에서는 이 클릭이 /api/paywall-checkout?tier=premium 으로 리다이렉트되어야 합니다.
+        document.body.style.backgroundColor = '#1A1A1A'; // 오버레이를 제거하는 대신, 다음 페이지로 넘어간 느낌을 줍니다.
+    });
+</script>
+
+</body>
+</html>
