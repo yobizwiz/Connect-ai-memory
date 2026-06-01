@@ -1,127 +1,155 @@
-import React from 'react';
-import styled, { keyframes } from 'styled-components';
+/**
+ * src/components/PaywallModal.tsx
+ * @description 리스크 점수 기반의 결제 게이트웨이 모달 프로토타입 (Glassmorphism 스타일 가정)
+ */
 
-// --- [DESIGNER BLUETOOTH & WRITER COPY INTEGRATION] ---
+import React, { useState, useMemo } from 'react';
+import { TIER_DATA, PaymentTier } from '../types/payment';
+import { calculateTRE, determineMandatoryTier, DUMMY_RISK_ITEMS } from '../utils/riskCalculator';
+import { useCheckoutSimulation } from '../hooks/useCheckoutSimulation';
 
-const glitchAnimation = keyframes`
-  0% { transform: translate(0); opacity: 1; }
-  20% { transform: translate(-3px, -2px) scale(1.01); opacity: 0.8; }
-  40% { transform: translate(3px, 1px) scale(1.01); opacity: 0.9; }
-  60% { transform: translate(-2px, 0); opacity: 0.7; }
-  100% { transform: translate(0); opacity: 1; }
-`;
+// --- UI 컴포넌트 Mockup (실제 프로젝트에 맞게 스타일링 필요) ---
+const ModalContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+    <div className="modal-overlay" style={{ 
+        background: 'rgba(0, 0, 0, 0.7)', 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        minHeight: '100vh' 
+    }}>
+        <div className="modal-content glassmorphism" style={{ 
+            background: 'rgba(255, 255, 255, 0.1)', 
+            backdropFilter: 'blur(10px)', 
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            borderRadius: '20px',
+            padding: '40px',
+            maxWidth: '800px',
+        }}>
+            {children}
+        </div>
+    </div>
+);
 
-const ModalOverlay = styled.div`
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-color: rgba(26, 26, 26, 0.95); /* Neutral Black */
-    z-index: 1000; /* 최우선 레이어 보장 */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    backdrop-filter: blur(4px);
-`;
+const TierCard: React.FC<{ tier: PaymentTier; isRecommended?: boolean }> = ({ tier, isRecommended = false }) => {
+    // Gold/Silver가 강력 추천되도록 디자인 강조 (CEO 지시 반영)
+    const baseStyle = { 
+        border: '1px solid #ccc', 
+        padding: '20px', 
+        margin: '15px', 
+        borderRadius: '10px',
+        transition: 'all 0.3s'
+    };
 
-const GlitchContent = styled.div`
-    max-width: 90%;
-    width: 800px;
-    padding: 50px;
-    background-color: #1A1A1A;
-    border: 3px solid #FF0000; /* 네온 레드 경고 */
-    box-shadow: 0 0 40px rgba(255, 0, 0, 0.6), inset 0 0 10px rgba(255, 0, 0, 0.3);
-    animation: ${glitchAnimation} 1s infinite alternate; /* 지속적인 불안정성 연출 */
-`;
-
-const Headline = styled.h1`
-    color: #FF4444; /* 강렬한 빨간색 */
-    font-size: 2.5em;
-    margin-bottom: 0.3em;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-`;
-
-const SubHeadline = styled.h2`
-    color: #F39C12; /* 경고 오렌지 */
-    font-size: 1.4em;
-    margin-bottom: 1.5em;
-`;
-
-const BodyText = styled.p`
-    color: #B0B0B0;
-    line-height: 1.6;
-    margin-bottom: 2em;
-    font-size: 1.1em;
-`;
-
-const ActionBlock = styled.div`
-    border-top: 1px solid rgba(255, 0, 0, 0.4);
-    padding-top: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-`;
-
-const PrimaryButton = styled.button`
-    background: linear-gradient(90deg, #CC0000, #FF3333);
-    color: white;
-    border: none;
-    padding: 15px 30px;
-    font-size: 1.2em;
-    cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
-    &:hover {
-        background: linear-gradient(90deg, #FF0000, #CC0000);
-        transform: scale(1.03);
-        box-shadow: 0 0 25px rgba(255, 0, 0, 1);
+    let dynamicStyle: React.CSSProperties = {};
+    if (isRecommended) {
+        dynamicStyle = { 
+            border: '2px solid #ff4d4d', // 네온 레드 강조
+            boxShadow: '0 0 15px rgba(255, 77, 77, 0.5)',
+            transform: 'scale(1.03)',
+        };
+    } else if (tier.type === 'Gold') {
+         dynamicStyle = { 
+            border: '2px solid #ff9800', // Gold 강조
+            boxShadow: '0 0 15px rgba(255, 152, 0, 0.5)',
+        };
     }
-`;
 
-const SecondaryWarning = styled.p`
-    color: #990000;
-    font-size: 0.8em;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-`;
-
-
-// --- [COMPONENT LOGIC] ---
-
-interface PaywallModalProps {
-    isVisible: boolean;
-    onClose: () => void; // 강제 종료 로직 (A/B 테스트 변수)
-}
-
-const PaywallModal: React.FC<PaywallModalProps> = ({ isVisible, onClose }) => {
-    if (!isVisible) return null;
 
     return (
-        <ModalOverlay aria-modal="true" role="alertdialog">
-            <GlitchContent>
-                <Headline>⚠️ CRITICAL FAILURE IMMINENT: OPERATION BLACKOUT LEVEL 5 DETECTED.</Headline>
-                <SubHeadline>시스템 운영 중단 임박: 블랙아웃 레벨 5 감지</SubHeadline>
+        <div style={{ ...baseStyle, ...dynamicStyle }}>
+            <h3>{tier.name}</h3>
+            <p>{tier.description}</p>
+            <div style={{ fontSize: '3em', color: '#ff4d4d' }}>${tier.price}</div>
+            <button disabled={!isRecommended && tier.type !== determineMandatoryTier(calculateTRE(DUMMY_RISK_ITEMS).tre)} className="purchase-btn">
+                {isRecommended ? "필수 납부" : "구매하기"}
+            </button>
+        </div>
+    );
+};
 
-                {/* Writer's Core Copy - Operational Blackout */}
-                <BodyText>
-                    당신의 데이터 무결성 게이지(TARS)가 이미 위험 임계치 $85$점을 초과했습니다. 현재 시스템 상태는 **'운영적 블랙아웃' 직전의 비정상적인 크리티컬 코드**에 진입한 것이 확인되었습니다. 즉각적인 개입 없이는, 다음 30분 내로 핵심 컴플라이언스 모듈이 연쇄적으로 실패하며 전면 서비스 중단(Operational Halt) 상태에 돌입합니다. **지금 당장 시스템을 복원하십시오.**
-                </BodyText>
 
-                {/* Writer's Core Copy - Patch Necessity */}
-                <div style={{ marginBottom: '30px', borderLeft: '5px solid #F39C12', paddingLeft: '15px' }}>
-                    <h3 style={{ color: '#F39C12', fontSize: '1.2em', margin: 0 }}>🚨 SYSTEM INTEGRITY PATCH REQUIRED</h3>
-                    <p style={{ color: '#B0B0B0', fontSize: '0.95em', marginTop: '5px' }}>
-                        현 상황은 단순한 '업데이트'가 아닙니다. 이는 법적 규제(GDPR, AI Act 등) 위반에 따른 **선제적 방어막 구축 및 무결성 재확립을 위한 필수 패치 과정**입니다... 이 자원은 선택 사항이 아닙니다. **존립을 위한 필수 유지 비용입니다.**
-                    </p>
+// =========================================================
+const PaywallModal: React.FC = () => {
+    // 1. 초기 리스크 점수를 계산합니다. (더미 데이터 사용)
+    const initialRiskData = DUMMY_RISK_ITEMS;
+    const { tre: calculatedTRE, totalSavedValue } = useMemo(() => calculateTRE(initialRiskData), []);
+
+    // 2. 비즈니스 로직에 따라 필수 티어를 결정합니다.
+    const mandatoryTierType = determineMandatoryTier(calculatedTRE);
+    
+    // 3. 결제 시뮬레이션 훅 사용
+    const { isProcessing, processPayment } = useCheckoutSimulation();
+
+    // 현재 리스크 점수와 절감 가치로 인한 경고 메시지 상태
+    const [riskLevel, setRiskLevel] = useState(null);
+
+    // 초기 로직 실행: TRE 계산 결과를 기반으로 사용자에게 공포감을 조성하는 메시지를 설정합니다.
+    React.useEffect(() => {
+        if (calculatedTRE > 0) {
+            setRiskLevel({ tre: calculatedTRE, savedValue: totalSavedValue });
+        }
+    }, [calculatedTRE, totalSavedValue]);
+
+    // 결제 핸들러 함수
+    const handlePurchase = async (tierType: PaymentTier['type']) => {
+        if (isProcessing) return;
+        
+        try {
+            await processPayment(tierType);
+            alert(`✅ ${tierType} 플랜 구매가 성공적으로 시뮬레이션되었습니다. 시스템 감사 로그에 기록됩니다.`);
+        } catch (error) {
+            console.error("결제 실패:", error);
+            alert("❌ 결제 과정에서 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+        }
+    };
+
+    // 렌더링 로직
+    return (
+        <ModalContainer>
+            {/* --- 상단 경고 문구: 공포감 조성 영역 --- */}
+            <div className="alert-header" style={{ color: '#ff4d4d', borderBottom: '2px solid #ff4d4d', paddingBottom: '15px' }}>
+                <h2>⚠️ [시스템 임무 알림]: 구조적 리스크 경고</h2>
+                <p>현재 귀하의 시스템은 **{calculatedTRE}점**의 높은 위험 노출도(TRE)를 감지했습니다. 이는 법적/재정적 무효화 리스크가 매우 높음을 의미합니다.</p>
+                <p style={{ fontWeight: 'bold', fontSize: '1.2em' }}>🚨 즉각적인 조치가 필요하며, 최소 ${totalSavedValue}의 재정적 손실을 방지하기 위해 필수 보험료 납부가 요구됩니다.</p>
+            </div>
+
+            {/* --- 결제 로직 및 티어 비교 영역 --- */}
+            <div className="tier-comparison">
+                <h3>가장 적합한 보호 수준 선택 (Mandatory Escalation)</h3>
+                <p style={{ margin: '20px 0', color: '#555' }}>
+                    🚨 **[시스템 권고]** 귀하의 현재 리스크 점수({calculatedTRE}점)를 고려할 때, 최소한 {mandatoryTierType.toUpperCase()} 티어 이상의 보호가 의무화됩니다.
+                </p>
+
+                <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+                    {Object.values(TIER_DATA)).map((tier) => (
+                        <React.Fragment key={tier.type}>
+                            <TierCard 
+                                tier={tier} 
+                                isRecommended={tier.type === mandatoryTierType} // 필수 추천 로직 구현
+                            />
+                        </React.Fragment>
+                    ))}
                 </div>
 
-                <ActionBlock>
-                    <SecondaryWarning>경고: 구독 라이선스 없이 강제 종료 시, 데이터는 복구 불가능합니다.</SecondaryWarning>
-                    <PrimaryButton onClick={onClose}>
-                        규제 대응 프로토콜 라이선스($XXXX) 확보 및 진행 ⚙️
-                    </PrimaryButton>
-                </ActionBlock>
-            </GlitchContent>
-        </ModalOverlay>
+                {/* 결제 버튼 위치 및 상태 관리 */}
+                <div style={{ textAlign: 'center', marginTop: '30px' }}>
+                    <button 
+                        onClick={() => handlePurchase(mandatoryTierType)}
+                        disabled={isProcessing}
+                        style={{ padding: '15px 40px', fontSize: '1.2em', cursor: isProcessing ? 'not-allowed' : 'pointer', background: '#ff4d4d', color: 'white' }}
+                    >
+                        {isProcessing ? (
+                            <>
+                                <span role="img" aria-label="로딩">⏳</span> 🛡️ 시스템 결제 처리 중...
+                            </>
+                        ) : (
+                            `[${mandatoryTierType.toUpperCase()} 필수] ${TIER_DATA[mandatoryTierType].name} 보호 가입 (${TIER_DATA[mandatoryTierType].price}/년)`
+                        )}
+                    </button>
+                </div>
+            </div>
+
+        </ModalContainer>
     );
 };
 

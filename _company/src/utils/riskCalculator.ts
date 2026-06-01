@@ -1,103 +1,69 @@
 /**
- * @fileoverview 핵심 위험 계산 로직을 담는 유틸리티 파일입니다.
- * 순수 함수(Pure Function) 형태로 분리하여 테스트 용이성을 극대화했습니다.
- * 이 모듈은 비즈니스 규칙(Domain Logic)만을 담당하며, UI나 API 호출과는 독립적입니다.
+ * src/utils/riskCalculator.ts
+ * @description 리스크 노출도 점수 (TRE: Total Risk Exposure) 계산 및 타입 정의 유틸리티 모듈
+ * 코다리 에이전트가 구현한 핵심 비즈니스 로직. 이 함수는 재사용성을 위해 분리함.
  */
 
-// 🚨 타입 정의 (Type Safety 확보)
-export interface RiskInput {
-    userIndustry: string; // 사용자가 선택한 산업군 (예: 'FinTech', 'Healthcare')
-    employeeCount: number; // 직원 수
-    complianceScore: number; // 현재 준수 점수 (0-100)
-}
+import { PaymentTier } from '../types/payment'; // 가상의 타입 파일 임포트 가정
 
 /**
- * 리스크 데이터 구조체. API 호출 시뮬레이션의 반환 타입입니다.
+ * 개별 규제 위반 항목의 위험 지수를 정의합니다.
+ * @typedef {Object} RiskItem
+ * @property {string} id - 리스크 항목 고유 ID (예: data_governance)
+ * @property {number} score - 사용자가 체크한 점수 (0~100)
+ * @property {number} weight - 비즈니스 로직에 따른 가중치 (w_i)
  */
-export interface RiskReport {
-    totalRiskExposureUSD: number; // 총 위험 노출액 ($): 가장 높은 숫자여야 함.
-    identifiableGapCount: number; // 식별 가능한 구조적 결함 개수.
-    riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'; // 위협 레벨.
-    analysisDurationMs: number; // 분석에 걸린 시간 (마케팅용).
-}
 
 /**
- * [핵심 로직] 입력된 데이터를 기반으로 총 위험 노출액을 계산합니다.
- * 이 공식은 yobizwiz의 영업 논리에 맞춰 '공포'를 극대화하도록 설계되었습니다.
- * @param input 사용자 리스크 데이터 
- * @returns RiskReport 객체
+ * 총 리스크 노출도 점수(TRE)를 계산합니다.
+ * TRE = Σ (가중치 * 개별 위험 지수)
+ * @param {RiskItem[]} riskItems - 사용자가 체크한 모든 리스크 항목 배열.
+ * @returns {{ tre: number, totalSavedValue: number }} 계산된 TRE 값과 예상 절감 가치.
  */
-export const calculateTotalRiskExposure = (input: RiskInput): RiskReport => {
-    // 1. 산업군별 기본 위험 가중치 적용 (Domain Knowledge)
-    let baseWeight: number;
-    switch (input.userIndustry) {
-        case 'FinTech':
-            baseWeight = 50000; // 금융은 규제 리스크가 높음
-            break;
-        case 'Healthcare':
-            baseWeight = 45000; // 의료는 민감 정보 및 법적 책임이 높음
-            break;
-        case 'Manufacturing':
-            baseWeight = 30000;
-            break;
-        default:
-            baseWeight = 20000;
+export const calculateTRE = (riskItems: Array<{ id: string; score: number; weight: number }>): { tre: number, totalSavedValue: number } => {
+    if (!riskItems || riskItems.length === 0) {
+        return { tre: 0, totalSavedValue: 0 };
     }
 
-    // 2. 직원 수 기반 복잡성 페널티 적용 (Complexity Penalty)
-    const complexityPenalty = input.employeeCount * 1500; // 인원이 많을수록 위험도 증가
+    let treSum = 0;
+    let savedValueSum = 0;
 
-    // 3. 컴플라이언스 점수 역산 (The Core Fear Factor)
-    // Score가 낮을수록(위험할수록) 가중치가 급격히 올라가야 함.
-    const complianceMultiplier = Math.pow((100 - input.complianceScore) / 100, 2);
-    const riskPenaltyFromCompliance = baseWeight * complianceMultiplier;
+    for (const item of riskItems) {
+        // TRE 계산 로직: 가중치 * 점수
+        treSum += item.weight * Math.min(item.score, 100); // 점수는 최대 100으로 제한
+        
+        // 절감 가치 계산 예시 (가중치가 높을수록 더 큰 재정적 가치를 방어함)
+        savedValueSum += item.weight * 5; 
+    }
 
-    // 총 위험 노출액 (Total Risk Exposure): 세 가지 요소를 합산합니다.
-    const totalRiskExposureUSD = Math.round(baseWeight + complexityPenalty + riskPenaltyFromCompliance / 100);
+    // 최종 TRE는 반올림 처리하여 일관성을 유지합니다.
+    const finalTRE = Math.round(treSum / 10); 
 
-    // 결함 개수 추정 (Gap Count)
-    const identifiableGapCount = Math.min(Math.floor((20 - input.complianceScore / 5)), 7);
+    return { tre: finalTRE, totalSavedValue: Math.round(savedValueSum) };
+};
 
 
-    // 위협 레벨 결정
-    let riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-    if (totalRiskExposureUSD > 150000) {
-        riskLevel = 'CRITICAL'; // 시스템적 생존 위협 수준
-    } else if (totalRiskExposureUSD > 80000) {
-        riskLevel = 'HIGH';
-    } else if (totalRiskExposureUSD > 30000) {
-        riskLevel = 'MEDIUM';
+/**
+ * 사용자의 TRE 값에 따라 필수 구매 티어를 결정하는 로직입니다.
+ * @param {number} tre - 계산된 총 리스크 노출도 점수.
+ * @returns {PaymentTier['type']} 강제적으로 추천해야 하는 최소 Tier 타입 ('gold' 또는 'silver').
+ */
+export const determineMandatoryTier = (tre: number): PaymentTier['type'] => {
+    if (tre >= 1200) {
+        return 'Gold'; // 패닉 상태: 최고 레벨 필수
+    } else if (tre >= 800) {
+        return 'Silver'; // 불안감 상태: 최소한의 보험료 필요
     } else {
-        riskLevel = 'LOW';
+        // Mild Concern: Bronze가 기본으로 적절하지만, Silver를 다음 목표로 노출해야 함.
+        return 'Bronze'; 
     }
-
-    return {
-        totalRiskExposureUSD: Math.max(1000, totalRiskExposureUSD), // 최소값 보장
-        identifiableGapCount: identifiableGapCount,
-        riskLevel: riskLevel,
-        analysisDurationMs: 3000, // 강제된 로딩 시간 (마케팅 요소)
-    };
 };
 
 /**
- * [핵심 비즈니스 로직] 총 위험 노출액을 기반으로 최소 보험료(해결 비용)를 역산합니다.
- * 이 공식은 '총 손실 - 제거 가능한 손실 = 필요한 해결 비용'이라는 논리를 따릅니다.
- * @param totalExposure USD로 측정된 총 위험 노출액.
- * @returns MinimumInsurancePremium USD (최소 보험료).
+ * 가상의 리스크 항목 구조체 (테스트용 더미 데이터)
  */
-export const calculateMinimumInsurancePremium = (totalExposure: number): number => {
-    // 1. 제거 가능한 손실 추정치 (예: 법적 절차/시간 소모로 인해 일부 비용은 이미 발생함)
-    const solutionRemovableLossFraction = 0.2; // 총 위험액의 20%는 이미 노출된 손실로 간주
-    const removableLoss = totalExposure * solutionRemovableLossFraction;
-
-    // 2. 최소 보험료 (Minimum Insurance Premium): [총 위험 노출액] - [제거 가능 손실액]
-    // 이 금액이 바로 Gold Tier 컨설팅의 '가치'로 포지셔닝됩니다.
-    const minimumPremium = Math.round(totalExposure * (1 - solutionRemovableLossFraction));
-
-    return Math.max(500, minimumPremium); // 최소 가격 보장
-};
-
-export type RiskCalculatorUtils = {
-    calculateTotalRiskExposure: (input: RiskInput) => RiskReport;
-    calculateMinimumInsurancePremium: (totalExposure: number) => number;
-}
+export const DUMMY_RISK_ITEMS = [
+    { id: 'data_governance', score: 85, weight: 2.5 }, // 높은 위협 지수
+    { id: 'compliance_gap', score: 40, weight: 1.5 },
+    { id: 'systemic_risk', score: 95, weight: 3.0 }  // 가장 중요하고 무거운 리스크
+];
