@@ -1,0 +1,74 @@
+{
+  "schema_version": "2.0",
+  "model_description": "글로벌 컴플라이언스 위반 시나리오별 최대 재정 손실 예측 모델 (Total Risk Exposure Index: TRE). 모든 수치 계산은 개발자가 입력한 변수(N, R)를 기반으로 수행해야 함.",
+  "calculation_variables": {
+    "N": "위반에 노출된 사용자 또는 데이터 건수 (Number of Affected Records/Users)",
+    "R": "규제 위반의 심각도 및 고의성 계수 (Risk Multiplier, 1.0 ~ 3.0). 높은 값일수록 법적 책임을 가중함.",
+    "T_rate": "위반으로 인한 일별 매출 손실 추정률 (%)",
+    "Jurisdiction": "규제 적용 지역 (예: EU, US-CA, Global)"
+  },
+  "lmax_formula_breakdown": {
+    "L_TotalMax": "[L_Fine * R] + [L_Litigation] + [L_Operational]",
+    "L_Fine": "규제별 최대 패널티 (금액 또는 비율)",
+    "L_Litigation": "N * C_user_avg",
+    "L_Operational": "Total Revenue * T_rate * R (최대 1년치 손실을 반영)"
+  },
+  "compliance_scenarios": [
+    {
+      "regulation": "GDPR (General Data Protection Regulation)",
+      "focus": "개인 식별 정보(PII) 처리 및 데이터 주권 위반",
+      "jurisdiction": "EU (Global Scope)",
+      "lmax_metrics": {
+        "L_Fine_Formula": "(최대 4% of Global Annual Turnover 또는 €20M 중 큰 금액) * R",
+        "L_Fine_Example_Range": "$100,000,000 - $2B+",
+        "L_Litigation_Formula": "N (Affected Records) * C_user_avg ($50-$300)",
+        "L_Operational_Impact": "데이터 주권 상실로 인한 비즈니스 중단 비용 (T_rate 기반).",
+        "critical_variables": ["Data Sovereignty violation", "Purpose limitation breach"]
+      },
+      " 근거_source": "[근거: sessions/2026-05-19T04-23/secretary.md] 및 Researcher 개인 메모리 - PII_Leakage_Index"
+    },
+    {
+      "regulation": "HIPAA (Health Insurance Portability and Accountability Act)",
+      "focus": "보호 대상 건강 정보(PHI) 유출",
+      "jurisdiction": "USA (Healthcare)",
+      "lmax_metrics": {
+        "L_Fine_Formula": "최대 $1.5M/년 또는 최대 4% of Global Revenue, 위반 유형별 가중치 적용.",
+        "L_Fine_Example_Range": "$20M - $1B+",
+        "L_Litigation_Formula": "N (Affected Records) * C_user_avg ($1k-$5k)",
+        "L_Operational_Impact": "의료 시스템 신뢰도 상실 및 영업 정지. 가장 높은 R 계수 적용.",
+        "critical_variables": ["PHI Masking failure", "Unauthorized access"]
+      },
+      " 근거_source": "[근거: sessions/2026-05-19T04-23/secretary.md] 및 Researcher 개인 메모리 - PII_Leakage_Index"
+    },
+    {
+      "regulation": "CCPA (California Consumer Privacy Act)",
+      "focus": "캘리포니아 거주자 데이터 권리 침해",
+      "jurisdiction": "USA (State Level)",
+      "lmax_metrics": {
+        "L_Fine_Formula": "N (Affected Consumers) * $750/건 (최대), R에 따라 가중치 적용.",
+        "L_Fine_Example_Range": "$1M - $30M+",
+        "L_Litigation_Formula": "집합 소송(Class Action) 규모 및 피해 추정액. ($1k-$5k)",
+        "L_Operational_Impact": "소비자 신뢰도 급락, 마케팅 활동 제약.",
+        "critical_variables": ["Right to Know violation", "Do Not Sell opt-out failure"]
+      },
+      " 근거_source": "[근거: Researcher 개인 메모리] 및 관련 두뇌 지식 - Research_Artifacts/Compliance_Threat_Report_V1.md"
+    },
+    {
+      "regulation": "EU AI Act (Artificial Intelligence Act)",
+      "focus": "고위험 AI 시스템의 투명성, 거버넌스 위반",
+      "jurisdiction": "EU (Emerging Standard)",
+      "lmax_metrics": {
+        "L_Fine_Formula": "시스템 위험 등급(Risk Class)에 따른 최대 벌금 (예: 3% of Global Revenue 또는 고정액 $50M).",
+        "L_Fine_Example_Range": "$100M - $5B+",
+        "L_Litigation_Formula": "AI 오작동으로 인한 재산 피해 + 명예훼손 배상. (최고 변수)",
+        "L_Operational_Impact": "시스템 무효화 비용 증가, 시장 퇴출 위험. 특히 'Hallucination' 책임 전가에 대한 법적 방어 실패 시 치명적.",
+        "critical_variables": ["Lack of Provenance", "Systemic Bias/Failure"]
+      },
+      " 근거_source": "[근거: Researcher 개인 메모리] 및 [2026-05-26] | 취약점 1"
+    }
+  ],
+  "actionable_note": {
+    "directive": "이 스키마는 개발자가 API 연동 시, 위반 유형(Regulation)에 따라 적절한 가중치($R$)와 데이터 건수($N$)를 입력받아 $L_{totalMax}$를 계산하도록 설계되어야 합니다. 특히 L_Operational은 단순히 벌금이 아닌 '비즈니스 연속성' 측면의 재정적 손실로 포지셔닝합니다.",
+    "priority": "Highest (Immediate API Implementation Required)"
+  }
+}
