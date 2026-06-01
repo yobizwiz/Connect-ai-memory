@@ -1,0 +1,21 @@
+/* 💡 Global Styles: Glitch Effect & Neon Glow */
+
+@keyframes glitch {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, -2px) skewX(1deg); opacity: 0.8; }
+    40% { transform: translate(3px, 3px) skewY(-1deg); opacity: 1; }
+    60% { transform: translate(-1px, 1px) skewX(2deg); opacity: 0.9; }
+    80% { transform: translate(2px, -2px) skewY(1.5deg); opacity: 0.7; }
+    100% { transform: translate(0); }
+}
+
+/* Glitch 클래스 정의 */
+.animate-glitch {
+    animation: glitch 0.3s linear infinite alternate;
+    text-shadow: -2px 0 #ff0000, 2px 0 #00ffff; /* 네온 레드 + 사이언 */
+}
+
+/* Neon Glow 효과를 위한 일반 클래스 정의 (필요할 경우) */
+.neon-red {
+    box-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000;
+}
