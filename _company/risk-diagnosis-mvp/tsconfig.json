@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "tsx",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": "error",
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node"
+  }
+}
