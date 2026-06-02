@@ -1,93 +1,107 @@
+# Python: L_totalMax 계산 로직 및 Master Data Set 연동 서비스 레이어 (Defensive Design)
+
 import json
-from typing import Dict, Any, Optional
-# Mock Knowledge Base Load (In a real app, this would load from DB or persistent storage)
-try:
-    with open("KnowledgeBase/Knowledge Items", "r", encoding="utf-8") as f:
-        KNOWLEDGE_ITEMS = f.read()
-except FileNotFoundError:
-    print("Warning: KnowledgeBase/Knowledge Items not found.")
-    KNOWLEDGE_ITEMS = "{}"
+from typing import Dict, Any
+from datetime import date
 
-# Mock API Key for Internal Use (Use actual environment variables in production)
-INTERNAL_API_KEY = "SECURE_SYSTEM_ACCESS_TOKEN" 
+# --- [Constants & Configuration] ---
+# 이 경로는 환경 변수에서 받아와야 하지만, 테스트를 위해 임시로 지정합니다.
+DATASET_PATH = "data/Master_Compliance_Data_Set.json" 
 
-class RiskCalculationResult:
-    """Calculates a structured risk report based on user context."""
+def load_master_compliance_data() -> Dict[str, Any]:
+    """
+    데이터셋 파일에서 모든 컴플라이언스 데이터를 로드하고 검증하는 함수.
+    파일이 없거나 형식이 깨지면 빈 딕셔너리를 반환하여 시스템 다운을 방지합니다. (Fallback)
+    """
+    try:
+        with open(DATASET_PATH, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        print("✅ Master Compliance Data Set loaded successfully.")
+        return data
+    except FileNotFoundError:
+        print(f"⚠️ Warning: {DATASET_PATH} not found. Returning empty dataset for graceful failure.")
+        return {}
+    except json.JSONDecodeError as e:
+        print(f"❌ Fatal Error in Data Set JSON decoding: {e}. Using fallback data structure.")
+        # 원본 데이터 구조가 깨졌을 때의 폴백 로직 (Fail-Safe)
+        return {"initial_risk": 0, "dataset_status": "Corrupted"}
+
+def calculate_l_totalmax(compliance_data: Dict[str, Any], user_context: Dict[str, Any]) -> float:
+    """
+    $L_{totalMax}$ (Total Maximum Potential Loss)를 계산하는 핵심 서비스 로직. 
+    이 함수는 모든 재무적 리스크 산출의 최종 진실 공급원입니다.
     
-    def __init__(self, input_context: str):
-        self.input_context = input_context
-        self.risk_score = 0.0
-        self.status = "LOW" # LOW, WARNING, CRITICAL
-        self.alert_messages = []
-        self.violation_details = {}
+    Args:
+        compliance_data: Master_Compliance_Data_Set에서 가져온 구조화된 컴플라이언스 데이터.
+        user_context: 사용자별 상황 정보 (예: 지역, 산업군).
 
-    def calculate(self) -> Dict[str, Any]:
-        """
-        Mock calculation logic: Determines risk based on keywords and simulated severity rules.
-        In a production environment, this would involve complex NLP or ML models.
-        """
-        context = self.input_context.lower()
-        details = {}
+    Returns:
+        계산된 총 최대 손실액 ($L_{totalMax}$).
+    """
+    # 1. 기본 리스크 값 설정 (Fallback Guard)
+    l_base = compliance_data.get('initial_risk', 0.0)
+    
+    # 2. 규제 컴플라이언스 리스크 계층 계산 (GDPR, CCPA 등 개별 항목 로직 통합)
+    regulatory_risks = 0.0
+    if isinstance(compliance_data, dict):
+        for key, value in compliance_data.items():
+            # 키와 값이 존재하는지 항상 확인합니다. (KeyError 방지)
+            if key == 'GDPR' and isinstance(value, float):
+                regulatory_risks += value * user_context.get('global_presence', 1.0) # 사용자 컨텍스트 반영
+            elif key == 'HIPAA' and isinstance(value, float):
+                 # HIPAA는 민감 데이터 처리량에 비례한다고 가정
+                data_volume = user_context.get('pii_data_volume', 1000.0)
+                regulatory_risks += value * (data_volume / 1000.0)
+    
+    # 3. 운영 리스크 가중치 적용 (운영 리스크에 가장 높은 가중치를 부여하는 원칙 반영)
+    operational_risk = compliance_data.get('Operational_Gap', 0.0)
+    weighted_operational_risk = operational_risk * user_context.get('process_automation_level', 1.0) # 자동화 레벨에 비례 가중치
+    
+    # 최종 합산: L_totalMax = Base + Regulatory Risk + Weighted Operational Risk
+    l_totalmax = l_base + regulatory_risks + weighted_operational_risk
 
-        # --- 1. PII Leakage Check (High Priority) ---
-        if "pii" in context or "personal data" in context:
-            self.risk_score += 0.3 # Base score for privacy concern
-            self.alert_messages.append("🚨 경고: 개인 식별 정보(PII)가 언급되었습니다. GDPR 준수 여부를 즉시 확인하십시오.")
-            details["privacy"] = "High"
+    return round(l_totalmax, 2)
 
-        # --- 2. Cross-Border Transfer Check (Medium Priority) ---
-        if "cross-border" in context or "international" in context:
-            self.risk_score += 0.15
-            self.alert_messages.append("⚠️ 주의: 국경을 넘는 데이터 전송 시, 현지 법규(Data Sovereignty)를 검토해야 합니다.")
-            details["geography"] = "Medium"
 
-        # --- 3. Audit Trail/Compliance Check (Critical Priority) ---
-        if "log missing" in context or "audit trail" in context:
-            self.risk_score += 0.5 # High penalty for systemic failure
-            self.alert_messages.append("💥 치명적 위험: 감사 추적(Audit Trail) 기록의 누락 또는 조작은 법적 책임을 극대화합니다.")
-            details["compliance"] = "Critical"
+def run_integration_test_scenario() -> Dict[str, Any]:
+    """
+    통합 테스트 시나리오: 가상 데이터를 기반으로 L_totalMax를 계산하고 결과를 반환합니다.
+    """
+    print("\n--- [Integration Test Start] ---")
+    # 1. 데이터 로드 (Master Data Set)
+    master_data = load_master_compliance_data()
 
-        # --- Final Status Determination (The Funnel Logic) ---
-        if self.risk_score >= 0.8:
-            self.status = "CRITICAL"
-            self.violation_details['Lmax'] = "$€20M - 전 세계 연 매출의 4%"
-        elif self.risk_score >= 0.3:
-            self.status = "WARNING"
-            self.violation_details['Lmax'] = "$1M - 예상 소송 및 벌금 범위"
-        else:
-            self.status = "LOW"
-            self.alert_messages.append("✅ 현재 컨텍스트상 높은 리스크는 감지되지 않았습니다. 지속적인 모니터링이 필요합니다.")
+    # 2. 테스트 사용자 컨텍스트 정의 (가정)
+    test_user_context = {
+        "global_presence": 1.0, # 글로벌 운영 여부 가중치
+        "pii_data_volume": 50000.0, # PII 데이터 볼륨 (5만 건 가정)
+        "process_automation_level": 0.7 # 프로세스 자동화 레벨 (70% 달성 가정)
+    }
 
-        self.violation_details['risk_score'] = round(self.risk_score, 2)
+    # 3. 최종 계산 실행
+    try:
+        l_totalmax = calculate_l_totalmax(master_data, test_user_context)
+        
         return {
-            "status": self.status,
-            "score": self.risk_score,
-            "lmax_estimate": self.violation_details.get('Lmax', 'N/A'),
-            "alerts": self.alert_messages,
-            "details": details
+            "success": True,
+            "calculated_l_totalmax": l_totalmax,
+            "message": f"✅ Integration Test Passed. Calculated L_totalMax: ${l_totalmax:,}"
+        }
+    except Exception as e:
+        # Catch-all 예외 처리 (궁극적인 디펜시브 아키텍처)
+        return {
+            "success": False,
+            "error": str(e),
+            "message": f"❌ Integration Test Failed due to unexpected exception: {type(e).__name__}"
         }
 
-# Mock API endpoint (Simplified FastAPI structure)
-def get_mock_risk_api(input_context: str) -> Dict[str, Any]:
-    """Simulates the full backend call."""
-    if input_context is None or not isinstance(input_context, str):
-         return {"status": "ERROR", "message": "Invalid context provided."}
-
-    result = RiskCalculationResult(input_context)
-    calculated_data = result.calculate()
-    # Add metadata for defensive programming
-    calculated_data['metadata'] = {
-        "api_version": "v1.0.0",
-        "processed_by": "RiskCalculatorService",
-        "timestamp": "2026-05-30T" + str(hash(input_context) % 100).zfill(2)
-    }
-    return calculated_data
-
-# Test verification:
-if __name__ == '__main__':
-    test_case = "우리는 해외 클라이언트를 위해 PII가 포함된 데이터를 Cross-border로 전송할 계획입니다."
-    result = get_mock_risk_api(test_case)
-    print("\n--- TEST RESULT ---")
-    print(json.dumps(result, indent=2, ensure_ascii=False))
-
-# Required: Type check verification for Python
+# 테스트 실행 예제 (실제로 API 게이트웨이에서 호출될 로직)
+if __name__ == "__main__":
+    result = run_integration_test_scenario()
+    print("\n=========================================")
+    if result['success']:
+        print("✅ 최종 리스크 계산 성공:")
+        print(f"   [L_totalMax] : ${result['calculated_l_totalmax']:,}")
+    else:
+        print("❌ 통합 테스트 실패! 원인 분석 필요.")
+        print(f"   [Error] : {result.get('error', 'Unknown Error')}")
