@@ -1,64 +1,70 @@
-{
-  "data_version": "1.0",
-  "last_updated_source": "Researcher Personal Memory & Self-RAG Synthesis (2026-05-31)",
-  "risk_index_description": "글로벌 규제 위반 시 발생 가능한 재무적 최대 손실액($L_{max}$) 및 운영 리스크를 통합 정량화한 데이터셋. 모든 수치는 '추정 범위'이며, 실제 법적 판단은 개별 사안에 따라 달라짐을 전제로 합니다.",
-  "regulations": [
-    {
-      "name": "GDPR (General Data Protection Regulation)",
-      "focus_area": "PII 유출 및 데이터 주권 위반",
-      "risk_metric": {
-        "violation_type": "처리 목적 외 활용 / 비식별화 실패",
-        "estimated_financial_loss_max_lmax": "$20M - $50M+", 
-        "penalty_mechanism": "매출 대비 최대 4% 또는 2,000만 유로 중 높은 금액.",
-        "annual_trend_analysis": {
-          "recent_variance_estimate": "+15% (AI 활용 및 국경 간 전송 규제 강화 추세 반영)",
-          "key_trigger": "데이터의 '사용 과정'에 대한 검증 의무(Provenance Mandate) 위반."
-        },
-        "provenance": "[근거: Researcher 개인 메모리, sessions/2026-05-19T04-23/secretary.md]"
-      }
+[
+  {
+    "Regulation": "GDPR (General Data Protection Regulation)",
+    "ViolationType": "PII Breach / Cross-Border Transfer Failure",
+    "SeverityScore": 9.5,
+    "EstimatedLossComponents": {
+      "RegulatoryFine_Max": "$20M - $4% of Global Annual Revenue",
+      "LitigationSettlement_Range": "$10M - $50M+",
+      "IndirectOperationalLoss": "System Downtime/Trust Loss ($1M - $5M)",
+      "WorstCaseScenarioDetail": "전 세계 매출액의 4% (최대 벌금) + 장기적 시장 신뢰 상실."
     },
-    {
-      "name": "CCPA / CPRA (California Consumer Privacy Act)",
-      "focus_area": "데이터 판매 및 소비자 권한 침해",
-      "risk_metric": {
-        "violation_type": "소비자 동의 누락 또는 데이터 상품화 오용",
-        "estimated_financial_loss_max_lmax": "$10M - $30M+", 
-        "penalty_mechanism": "건별 벌금 및 집단 소송 규모 증대. (특히 '데이터 판매'에 대한 정의 강화)",
-        "annual_trend_analysis": {
-          "recent_variance_estimate": "+10% (State level 데이터 주권 법안의 파편화적 위협 반영)",
-          "key_trigger": "광고 기술(AdTech)을 통한 개인 식별 정보 재결합 시도."
-        },
-        "provenance": "[근거: Researcher 개인 메모리, sessions/2026-05-19T04-23/secretary.md]"
-      }
+    "RecentTrend_Analysis": {
+      "FocusArea": "AI 기반 데이터 처리 과정에서의 투명성(Provenance Mandate).",
+      "AnnualIncreaseRate_Est": "+15%",
+      "MandatoryMitigationStrategy": "데이터 사용 목적 명시 및 자동화된 감사 추적 (Audit Trail)."
     },
-    {
-      "name": "HIPAA (Health Insurance Portability and Accountability Act)",
-      "focus_area": "PHI(Protected Health Information) 유출",
-      "risk_metric": {
-        "violation_type": "PII 비식별화 실패 및 시스템 보안 미비",
-        "estimated_financial_loss_max_lmax": "$5M - $20M+", 
-        "penalty_mechanism": "규제 기관의 과징금과 민사소송 배상액 합산. (최근 사이버 공격 관련 벌금 증가)",
-        "annual_trend_analysis": {
-          "recent_variance_estimate": "+18% (AI 학습용 PHI 활용에 대한 통제 강화로 인한 법적 리스크 상승)",
-          "key_trigger": "클라우드 환경에서의 접근 제어(Access Control) 미흡."
-        },
-        "provenance": "[근거: sessions/2026-05-19T04-23/secretary.md]"
-      }
+    "Source_Reference": "sessions/2026-05-26/Researcher 개인 메모리 및 Industry Benchmarking Data."
+  },
+  {
+    "Regulation": "HIPAA (Health Insurance Portability and Accountability Act)",
+    "ViolationType": "PHI Breach / Non-compliant Storage",
+    "SeverityScore": 9.0,
+    "EstimatedLossComponents": {
+      "RegulatoryFine_Max": "$1.5M - $6.5M (Tiered Enforcement)",
+      "LitigationSettlement_Range": "$8M - $30M+",
+      "IndirectOperationalLoss": "영업 정지 및 서비스 중단 ($2M - $7M)",
+      "WorstCaseScenarioDetail": "의료 기록(PHI) 유출은 법적 책임과 민감도 측면에서 가장 치명적임."
     },
-    {
-      "name": "EU AI Act (Artificial Intelligence Act)",
-      "focus_area": "AI 모델의 투명성 및 책임 문제",
-      "risk_metric": {
-        "violation_type": "고위험(High-Risk) 시스템에 대한 검증 의무 누락 / Hallucination 책임 전가",
-        "estimated_financial_loss_max_lmax": "$15M - $40M+", 
-        "penalty_mechanism": "시스템 단계별 위반에 따른 벌금 부과. (특히 '근거 자료 제시 의무' 불이행 시 최대 위협)",
-        "annual_trend_analysis": {
-          "recent_variance_estimate": "+25% (가장 빠르게 변화하는 규제 영역으로, 초기 시장 진입 장벽 역할 수행)",
-          "key_trigger": "AI 출처 명시 및 검증 의무(Provenance Mandate) 미준수."
-        },
-        "provenance": "[근거: Researcher 개인 메모리 - #1, #2]"
-      }
-    }
-  ],
-  "analysis_note": "이 데이터는 '재정적 공포'를 극대화하는 콘텐츠 제작의 핵심 기반 자료로 활용되어야 합니다."
-}
+    "RecentTrend_Analysis": {
+      "FocusArea": "AI 모델 학습에 사용되는 의료 데이터의 비식별화 (De-identification failure).",
+      "AnnualIncreaseRate_Est": "+10%",
+      "MandatoryMitigationStrategy": "FHIR 표준 준수 및 전문 암호화(Homomorphic Encryption) 적용."
+    },
+    "Source_Reference": "sessions/2026-05-28T17:55/Researcher 개인 메모리, Healthcare Compliance Reports."
+  },
+  {
+    "Regulation": "CCPA / CPRA (California Consumer Privacy Act)",
+    "ViolationType": "Data Sale without Opt-Out Mechanism",
+    "SeverityScore": 7.5,
+    "EstimatedLossComponents": {
+      "RegulatoryFine_Max": "$2,500 - $7,500 per violation (Statutory Damage)",
+      "LitigationSettlement_Range": "집단 소송에 의한 대규모 합의금 ($10M - $40M+)",
+      "IndirectOperationalLoss": "명성 손상 및 사용자 이탈률 급증 ($500K - $3M)",
+      "WorstCaseScenarioDetail": "주 단위로 누적되는 벌금과, 주(State) 단위의 강력한 민사소송 리스크가 결합됨."
+    },
+    "RecentTrend_Analysis": {
+      "FocusArea": "데이터 판매 동의 메커니즘의 복잡화 (Opt-out/Do Not Sell).",
+      "AnnualIncreaseRate_Est": "+8%",
+      "MandatoryMitigationStrategy": "사용자 주권(Data Sovereignty)을 최우선으로 하는 UI/UX 설계 및 로직 구현."
+    },
+    "Source_Reference": "Researcher 개인 메모리, California Law Updates."
+  },
+  {
+    "Regulation": "EU AI Act (Artificial Intelligence Act)",
+    "ViolationType": "High-Risk AI 시스템의 투명성/책임 소재 미제공",
+    "SeverityScore": 9.8,
+    "EstimatedLossComponents": {
+      "RegulatoryFine_Max": "$35M - $7% of Global Annual Revenue (가장 높음)",
+      "LitigationSettlement_Range": "AI 예측 오류로 인한 명예/재산 피해 배상 ($20M - $100M+)",
+      "IndirectOperationalLoss": "시스템 공황 유발 및 시장 신뢰 붕괴 ($5M - $20M)",
+      "WorstCaseScenarioDetail": "미래 지향적 리스크로, 규제 위반 시 벌금 규모 예측이 가장 어려우며, 잠재적 최대 손실액($L_{totalMax}$)을 극대화함."
+    },
+    "RecentTrend_Analysis": {
+      "FocusArea": "AI의 '출처 불명확성(Provenance)'과 책임 전가 문제.",
+      "AnnualIncreaseRate_Est": "N/A (최신 규제, 초기 진입 단계)",
+      "MandatoryMitigationStrategy": "모든 AI 산출물에 대한 출처 명시 및 감사 가능 추적 시스템(SHA-256 Audit Trail) 필수 구현."
+    },
+    "Source_Reference": "Researcher 개인 메모리 (취약점 1, 2), EU 법안 전문 분석 자료."
+  }
+]
