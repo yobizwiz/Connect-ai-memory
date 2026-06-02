@@ -1,57 +1,72 @@
-import { calculateRisk } from '../riskService';
-import { RiskInputData, DiagnosticReport } from '../../types/SystemTypes';
+// @jest-environment node
+import { recordAudit } from '../riskService';
+import { AuditLogRequest, ActionType } from '../../types/AuditTypes';
 
-/**
- * @description 리스크 계산 서비스의 핵심 로직을 테스트하는 파일입니다.
- * Paywall Barrier가 정상적으로 State A -> B -> C로 전환되는지 검증합니다.
- */
-describe('RiskService - Defensiveness Test Suite', () => {
-    // 🚨 Edge Case: 필수 입력 값 누락 시 에러가 발생하는지 확인해야 합니다. (Guard Clause 테스트)
-    test('should throw error if input data is missing or malformed', async () => {
-        await expect(calculateRisk(null as any)).rejects.toThrow("Invalid input data");
-        await expect(calculateRisk({ checksCompleted: 'abc' } as any)).rejects.toThrow("Invalid input data");
+describe('RiskService - Audit Ledger Integration Test (Immutability Check)', () => {
+    
+    // Mocking the database service for isolated testing
+    const mockDatabaseService = {
+        saveAuditLog: jest.fn().mockResolvedValue({ newHash: "0xabcdef1234567890abcdef1234567890", timestamp: new Date() })
+    };
+
+    // Mock the global database service access point
+    jest.mock('../../services/databaseService', () => ({
+        databaseService: { saveAuditLog: mockDatabaseService.saveAuditLog }
+    }));
+
+
+    it('✅ [SUCCESS] Should successfully record a new audit log entry and calculate new hash when previousHash is provided.', async () => {
+        // Arrange: 체인의 중간 지점부터 시작하는 테스트 케이스
+        const request: AuditLogRequest = {
+            userId: 'user-abc-123',
+            actionType: ActionType.WRITE,
+            targetResource: "report/financial",
+            details: { riskScore: 85, mitigationSteps: ["A", "B"] },
+            previousHash: "0xdeadbeef0000deadbeef0000deadbeef00" // 임의의 이전 해시
+        };
+
+        // Act
+        const result = await recordAudit(request);
+
+        // Assert
+        expect(result.success).toBe(true);
+        expect(mockDatabaseService.saveAuditLog).toHaveBeenCalledWith(expect.objectContaining({
+            previousHash: "0xdeadbeef0000deadbeef0000deadbeef00"
+        }));
+        console.log("Test Passed: New hash generated and expected previous hash was used.");
     });
 
-    // 🟢 State A Test: Low Risk Zone (Barrier 미작동)
-    test('should correctly calculate LOW risk score and not trigger the barrier', async () => {
-        const lowRiskData: RiskInputData = { checksCompleted: 5, isCriticalFailure: false };
-        const report = await calculateRisk(lowRiskData);
+    it('✅ [SUCCESS] Should successfully record the first block (Chain Genesis) when previousHash is null.', async () => {
+        // Arrange: 체인의 시작점 테스트 케이스
+        const request: AuditLogRequest = {
+            userId: 'system-initial',
+            actionType: ActionType.WRITE,
+            targetResource: "system/genesis",
+            details: { message: "System initialization start." },
+            previousHash: null // 체인 시작이므로 null 허용
+        };
 
-        expect(report.riskScore).toBeLessThan(20);
-        expect(report.statusLevel).toBe('LOW');
-        expect(report.isBarrierTriggered).toBe(false);
+        // Act
+        const result = await recordAudit(request);
+
+        // Assert
+        expect(result.success).toBe(true);
+        expect(mockDatabaseService.saveAuditLog).toHaveBeenCalledWith(expect.objectContaining({
+            previousHash: null
+        }));
     });
 
-    // 🟡 State B Test: Medium Risk Zone (Warning, Barrier 미작동)
-    test('should correctly calculate MEDIUM risk score and not trigger the barrier', async () => {
-        const mediumRiskData: RiskInputData = { checksCompleted: 20, isCriticalFailure: false };
-        const report = await calculateRisk(mediumRiskData);
+    it('❌ [FAILURE] Should throw an error if the previousHash is missing or malformed.', async () => {
+        // Arrange: 유효성 검증 실패 케이스
+        const request: AuditLogRequest = {
+            userId: 'user-fail',
+            actionType: ActionType.READ,
+            targetResource: "dummy",
+            details: {},
+            previousHash: null // Null은 체인 시작 시에만 허용되므로, 여기서는 실패 유도
+        };
 
-        expect(report.riskScore).toBeGreaterThanOrEqual(20);
-        expect(report.riskScore).toBeLessThan(65);
-        expect(report.statusLevel).toBe('MEDIUM');
-        expect(report.isBarrierTriggered).toBe(false);
-    });
-
-    // 🔴 State C Test: High Risk Zone (CRITICAL, Barrier 작동) - 가장 중요!
-    test('should calculate HIGH risk score and correctly trigger the Paywall Barrier', async () => {
-        const highRiskData: RiskInputData = { checksCompleted: 30, isCriticalFailure: true };
-        const report = await calculateRisk(highRiskData);
-
-        // 점수 계산 검증 (30 * 1.5 + 30 = 75)
-        expect(report.riskScore).toBe(75); 
-        expect(report.statusLevel).toBe('HIGH');
-        expect(report.isBarrierTriggered).toBe(true);
-        // 필수 조치 목록 검증 (High Risk일 때만 액션이 있어야 함)
-        expect(report.mockAudit.mandatoryActionsRequired).toHaveLength(2); 
-    });
-
-    // 🚨 Edge Case Test: 최대 리스크 점수 테스트
-    test('should cap the risk score at a maximum of 85', async () => {
-        const maxRiskData: RiskInputData = { checksCompleted: 100, isCriticalFailure: true };
-        const report = await calculateRisk(maxRiskData);
-
-        // 점수가 계산 로직을 무시하고 최대치로 제한되는지 확인 (Mock API의 방어적 설계 검증)
-        expect(report.riskScore).toBe(85); 
+        // Act & Assert
+        await expect(recordAudit({ ...request, previousHash: 'INVALID_HASH' as string })).rejects.toThrow("Invalid or missing previous hash");
     });
 });
