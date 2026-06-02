@@ -8,13 +8,20 @@
  * @property {Record<string, number>} currentRiskScores - 현재 발견된 개별 리스크 점수 맵 (예: {'GDPR': 0.8}).
  */
 
+interface LmaxCalculationInput {
+    userId: string;
+    dataPointsCount: number;
+    hasAuditLogs: boolean;
+    currentRiskScores: Record<string, number>;
+}
+
 /**
  * Lmax 계산 Mock API 호출 함수.
  * 실제 환경에서는 백엔드 서버(FastAPI 등)를 호출해야 함.
  * @param {LmaxCalculationInput} input - 리스크 계산에 필요한 입력 데이터 구조체.
  * @returns {Promise<{lmax: number, confidenceScore: number}>} L_max 값과 시스템 신뢰도 점수.
  */
-export const calculateLmax = async (input) => {
+export const calculateLmax = async (input: LmaxCalculationInput) => {
     // Defensive Coding: Input Validation & Guard Clause
     if (!input || typeof input.userId !== 'string' || !input.currentRiskScores || Object.keys(input.currentRiskScores).length === 0) {
         throw new Error("API_ERROR: Invalid input provided for Lmax calculation. userId, dataPointsCount, and currentRiskScores are mandatory.");
@@ -27,7 +34,7 @@ export const calculateLmax = async (input) => {
 
     try {
         // --- CORE MOCK LOGIC START ---
-        let totalRisk = Object.values(input.currentRiskScores).reduce((sum, score) => sum + score, 0);
+        let totalRisk: number = Object.values(input.currentRiskScores).reduce((sum: number, score: number) => sum + score, 0);
 
         // 복잡한 계산을 시뮬레이션합니다. (실제로는 통계 모델이나 ML 서비스 호출)
         // Lmax는 리스크 점수와 데이터 포인트 수에 비례하여 증가한다고 가정
@@ -54,7 +61,7 @@ export const calculateLmax = async (input) => {
  * @param {string[]} regulations - 검증할 법규 목록 (예: ['GDPR', 'CCPA']).
  * @returns {Promise<{status: Record<string, boolean>, details: string[]}>} 각 법규별 준수 여부 및 상세 내용.
  */
-export const verifyComplianceStatus = async (regulations) => {
+export const verifyComplianceStatus = async (regulations: string[]) => {
     // Defensive Coding: Input Validation & Guard Clause
     if (!Array.isArray(regulations) || regulations.length === 0) {
         throw new Error("API_ERROR: Must provide at least one regulation code.");
@@ -65,8 +72,8 @@ export const verifyComplianceStatus = async (regulations) => {
     // Mock Latency Simulation
     await new Promise(resolve => setTimeout(resolve, 200));
 
-    const complianceStatus = {};
-    const details = [];
+    const complianceStatus: Record<string, boolean> = {};
+    const details: Array<{ regulation: string; compliant: boolean; message: string }> = [];
 
     try {
         // --- CORE MOCK LOGIC START ---
