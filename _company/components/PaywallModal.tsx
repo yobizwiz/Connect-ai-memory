@@ -15,7 +15,7 @@ const PaywallModal = () => {
     /**
      * Paywall 구매 핸들러: 가상의 결제 API 호출을 시뮬레이션합니다.
      */
-    const handlePurchase = async (planName) => {
+    const handlePurchase = async (planName: string) => {
         console.log(`[Paywall Modal] 💳 ${planName} 플랜 구매 시도...`);
 
         // 실제 환경에서는 Stripe SDK를 사용해야 하지만, 여기서는 성공/실패 로직을 분리합니다.

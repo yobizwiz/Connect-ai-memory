@@ -18,7 +18,7 @@ export interface DiagnosisContextType {
     questions: DiagnosticQuestion[];
     lTotalMaxScore: number; // 최종 계산된 최대 위험 노출도 점수
     funnelState: FunnelState;
-    updateAnswer: (id: string, score: number) => void;
+    updateAnswer: (id: string, score: number | null) => void;
     calculateAndSetLTotalMax: () => void;
     handleSubmit: () => Promise<boolean>; // 결제 모달 진입 여부 반환
 }

@@ -17,7 +17,13 @@
  * @param {RiskInputs} inputs - 세 가지 핵심 위험 지표 객체.
  * @returns {{lmax: number, complexityScore: number}} 계산된 최대 손실액과 복합성 계수.
  */
-export const calculateMaxLoss = (inputs) => {
+export interface RiskInputs {
+    complianceDriftScore: number;
+    dataLeakRiskScore: number;
+    operationalVulnerability: number;
+}
+
+export const calculateMaxLoss = (inputs: RiskInputs) => {
     // --- [논리 검증] Weighting Factors 및 상수 정의 ---
     const WEIGHT_C = 0.3; // 규제 준수 위반의 중요도 가중치
     const WEIGHT_D = 0.5; // 데이터 유출의 심각성 가중치 (가장 높음)

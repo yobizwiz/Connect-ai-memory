@@ -35,7 +35,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question }) => {
     // 초기 스코어를 Context에서 가져와 반영
     React.useEffect(() => {
         const initialScore = context.formData[question.id] || null;
-        if (initialScore !== undefined && !isNaN(initialScore)) {
+        if (initialScore !== undefined && initialScore !== null && !isNaN(initialScore)) {
             setScoreInput(initialScore);
         } else {
              setScoreInput(null);

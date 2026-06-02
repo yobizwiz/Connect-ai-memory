@@ -4,7 +4,7 @@
  */
 
 // 가상의 환경 변수 또는 API 호출 함수라고 가정합니다.
-const sendEventToServer = (eventKey, properties) => {
+const sendEventToServer = (eventKey: string, properties: Record<string, any>) => {
     console.log(`[ANALYTICS] -> Event Sent: ${eventKey}`, properties);
     // 실제 구현 시: fetch('/api/analytics', { method: 'POST', body: JSON.stringify({ event: eventKey, data: properties }) });
 };
@@ -14,7 +14,7 @@ const sendEventToServer = (eventKey, properties) => {
  * @param {string} stage - 현재 트랜잭션 단계 (e.g., 'FREE_REPORT_CLICK', 'PAYWALL_VIEW', 'PURCHASE_SUCCESS')
  * @param {object} [data={}] - 추가 메타데이터 (e.g., userTier, source)
  */
-export const logPaywallEvent = (stage, data = {}) => {
+export const logPaywallEvent = (stage: string, data: Record<string, any> = {}) => {
     const timestamp = new Date().toISOString();
     
     // A/B 테스트 그룹 식별자를 강제합니다.
@@ -31,7 +31,7 @@ export const logPaywallEvent = (stage, data = {}) => {
  * 트랜잭션 완료 후 성공 로깅
  * @param {string} planName - 구매한 플랜 이름 (예: 'Silver Tier')
  */
-export const logTransactionSuccess = (planName) => {
+export const logTransactionSuccess = (planName: string) => {
     logPaywallEvent('TRANSACTION_SUCCESS', { 
         purchased_plan: planName, 
         status: 'success' 
@@ -42,7 +42,7 @@ export const logTransactionSuccess = (planName) => {
  * 트랜잭션 실패 로깅 (Grace Recovery 준비)
  * @param {string} reason - 실패 이유 (예: 'CARD_DECLINED', 'API_ERROR')
  */
-export const logTransactionFailure = (reason) => {
+export const logTransactionFailure = (reason: string) => {
     logPaywallEvent('TRANSACTION_FAILURE', { 
         failure_reason: reason, 
         status: 'failed' 

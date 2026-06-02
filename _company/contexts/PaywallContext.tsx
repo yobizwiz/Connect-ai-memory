@@ -1,16 +1,17 @@
-// PaywallContext.tsx - 시스템적 결제 흐름을 관리하는 중앙 상태 컨텍스트
 import React, { createContext, useContext, useState, useCallback } from 'react';
 
-/**
- * @typedef {'IDLE' | 'REQUESTING_FREE_REPORT' | 'SYSTEM_OVERLOAD_TRANSITION' | 'PAYWALL_ACTIVE'} PaywallState
- * 시스템의 현재 Paywall 상태를 정의합니다.
- */
+export type PaywallState = 'IDLE' | 'REQUESTING_FREE_REPORT' | 'SYSTEM_OVERLOAD_TRANSITION' | 'PAYWALL_ACTIVE';
+
+export interface PaywallContextType {
+    state: string;
+    initiateFreeReportRequest: () => Promise<void>;
+}
 
 /**
  * PaywallContextType
  * 모든 컴포넌트가 사용할 수 있는 전역 Paywall 상태 관리 객체입니다.
  */
-export const PaywallContext = createContext(null);
+export const PaywallContext = createContext<PaywallContextType | null>(null);
 
 /**
  * Custom Hook: paywallFlow - 컨텍스트 사용 편의성을 높여줍니다.
@@ -56,14 +57,11 @@ export const usePaywallFlow = () => {
 /**
  * PaywallProvider 컴포넌트: 애플리케이션 전체에 상태를 제공합니다.
  */
-export const PaywallProvider = ({ children }) => {
+export const PaywallProvider = ({ children }: { children: React.ReactNode }) => {
     const flow = usePaywallFlow();
 
     return (
-        <PaywallContext.Provider value={{ 
-            flow,
-            // 필요하다면 여기에 추가적인 Setter 함수들을 정의할 수 있습니다.
-        }}>
+        <PaywallContext.Provider value={flow}>
             {children}
         </PaywallContext.Provider>
     );
@@ -72,4 +70,10 @@ export const PaywallProvider = ({ children }) => {
 /**
  * 사용 예시: usePaywallFlowHook()
  */
-export const usePaywallFlowHook = () => useContext(PaywallContext);
+export const usePaywallFlowHook = () => {
+    const context = useContext(PaywallContext);
+    if (!context) {
+        throw new Error('usePaywallFlowHook must be used within a PaywallProvider');
+    }
+    return context;
+};

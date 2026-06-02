@@ -80,11 +80,11 @@ const RiskGauge: React.FC = () => {
 
             {/* 1. INPUT CONTROL PANEL */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 p-6 bg-gray-800/50 rounded-lg border border-gray-700">
-                {[
+                ([
                     { name: 'complianceDriftScore', label: '규제 준수 위반 지연 점수 (C)', range: [0, 100] },
                     { name: 'dataLeakRiskScore', label: 'PII 데이터 유출 위험도 (D)', range: [0, 100] },
                     { name: 'operationalVulnerability', label: '운영 취약성 지수 (V)', range: [0, 100] },
-                ].map((field) => (
+                ] as const).map((field) => (
                     <div key={field.name} className="flex flex-col">
                         <label htmlFor={field.name} className="text-sm font-medium text-gray-300 mb-2">{field.label}</label>
                         <input
