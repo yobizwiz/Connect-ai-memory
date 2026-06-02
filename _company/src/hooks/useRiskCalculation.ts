@@ -1,52 +1,86 @@
-import { useState, useEffect } from 'react';
-import { RiskInputs, RiskOutput } from '../components/types/RiskInputs';
+/**
+ * @fileoverview 리스크 진단 데이터 계산 로직 (Mock API Service).
+ * 이 훅은 UI 컴포넌트가 직접 비즈니스 규칙에 의존하는 것을 방지합니다.
+ */
+import { useState, useCallback } from 'react';
+import { RiskInput, LmaxResult, CRITICAL_THRESHOLD } from '../types/risk-types';
 
-// 🚨 중요: Lmax 계산 공식 정의 (Researcher의 스키마를 기반으로 구현)
-const calculateLmax = (inputs: RiskInputs): number => {
-    const N = inputs.numberOfAffectedRecords;
-    const R = inputs.riskMultiplier;
-    const T_rate = inputs.dailyLossRate / 100; // 퍼센트를 소수점으로 변환
+// --- [Mock API Simulation] ---
+/**
+ * Mock API 호출을 시뮬레이션하며 리스크 점수를 계산합니다.
+ * 실제 환경에서는 fetch() 또는 axios를 통해 백엔드 엔드포인트를 호출해야 합니다.
+ * @param inputs - 사용자로부터 받은 리스크 입력 값들.
+ * @returns LmaxResult 객체.
+ */
+const calculateLmax = (inputs: RiskInput): LmaxResult => {
+    // 1. 규정 준수 점수에 기반한 기본 위험도 계산 (Compliance Loss)
+    const complianceLoss = Math.max(0, 100 - inputs.regulatoryComplianceScore);
 
-    // Lmax = (Sum L_규제 벌금) + L_소송 합의액 + L_운영/신뢰도 손실
-    // 현재는 Mock 계산을 사용하며, 실제 값은 외부 API에서 받아와야 합니다.
-    const regulatoryFineMock = 1000 * N * R; // 예시: 벌금 = N * R
-    const litigationSettlementMock = N * T_rate * 5000; // 예시: 합의액 = N * T_rate * 상수
-    const operationalLossMock = Math.pow(R, 2) * 1000; // 예시: 운영 손실
+    // 2. 데이터 보안 레벨에 따른 가중치 적용 (Security Multiplier)
+    let securityWeight: number;
+    if (inputs.dataStorageSecurityLevel === 'Low') {
+        securityWeight = 1.5; // Low는 위험도가 높다고 가정하고 가중치를 크게 부여
+    } else if (inputs.dataStorageSecurityLevel === 'Medium') {
+        securityWeight = 1.0;
+    } else {
+        securityWeight = 0.8; // High Security는 약간의 완충 효과가 있다고 가정
+    }
 
-    // 최종 Lmax 계산 (가중치 부여 및 조합)
-    let lTotalMax = regulatoryFineMock + litigationSettlementMock + operationalLossMock;
-    return parseFloat(lTotalMax.toFixed(2));
+    // 3. 교육 빈도에 따른 위험 증가 (Training Gap) - 숫자가 작을수록(드물게) 점수가 높아짐.
+    const trainingGapFactor = Math.max(1, 10 / inputs.employeeTrainingFrequencyDays);
+
+    // 총 리스크 지표 계산 (가중치 적용 및 결합)
+    // L_max = (ComplianceLoss * SecurityWeight) + (TrainingGapFactor * Constant)
+    let lmaxScore = (complianceLoss * securityWeight) + (trainingGapFactor * 15);
+
+    // 최종 TRI 점수 (정규화된 값, 최대 100점)
+    let totalResilienceIndex = Math.min(100, lmaxScore * 2 + inputs.regulatoryComplianceScore / 2);
+
+
+    // $L_{max}$ 임계치 초과 감지 로직 구현
+    const isCritical = lmaxScore >= CRITICAL_THRESHOLD;
+
+    return {
+        totalResilienceIndex: parseFloat(totalResilienceIndex.toFixed(1)),
+        lmaxScore: parseFloat(Math.min(100, Math.max(0, lmaxScore)).toFixed(1)), // 점수는 0~100으로 제한
+        isCritical: isCritical
+    };
 };
 
 /**
- * 리스크 입력값 변화에 따라 실시간으로 총 리스크 점수와 상태를 계산하는 커스텀 훅.
- * @param initialInputs 초기 리스크 입력값들
- * @returns {RiskOutput} 최종 계산된 위험 출력 객체 (Lmax, Critical 여부 등)
+ * 리스크 계산 상태를 관리하는 커스텀 훅.
+ * 이 훅은 모든 UI 컴포넌트가 사용하는 '단일 진실 공급원' 역할을 합니다.
  */
-export const useRiskCalculation = (initialInputs: RiskInputs): [RiskOutput, React.Dispatch<React.SetStateAction<RiskInputs>>] => {
-    const [inputs, setInputs] = useState<RiskInputs>(initialInputs);
+export const useRiskCalculation = (initialInputs: RiskInput) => {
+    const [inputs, setInputs] = useState<RiskInput>(initialInputs);
+    const [result, setResult] = useState<LmaxResult | null>(null);
 
-    // 계산 로직을 실행하는 내부 함수
-    const calculateAndCheck = (currentInputs: RiskInputs): RiskOutput => {
-        const lTotalMax = calculateLmax(currentInputs);
-        
-        // 🚨 임계값 체크 로직 정의: Lmax가 특정 금액(예: 100,000)을 초과하면 Critical.
-        const CRITICAL_THRESHOLD = 100000; 
-        const isCritical = lTotalMax >= CRITICAL_THRESHOLD;
+    // 입력 값 변경 시 리스크 계산을 트리거하는 핸들러
+    const updateInputs = useCallback((newInputs: Partial<RiskInput>) => {
+        setInputs(prev => ({ ...prev, ...newInputs }));
+    }, []);
 
-        let message = `현재 리스크 노출 지표는 ${lTotalMax.toLocaleString()} 수준입니다.`;
-        if (isCritical) {
-            message = "🚨 경고: 임계치를 초과했습니다. 즉각적인 구조적 위험 분석이 필수적입니다.";
-        } else if (lTotalMax > 50000) {
-             message = "⚠️ 주의: 리스크 점수가 상승하고 있습니다. 다음 단계의 방어책을 마련해야 합니다.";
+    // 메인 로직 실행 함수 (API 호출 대체)
+    const calculateRisk = useCallback(() => {
+        try {
+            if (!inputs) throw new Error("Input data cannot be null.");
+            const calculatedResult = calculateLmax(inputs);
+            setResult(calculatedResult);
+        } catch (error) {
+            console.error("🚨 Lmax Calculation Failed:", error);
+            setResult({ totalResilienceIndex: 0, lmaxScore: 0, isCritical: false }); // 에러 시 기본값 설정
         }
+    }, [inputs]);
 
-        return { lTotalMax, isCritical, message };
+    // 컴포넌트 마운트 또는 의존성 변경 시 계산 실행
+    useState(() => {
+        calculateRisk();
+    });
+
+    return {
+        inputs,
+        result,
+        updateInputs,
+        calculateRisk // 외부에서 강제로 재계산해야 할 경우를 대비해 노출
     };
-
-    // 입력값이 바뀔 때마다 계산 로직이 실행되도록 useEffect 사용 (핵심)
-    const riskOutput = calculateAndCheck(inputs);
-
-    // 상태 업데이트 함수를 반환하여 컴포넌트에서 사용할 수 있게 합니다.
-    return [riskOutput, setInputs];
 };

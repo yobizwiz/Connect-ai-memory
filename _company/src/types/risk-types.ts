@@ -1,33 +1,20 @@
 /**
- * @description 핵심 리스크 점수 구조체 (L_max)
+ * @fileoverview 리스크 진단 서비스 관련 모든 공통 타입 정의.
  */
-export interface RiskScore {
-    structuralGap: number;      // 0.0 ~ 1.0. 시스템이 놓친 공백의 비율.
-    provenanceConfidence: number; // 0.0 ~ 1.0. 정보 출처의 신뢰도. (법적 근거 유무 등)
-    regulatoryExposureScore: number; // 0 ~ N. 특정 법규 위반 시 예상되는 재정적 손실액($).
+
+// 사용자 입력 항목의 구조를 정의합니다. (예시로 3가지 리스크 요소를 가정)
+export interface RiskInput {
+    regulatoryComplianceScore: number; // 규정 준수 점수 (0-100)
+    dataStorageSecurityLevel: 'Low' | 'Medium' | 'High'; // 데이터 보안 레벨
+    employeeTrainingFrequencyDays: number; // 직원 교육 빈도 (일 단위, 숫자가 작을수록 위험)
 }
 
-/**
- * @description 세션 컨텍스트 및 사용자 티어 정의
- */
-export interface SessionContext {
-    sessionId: string;
-    userTier: 'FREE' | 'PREMIUM' | 'ENTERPRISE'; // A/B 테스트나 기능 제한에 사용
-    lastActivityTimestamp: Date;
+// Mock API의 최종 출력 스키마입니다.
+export interface LmaxResult {
+    totalResilienceIndex: number; // Total Resilience Index (TRI): 전체 총점수 (0-100)
+    lmaxScore: number;             // 최대 리스크 점수 ($L_{max}$): 임계치 판단 기준이 되는 핵심 지표
+    isCritical: boolean;          // $L_{max}$가 위험 임계치를 초과했는지 여부 (불리언 플래그로 UI에 직접 전달)
 }
 
-/**
- * @description Funnel Stage 상수 정의
- */
-export type FunnelStage = "CRITICAL" | "WARNING" | "SOLUTION_IMMEDIATE" | "WARNING_HIGH_INTENSITY" | "SOLUTION";
-
-export interface RiskParameters {
-    lMaxThreshold: number;
-    initialScore: number;
-}
-
-export interface RiskState {
-    currentScore: number;
-    isCritical: boolean;
-    lastChecked: Date;
-}
+// Lmax 계산의 경계값 및 상수 정의 (Configuration Rule)
+export const CRITICAL_THRESHOLD: number = 75; // 예시 임계치: 이 점수 이상이면 Red Zone 발동
