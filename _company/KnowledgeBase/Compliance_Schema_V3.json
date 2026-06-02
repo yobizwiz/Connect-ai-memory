@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.0.0",
+  "description": "Global Regulatory Violation Loss Quantification Schema (API Ready)",
+  "title": "Regulatory Compliance Risk Model API Schema",
+  "type": "object",
+  "properties": {
+    "regulationId": {
+      "type": "string",
+      "description": "규제 ID (e.g., GDPR, HIPAA, CCPA)"
+    },
+    "violationType": {
+      "type": "string",
+      "description": "구체적인 위반 유형 (예: PII Leakage, Data Sovereignty Violation, Hallucination/Provenance Deficit)"
+    },
+    "affectedDataCategory": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "위반에 영향을 받는 데이터 카테고리 (예: PII, Financial Record, Health Data, AI Model Output)"
+    },
+    "complianceFailureMechanism": {
+      "type": "string",
+      "description": "규제 위반이 발생하는 시스템적 근본 원인 (Root Cause of Failure - 예: Insufficient Masking, Lack of Audit Trail, Poor Access Control)"
+    },
+    "riskQuantification": {
+      "type": "object",
+      "properties": {
+        "directFineSource": {
+          "type": "string",
+          "description": "규제 당국 부과 직접 벌금의 근거 조항 및 예상 범위 (e.g., GDPR Article 83)"
+        },
+        "litigationSettlementCostEstimate": {
+          "type": "number",
+          "description": "소송 합의 비용 추정치 (최소, 최대) - $ 단위"
+        },
+        "operationalLossEstimation": {
+          "type": "object",
+          "properties": {
+            "indirectLossMin_USD": {"type": "number"},
+            "indirectLossMax_USD": {"type": "number"},
+            "lossBasisDescription": {"type": "string"}
+          },
+          "description": "시스템 중단, 명예 손상 등 간접적 운영 손실 추정치."
+        }
+      },
+      "required": ["directFineSource", "litigationSettlementCostEstimate"]
+    },
+    "financialLossRange": {
+      "type": "object",
+      "properties": {
+        "minimumUSD": {"type": "number"},
+        "maximumUSD": {"type": "number"},
+        "lossBasisSummary": {"type": "string"}
+      },
+      "description": "위반으로 인한 총 예상 재정적 손실 범위 (Min - Max)."
+    }
+  },
+  "required": ["regulationId", "violationType", "financialLossRange"]
+}

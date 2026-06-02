@@ -1,0 +1,82 @@
+[
+  {
+    "regulationId": "GDPR",
+    "violationType": "PII Leakage (Unmasked Data)",
+    "affectedDataCategory": ["Health Data", "Identity Data"],
+    "complianceFailureMechanism": "Insufficient data masking and lack of purpose limitation in AI training.",
+    "riskQuantification": {
+      "directFineSource": "GDPR Article 83 (Tier 2: High Risk)",
+      "litigationSettlementCostEstimate": {"min": 500000, "max": 10000000},
+      "operationalLossEstimation": {
+        "indirectLossMin_USD": 1000000,
+        "indirectLossMax_USD": 20000000,
+        "lossBasisDescription": "시스템 신뢰도 하락 및 고객 이탈로 인한 매출 손실 (재구축 비용 포함)."
+      }
+    },
+    "financialLossRange": {
+      "minimumUSD": 600000,
+      "maximumUSD": 30000000,
+      "lossBasisSummary": "직접 벌금(GDPR) + 소송 합의 비용 + 운영 손실 (최대 잠재 손실액 Lmax)."
+    }
+  },
+  {
+    "regulationId": "HIPAA",
+    "violationType": "PHI Access Violation/Data Breach",
+    "affectedDataCategory": ["Health Data"],
+    "complianceFailureMechanism": "Lack of granular access control and failure to implement audit trails (Provenance Deficit).",
+    "riskQuantification": {
+      "directFineSource": "HHS OCR Enforcement Rule (Tier 3: Willful Neglect)",
+      "litigationSettlementCostEstimate": {"min": 1000000, "max": 5000000},
+      "operationalLossEstimation": {
+        "indirectLossMin_USD": 500000,
+        "indirectLossMax_USD": 2000000,
+        "lossBasisDescription": "규제 기관 조사 비용 및 영업 정지 관련 손실."
+      }
+    },
+    "financialLossRange": {
+      "minimumUSD": 1500000,
+      "maximumUSD": 7000000,
+      "lossBasisSummary": "벌금(HHS) + 소송 합의 비용 + 시스템 감사 재구축 비용."
+    }
+  },
+  {
+    "regulationId": "EU AI Act",
+    "violationType": "High-Risk System Non-Compliance",
+    "affectedDataCategory": ["AI Model Output", "PII"],
+    "complianceFailureMechanism": "Model output lack of transparency, unquantifiable risk, and failure to implement human oversight.",
+    "riskQuantification": {
+      "directFineSource": "EU AI Act (High Risk Classification)",
+      "litigationSettlementCostEstimate": {"min": 1000000, "max": 5000000},
+      "operationalLossEstimation": {
+        "indirectLossMin_USD": 2000000,
+        "indirectLossMax_USD": 10000000,
+        "lossBasisDescription": "시스템 재설계(Redesign) 비용 및 시장 신뢰 상실로 인한 기회비용."
+      }
+    },
+    "financialLossRange": {
+      "minimumUSD": 3000000,
+      "maximumUSD": 16000000,
+      "lossBasisSummary": "AI Act 규제 준수 비용 + 잠재적 재구축 비용 및 명성 손실."
+    }
+  },
+  {
+    "regulationId": "CCPA/CPRA",
+    "violationType": "Data Sovereignty Violation",
+    "affectedDataCategory": ["Identity Data"],
+    "complianceFailureMechanism": "Cross-border data transfer or use beyond stated consent scope.",
+    "riskQuantification": {
+      "directFineSource": "CCPA/CPRA Penalties (Per Consumer)",
+      "litigationSettlementCostEstimate": {"min": 250000, "max": 1500000},
+      "operationalLossEstimation": {
+        "indirectLossMin_USD": 300000,
+        "indirectLossMax_USD": 800000,
+        "lossBasisDescription": "소비자 집단 소송(Class Action) 및 법률 자문 비용."
+      }
+    },
+    "financialLossRange": {
+      "minimumUSD": 350000,
+      "maximumUSD": 2300000,
+      "lossBasisSummary": "소비자 집단 소송 규모 및 데이터 주권 위반에 따른 벌금."
+    }
+  }
+]
