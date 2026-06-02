@@ -1,57 +1,57 @@
-import { calculateRiskScore } from '../riskService';
+import { calculateRisk } from '../riskService';
+import { RiskInputData, DiagnosticReport } from '../../types/SystemTypes';
 
-// Mocking the regulatory data loader to ensure test isolation
-jest.mock('../../../KnowledgeBase/Regulatory_Risk_Index_V1.json', () => ({
-    default: {
-        regulations: [
-            {
-                name: "GDPR (General Data Protection Regulation)",
-                focus_area: "PII 유출 및 데이터 주권 위반",
-                risk_metric: {
-                    violation_type: "처리 목적 외 활용 / 비식별화 실패",
-                    estimated_financial_loss_max_lmax: "$20M - $50M+", 
-                    penalty_mechanism: "매출 대비 최대 4% 또는 2,000만 유로 중 높은 금액.",
-                    annual_trend_analysis: { recent_variance_estimate: "+15%", key_trigger: "데이터의 '사용 과정'에 대한 검증 의무(Provenance Mandate) 위반." }
-                }
-            },
-            {
-                name: "CCPA / CPRA (California Consumer Privacy Act)",
-                focus_area: "소비자 데이터 통제권 침해",
-                risk_metric: {
-                    violation_type: "판매 및 공유 동의 부재",
-                    estimated_financial_loss_max_lmax: "$10M - $30M", 
-                    penalty_mechanism: "최대 소비자 피해액 또는 매출 기반 과징금.",
-                    annual_trend_analysis: { recent_variance_estimate: "+8%", key_trigger: "데이터의 '수집 동의' 절차 위반." }
-                }
-            }
-        ]
-    }
-}));
-
-describe('calculateRiskScore API Integration Test', () => {
-    // Mocking the file system read to prevent actual I/O during unit test run
-    beforeEach(() => {
-        jest.clearAllMocks();
+/**
+ * @description 리스크 계산 서비스의 핵심 로직을 테스트하는 파일입니다.
+ * Paywall Barrier가 정상적으로 State A -> B -> C로 전환되는지 검증합니다.
+ */
+describe('RiskService - Defensiveness Test Suite', () => {
+    // 🚨 Edge Case: 필수 입력 값 누락 시 에러가 발생하는지 확인해야 합니다. (Guard Clause 테스트)
+    test('should throw error if input data is missing or malformed', async () => {
+        await expect(calculateRisk(null as any)).rejects.toThrow("Invalid input data");
+        await expect(calculateRisk({ checksCompleted: 'abc' } as any)).rejects.toThrow("Invalid input data");
     });
 
-    it('should successfully calculate risk score using the integrated GDPR schema (Lmax)', async () => {
-        const result = await calculateRiskScore("GDPR");
-        expect(result).toHaveProperty('score');
-        // L_max가 정확히 로드되었는지 확인
-        expect(result.lmax).toBe("$20M - $50M+"); 
-        // L_min이 N/A 대신 특정 값 또는 계산된 값이 와야 함을 검증 (현재는 Mocked)
-        expect(result.lmin).not.toBe("N/A"); 
+    // 🟢 State A Test: Low Risk Zone (Barrier 미작동)
+    test('should correctly calculate LOW risk score and not trigger the barrier', async () => {
+        const lowRiskData: RiskInputData = { checksCompleted: 5, isCriticalFailure: false };
+        const report = await calculateRisk(lowRiskData);
+
+        expect(report.riskScore).toBeLessThan(20);
+        expect(report.statusLevel).toBe('LOW');
+        expect(report.isBarrierTriggered).toBe(false);
     });
 
-    it('should calculate risk score for CCPA and correctly identify the regulatory body', async () => {
-        const result = await calculateRiskScore("CCPA");
-        // L_max가 정확히 로드되었는지 확인
-        expect(result.lmax).toBe("$10M - $30M"); 
+    // 🟡 State B Test: Medium Risk Zone (Warning, Barrier 미작동)
+    test('should correctly calculate MEDIUM risk score and not trigger the barrier', async () => {
+        const mediumRiskData: RiskInputData = { checksCompleted: 20, isCriticalFailure: false };
+        const report = await calculateRisk(mediumRiskData);
+
+        expect(report.riskScore).toBeGreaterThanOrEqual(20);
+        expect(report.riskScore).toBeLessThan(65);
+        expect(report.statusLevel).toBe('MEDIUM');
+        expect(report.isBarrierTriggered).toBe(false);
     });
 
-    it('should return zero score and N/A for unknown violation types (Graceful Degradation)', async () => {
-        const result = await calculateRiskScore("UNKNOWN_REGULATION");
-        expect(result.score).toBe(0);
-        expect(result.lmax).toBe("N/A");
+    // 🔴 State C Test: High Risk Zone (CRITICAL, Barrier 작동) - 가장 중요!
+    test('should calculate HIGH risk score and correctly trigger the Paywall Barrier', async () => {
+        const highRiskData: RiskInputData = { checksCompleted: 30, isCriticalFailure: true };
+        const report = await calculateRisk(highRiskData);
+
+        // 점수 계산 검증 (30 * 1.5 + 30 = 75)
+        expect(report.riskScore).toBe(75); 
+        expect(report.statusLevel).toBe('HIGH');
+        expect(report.isBarrierTriggered).toBe(true);
+        // 필수 조치 목록 검증 (High Risk일 때만 액션이 있어야 함)
+        expect(report.mockAudit.mandatoryActionsRequired).toHaveLength(2); 
+    });
+
+    // 🚨 Edge Case Test: 최대 리스크 점수 테스트
+    test('should cap the risk score at a maximum of 85', async () => {
+        const maxRiskData: RiskInputData = { checksCompleted: 100, isCriticalFailure: true };
+        const report = await calculateRisk(maxRiskData);
+
+        // 점수가 계산 로직을 무시하고 최대치로 제한되는지 확인 (Mock API의 방어적 설계 검증)
+        expect(report.riskScore).toBe(85); 
     });
 });
