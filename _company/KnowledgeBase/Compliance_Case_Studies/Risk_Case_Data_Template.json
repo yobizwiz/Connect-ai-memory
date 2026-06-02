@@ -1,0 +1,36 @@
+{
+  "report_title": "Top 5 규제 위반 리스크 사례 분석 및 $L_{totalMax}$ 산정 가이드",
+  "target_audience": "CFO, CTO (재무적 위험 극대화 노출)",
+  "data_collection_period": "Last 3 Months (YYYY-MM-DD to YYYY-MM-DD)",
+  "source_provenance_guide": "모든 항목은 [규제 기관명/판례 번호]를 명시해야 합니다.",
+  "case_studies": [
+    {
+      "case_id": 1,
+      "title": "[미정] 규제 위반 사례 제목 (핵심 파국적 지점 강조)",
+      "primary_regulation": "EU AI Act / DORA 등",
+      "violation_category": "데이터 유출 실패 / 절차적 하자 / 근거 없는 LLM 활용 등",
+      "impact_summary": "사건 요약: 무엇이, 어떻게 파국을 초래했는지 간결하게 서술합니다. (공포 유발)",
+      "quantifiable_risk_metrics": {
+        "initial_fine_estimate": "[최소 $XXXK ~ 최대 $XMM]",
+        "litigation_settlement_range": "[최소 $XXK ~ 최대 $XM]",
+        "operational_loss_estimate": "시스템 중단으로 인한 추정 손실액 ($Million) 및 기간 (Days)",
+        "total_risk_exposure_Lmax": "$[계산된 최고 위험 노출 금액]"
+      },
+      "data_points_for_calculation": [
+        {"metric": "PII 취급 개수", "value": "[N]", "source_note": "HIPAA/GDPR 기준"},
+        {"metric": "데이터 입출력 규모 (TB)", "value": "[X]", "source_note": "시스템 트래픽 기반"},
+        {"metric": "준법 절차 미비 횟수", "value": "[Y]", "source_note": "Critical Checkpoint Failure Count"}
+      ],
+      "provenance": {
+        "legal_source": "[실제 법률/규정 출처 명시]",
+        "reporting_agency": "[보고 기관명 및 보고서 URL]"
+      }
+    },
+    {
+      "case_id": 2,
+      "title": "...",
+      "primary_regulation": "...",
+      // ... 나머지 케이스는 동일한 구조로 반복 (총 5개)
+    }
+  ]
+}
