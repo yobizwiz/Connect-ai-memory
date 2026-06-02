@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import { calculateTotalMaximumLoss, determineRiskLevel } from '../services/riskCalculator';
-import { InputData } from '../types/inputTypes';
+import { calculateTotalMaximumLoss, determineRiskLevel } from '../src/services/riskCalculator';
+import { InputData } from '../src/types/inputTypes';
 // StatusGauge 컴포넌트는 디자인팀이 완성할 것으로 가정하고 임시로 대체합니다.
 
 /**
@@ -70,7 +70,7 @@ const RiskDiagnosticTool: React.FC = () => {
                     ⚠️ 경고! 즉각적인 대응이 필요합니다. (L_totalMax 임계값 초과)
                 </h2>
                 <p className="mt-3 text-lg text-white/90">
-                    현재 산출된 $L_{totalMax}$는 귀사가 감당할 수 있는 수준을 **현저히** 초과했습니다. 이대로 방치할 경우, 재정적 파국($L_{max}$)에 직면하게 됩니다.
+                    현재 산출된 {"$L_{totalMax}$"}는 귀사가 감당할 수 있는 수준을 **현저히** 초과했습니다. 이대로 방치할 경우, 재정적 파국({"$L_{max}$"})에 직면하게 됩니다.
                 </p>
                 <button className="mt-6 px-10 py-3 text-xl font-bold bg-red-700 hover:bg-red-800 transition duration-200 transform scale-105">
                     ✅ 필수 생존 보험료 가입 및 상세 진단 보고서 받기

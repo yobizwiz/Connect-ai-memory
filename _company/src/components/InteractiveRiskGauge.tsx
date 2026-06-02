@@ -58,7 +58,7 @@ const InteractiveRiskGauge: React.FC<RiskGaugeProps> = () => {
             <div className="gauge-value">
                 <h1>${new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(lTotalMax)}</h1>
                 <p className={`text-xl ${criticalClass ? 'text-red-400' : 'text-blue-200'}`}>
-                    $L_{totalMax}$ 추정치 (최대 재무적 손실)
+                    {"$L_{totalMax}$"} 추정치 (최대 재무적 손실)
                 </p>
             </div>
 

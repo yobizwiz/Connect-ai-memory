@@ -4,6 +4,12 @@
  * to ensure robust client-side state management and error handling.
  */
 
+declare global {
+    interface Window {
+        __MOCK_START_TIME__: number;
+    }
+}
+
 export type RiskData = {
     timestamp: number;
     treScore: number; // Time Risk Exposure Score (0 to 100)

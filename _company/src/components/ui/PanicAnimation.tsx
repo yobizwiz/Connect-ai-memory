@@ -30,4 +30,4 @@ const PanicAnimation: React.FC<PanicAnimationProps> = ({ isActive }) => {
   );
 };
 
-export default PanicAnimation;</code>
+export default PanicAnimation;

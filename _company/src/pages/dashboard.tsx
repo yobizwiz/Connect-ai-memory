@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import RiskAlertDisplay from '../components/RiskAlertDisplay';
-import { useTarsContext } from '../context/riskContext';
+import { useTarsContext } from '../context/RiskContext';
 import { RiskInputs } from '../services/riskCalculationService';
 
 const Dashboard: React.FC = () => {

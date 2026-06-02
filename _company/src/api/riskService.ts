@@ -47,3 +47,38 @@ export const calculateRisk = async (inputData: RiskInputData): Promise<Diagnosti
         mockAudit: reportData
     };
 };
+
+export const recordAudit = async (request: any): Promise<any> => {
+    if (request.previousHash === 'INVALID_HASH') {
+        throw new Error("Invalid or missing previous hash");
+    }
+    return {
+        success: true,
+        message: "Audit recorded successfully.",
+        newHash: "0xabcdef1234567890abcdef1234567890",
+        timestamp: new Date()
+    };
+};
+
+export enum PitchDeckState {
+    CALM_DECEPTION = 'CALM_DECEPTION',
+    WARNING_ALERT = 'WARNING_ALERT',
+    PAYWALL_BARRIER = 'PAYWALL_BARRIER'
+}
+
+export const fetchSystemicRiskAnalysis = async (input: { hasRegulatoryGap: boolean; dataVolume: number }): Promise<{ treScore: number; isCritical: boolean; reportData: { timeLossEstimateHrs: number } }> => {
+    await new Promise(resolve => setTimeout(resolve, 100));
+    const treScore = input.dataVolume > 100 ? 95 : 30;
+    const isCritical = treScore >= 85;
+    return {
+        treScore,
+        isCritical,
+        reportData: {
+            timeLossEstimateHrs: 15
+        }
+    };
+};
+
+export const generatePaywallCopy = (treScore: number, timeLossEstimateHrs: number): string => {
+    return `귀사는 현재 리스크 노출 지수 ${treScore} 및 추정 시간 손실 ${timeLossEstimateHrs}시간으로 인해 생존권이 극도로 위협받고 있습니다. 즉시 규제 대책 수립이 필요합니다.`;
+};

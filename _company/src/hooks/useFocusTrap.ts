@@ -15,8 +15,7 @@ export const useFocusTrap = (ref: React.RefObject<HTMLElement>) => {
       if (event.key === 'Tab') {
         let focusedElement = document.activeElement as HTMLElement;
         const focusableElements = element.querySelectorAll(
-          'button, [href], input:not([type="hidden"]), select, textarea', 
-          '[tabindex]:not([tabindex="-1"])'
+          'button, [href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])'
         ) as NodeListOf<HTMLElement>;
 
         if (focusedElement === element.querySelector('a')?.parentElement || focusedElement === element) {

@@ -54,7 +54,7 @@ const PaywallBarrierModal: React.FC<PaywallBarrierModalProps> = ({ result, onAct
                     <h3>🔒 시스템 접근 불가 (Access Denied)</h3>
                     <p className="warning-message">
                         현재 분석된 위험 노출도(TRE: {result.tre} Score, Lmax: ${result.lMax.toLocaleString()}M)는 비즈니스 활동의 지속 가능성을 위협하는 수준입니다. 
-                        이 리스크를 무시하고 진행할 경우, 최대 잠재 손실액($L_{max}$) 초과로 인한 법적/재무적 피해가 예상됩니다.
+                        이 리스크를 무시하고 진행할 경우, 최대 잠재 손실액({"$L_{max}$"}) 초과로 인한 법적/재무적 피해가 예상됩니다.
                     </p>
                     <button onClick={onActionClick} style={styles.ctaButton}>
                         ✅ 생존 필수 보험료 결제 및 시스템 권한 확보 ({riskColor})
@@ -70,7 +70,7 @@ export default PaywallBarrierModal;
 
 
 // ⚠️ 스타일 정의 (Design Tokens 기반)
-const styles = {
+const styles: Record<string, React.CSSProperties> = {
     modalOverlay: {
         position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1000, 
         display: 'flex', alignItems: 'center', justifyContent: 'center', 

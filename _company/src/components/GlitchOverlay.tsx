@@ -4,7 +4,12 @@ import React from 'react';
  * @description 시스템 오류를 시각적으로 표현하는 오버레이 컴포넌트.
  * 실제 애니메이션은 CSS Modules에서 처리됨.
  */
-const GlitchOverlay: React.FC = () => {
+interface GlitchOverlayProps {
+  isVisible?: boolean;
+}
+
+const GlitchOverlay: React.FC<GlitchOverlayProps> = ({ isVisible }) => {
+  if (isVisible === false) return null;
   return (
     <div className="glitch-overlay" aria-hidden="true">
       {/* 이 영역에 복잡한 SVG/CSS 애니메이션 코드가 들어가야 합니다. */}

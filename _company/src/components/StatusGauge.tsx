@@ -23,7 +23,7 @@ const GlitchText: React.FC<{ text: string; colorClass?: string }> = ({ text, col
  * Lmax 기반의 실시간 리스크 지표 게이지 컴포넌트.
  * 사용자가 입력값을 변경하면 로직이 재실행되어 상태와 스타일이 동기화됩니다.
  */
-const StatusGauge: React.FC = () => {
+const StatusGauge: React.FC<any> = () => {
     // 훅을 사용하여 계산 엔진과 상태를 연결합니다.
     const [riskOutput, setInputs] = useRiskCalculation(initialMockInputs);
 
@@ -57,7 +57,7 @@ const StatusGauge: React.FC = () => {
     return (
         <div className="p-8 bg-slate-900/70 backdrop-blur-md rounded-xl shadow-2xl max-w-4xl mx-auto">
             <h2 className={`text-3xl font-extrabold mb-6 ${riskOutput.isCritical ? 'text-red-500' : 'text-white'}`}>
-                🛡️ Total Risk Exposure Index ($L_{totalMax}$)
+                🛡️ Total Risk Exposure Index ({"$L_{totalMax}$"})
             </h2>
 
             {/* 1. 리스크 게이지 섹션 */}
@@ -136,7 +136,7 @@ const StatusGauge: React.FC = () => {
              {/* API 통합 지침 */}
              <div className="mt-8 p-4 border-t border-gray-700 pt-6">
                  <h3 className="text-xl font-bold text-yellow-400 mb-2">💡 [Developer Note] API Integration Point</h3>
-                 <p className="text-sm text-gray-400">현재 로직은 커스텀 훅을 통해 Mock 계산되고 있습니다. 실제 운영 환경에서는 이 `useRiskCalculation` 훅 내부에서, 백엔드의 <code className='bg-red-900/50 p-1 rounded'>/api/risk_service.py</code> 엔드포인트로 POST 요청을 보내어 최종 $L_{max}$ 값을 받아와야 합니다.</p>
+                 <p className="text-sm text-gray-400">현재 로직은 커스텀 훅을 통해 Mock 계산되고 있습니다. 실제 운영 환경에서는 이 `useRiskCalculation` 훅 내부에서, 백엔드의 <code className='bg-red-900/50 p-1 rounded'>/api/risk_service.py</code> 엔드포인트로 POST 요청을 보내어 최종 {"$L_{max}$"} 값을 받아와야 합니다.</p>
              </div>
 
         </div>

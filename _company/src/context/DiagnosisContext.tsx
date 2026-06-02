@@ -23,6 +23,7 @@ export const useDiagnosisContext = () => {
 export const DiagnosisProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [formData, setFormData] = useState<FormData>({});
     const [funnelState, setFunnelState] = useState<FunnelState>('INITIAL');
+    const [lTotalMaxScore, setLTotalMaxScore] = useState<number>(0.0);
 
     // ⭐️ 핵심 로직: L_totalMax 실시간 계산 함수 (Defensive Coding 적용)
     const calculateAndSetLTotalMax = useCallback(() => {
@@ -41,7 +42,7 @@ export const DiagnosisProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         const scaledScore = Math.min(100, Math.max(0, parseFloat(totalScore.toFixed(2))));
 
         console.log(`[DEBUG] Recalculated L_totalMax: ${scaledScore}`);
-        // 실제 Context State에 점수를 저장하는 로직이 필요하지만, 여기서는 예시로 console 로그만 남김.
+        setLTotalMaxScore(scaledScore);
     }, [formData]);
 
 
@@ -67,7 +68,7 @@ export const DiagnosisProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         }
 
         // 2. L_totalMax 값 확인 (예: 점수가 특정 임계치 미만이면 경고 메시지 표시)
-        if (parseFloat(useDiagnosisContext().lTotalMaxScore) > 85) {
+        if (lTotalMaxScore > 85) {
              console.warn("L_totalMax가 매우 높습니다. 즉각적인 조치가 필요합니다.");
         }
 
@@ -79,7 +80,8 @@ export const DiagnosisProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
     const contextValue = {
         formData,
-        lTotalMaxScore: 0.0, // Context 내부에서 점수 관리가 필요함.
+        questions: initialQuestions,
+        lTotalMaxScore,
         funnelState,
         updateAnswer,
         calculateAndSetLTotalMax,

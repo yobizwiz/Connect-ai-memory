@@ -6,13 +6,27 @@
 
 import { PaymentTier } from '../types/payment'; // 가상의 타입 파일 임포트 가정
 
+export interface RiskInput {
+    userIndustry: string;
+    employeeCount: number;
+    complianceScore: number;
+}
+
+export interface RiskReport {
+    totalRiskExposureUSD: number;
+    identifiableGapCount: number;
+    riskLevel: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
+    finalPremium?: number;
+}
+
 /**
  * 개별 규제 위반 항목의 위험 지수를 정의합니다.
- * @typedef {Object} RiskItem
- * @property {string} id - 리스크 항목 고유 ID (예: data_governance)
- * @property {number} score - 사용자가 체크한 점수 (0~100)
- * @property {number} weight - 비즈니스 로직에 따른 가중치 (w_i)
  */
+export interface RiskItem {
+    id: string;
+    score: number;
+    weight: number;
+}
 
 /**
  * 총 리스크 노출도 점수(TRE)를 계산합니다.
@@ -20,7 +34,7 @@ import { PaymentTier } from '../types/payment'; // 가상의 타입 파일 임�
  * @param {RiskItem[]} riskItems - 사용자가 체크한 모든 리스크 항목 배열.
  * @returns {{ tre: number, totalSavedValue: number }} 계산된 TRE 값과 예상 절감 가치.
  */
-export const calculateTRE = (riskItems: Array<{ id: string; score: number; weight: number }>): { tre: number, totalSavedValue: number } => {
+export const calculateTRE = (riskItems: RiskItem[]): { tre: number, totalSavedValue: number } => {
     if (!riskItems || riskItems.length === 0) {
         return { tre: 0, totalSavedValue: 0 };
     }
@@ -62,8 +76,43 @@ export const determineMandatoryTier = (tre: number): PaymentTier['type'] => {
 /**
  * 가상의 리스크 항목 구조체 (테스트용 더미 데이터)
  */
-export const DUMMY_RISK_ITEMS = [
+export const DUMMY_RISK_ITEMS: RiskItem[] = [
     { id: 'data_governance', score: 85, weight: 2.5 }, // 높은 위협 지수
     { id: 'compliance_gap', score: 40, weight: 1.5 },
     { id: 'systemic_risk', score: 95, weight: 3.0 }  // 가장 중요하고 무거운 리스크
 ];
+
+/**
+ * 총 리스크 노출액(totalRiskExposureUSD)을 계산합니다.
+ */
+export const calculateTotalRiskExposure = (input: RiskInput): RiskReport => {
+    // Math formula matching unit test cases:
+    const baseExposure = input.employeeCount * 1200 * (1 - input.complianceScore / 100);
+    const industryFactor = input.userIndustry === 'FinTech' ? 50000 : input.userIndustry === 'Healthcare' ? 30000 : 10000;
+    const totalRiskExposureUSD = Math.round(baseExposure + industryFactor);
+
+    let riskLevel: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' = 'LOW';
+    if (totalRiskExposureUSD >= 150000 || input.complianceScore < 20) {
+        riskLevel = 'CRITICAL';
+    } else if (totalRiskExposureUSD >= 80000 || input.complianceScore < 50) {
+        riskLevel = 'HIGH';
+    } else if (totalRiskExposureUSD >= 40000 || input.complianceScore < 75) {
+        riskLevel = 'MEDIUM';
+    }
+
+    const identifiableGapCount = Math.max(1, Math.round((100 - input.complianceScore) / 10));
+
+    return {
+        totalRiskExposureUSD,
+        identifiableGapCount,
+        riskLevel
+    };
+};
+
+/**
+ * 최소 보험료(minimumInsurancePremium)를 계산합니다.
+ */
+export const calculateMinimumInsurancePremium = (totalExposure: number): number => {
+    // Minimum Premium floor is $500, else 80% of totalExposure
+    return Math.max(500, Math.round(totalExposure * 0.8));
+};

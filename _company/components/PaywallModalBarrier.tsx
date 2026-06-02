@@ -12,14 +12,14 @@ const PaywallModalBarrier: React.FC<{ onClose: () => void }> = ({ onClose }) => 
           [ACCESS DENIED] <br />Premium Barrier Locked
         </h1>
         <p className="text-3xl mt-4 text-red-200/90">
-          현재 노출된 $L_{max}$ 수치는 귀사의 현재 자원으로는 감당할 수 없는 수준입니다.
+          현재 노출된 {"$L_{max}$"} 수치는 귀사의 현재 자원으로는 감당할 수 없는 수준입니다.
         </p>
         <div className="mt-8 p-6 bg-[#3a1c1f] border-l-4 border-red-500">
           <h3 className="text-xl font-bold text-white">
             솔루션이 필요합니다. (Premium Solution Required)
           </h3>
           <p className="mt-2 text-gray-300/80">
-            위험을 관리하고 재정적 손실액($L_{max}$)을 절감할 수 있는 유일한 방법은 '시스템 무결성 감사 리포트' 구매입니다.
+            위험을 관리하고 재정적 손실액({"$L_{max}$"})을 절감할 수 있는 유일한 방법은 '시스템 무결성 감사 리포트' 구매입니다.
           </p>
         </div>
         <button 

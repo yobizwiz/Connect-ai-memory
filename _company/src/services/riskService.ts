@@ -45,4 +45,26 @@ export const calculateTotalRisk = (riskCases: RiskCaseData[]): TotalRiskReport =
     };
 
     return report;
-}
+};
+
+export const getSystemicRiskReport = async (input: { auditScore: number }): Promise<any> => {
+    await new Promise(resolve => setTimeout(resolve, 2500));
+    const isHighRisk = input.auditScore >= 80;
+    return {
+        LOW: {
+            level: 'Low',
+            potential_loss_usd: '$0.50 Million',
+            description: '낮은 리스크 수준'
+        },
+        MEDIUM: {
+            level: 'Medium',
+            potential_loss_usd: '$2.34 Million',
+            description: '중간 리스크 수준'
+        },
+        HIGH: {
+            level: isHighRisk ? 'Critical' : 'High',
+            potential_loss_usd: '$10.50 Million',
+            description: isHighRisk ? '시스템적 생존 위협 경보 발동!' : '높은 리스크 수준'
+        }
+    };
+};

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTarsContext } from '../context/riskContext';
+import { useTarsContext } from '../context/RiskContext';
 
 // 🚨 UI 컴포넌트: Glitch Noise 및 타이머 연동 지점
 const RiskAlertDisplay: React.FC = () => {

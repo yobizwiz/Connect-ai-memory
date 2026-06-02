@@ -38,7 +38,7 @@ export const calculateTarsScore = (inputs: RiskInputs): number => {
     let finalTars: number = inputs.initialTRE * (1 + tauValue);
 
     // 리스크 점수는 0 이상, 1000 이하로 제한하는 것이 UI/UX 관점에서 안전합니다.
-    return Math.min(Math.max(finalTars, 0), 1000).toFixed(2) * 1;
+    return Number(Math.min(Math.max(finalTars, 0), 1000).toFixed(2));
 };
 
 
@@ -65,7 +65,7 @@ export const getTarsApiEndpoint = async (inputs: RiskInputs) => {
     const riskLevel = determineRiskLevel(tarsScore);
 
     return {
-        tarsScore: parseFloat(tarsScore),
+        tarsScore: tarsScore,
         riskLevel: riskLevel,
         timestamp: new Date().toISOString(),
         message: `TARS 계산 완료. 위험 레벨: ${riskLevel}.`

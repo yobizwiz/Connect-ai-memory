@@ -52,9 +52,9 @@ const DiagnosisForm: React.FC = () => {
 
     return (
         <div style={{ maxWidth: '1200px', margin: '50px auto', padding: '30px', backgroundColor: '#1A1A1A', color: '#E0E0E0' }}>
-            <h1>🧬 진단 리포트 시스템 - $L_{totalMax}$ 측정</h1>
+            <h1>🧬 진단 리포트 시스템 - {"$L_{totalMax}$"} 측정</h1>
             <p style={{ borderBottom: '1px dashed #444', paddingBottom: '20px' }}>
-                진단 과정에 답변할수록, 귀사의 재정적 최대 위험 노출도($L_{totalMax}$)가 실시간으로 계산됩니다.
+                진단 과정에 답변할수록, 귀사의 재정적 최대 위험 노출도({"$L_{totalMax}$"})가 실시간으로 계산됩니다.
             </p>
 
             {/* 1. 리스크 게이지 (Always Visible) */}
@@ -62,8 +62,7 @@ const DiagnosisForm: React.FC = () => {
 
             {/* 2. 질문 섹션 */}
             <div style={{ border: '1px solid #333', paddingBottom: '30px' }}>
-                {/* Researcher가 제공한 모든 질문을 순회하여 표시 */}
-                {context.calculateAndSetLTotalMax.mockQuestions.map(q => (
+                {context.questions.map(q => (
                     <QuestionCard key={q.id} question={q} />
                 ))}
             </div>

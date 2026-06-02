@@ -23,7 +23,7 @@ const StateTransitionFlow: React.FC = () => {
 
     // 2. Simulate Data Fetching & Risk Calculation (가상의 API 호출 시간)
     console.log("[Flow Logic]: 리스크 데이터 로딩 중...");
-    setCurrentLMax(0); // L_max 초기화 및 점진적 상승 준비
+    resetLMax(0); // L_max 초기화 및 점진적 상승 준비
 
     await new Promise(resolve => setTimeout(resolve, 1500)); 
 
@@ -87,10 +87,10 @@ const StateTransitionFlow: React.FC = () => {
           <div className="text-center p-8 bg-[#3a0d0f] border-4 border-red-600 rounded-xl shadow-[0_0_20px_#ff0000]">
             <h2 className="text-5xl font-extrabold text-white mb-4 animate-pulse">⚠️ 즉각적인 위험 감지!</h2>
             <p className="text-2xl text-red-300/90 mb-6">
-              최대 예상 재정적 손실액($L_{max}$)이 임계치를 초과했습니다. 이대로 방치할 경우, 비즈니스는 운영 불가능 상태에 도달합니다.
+              최대 예상 재정적 손실액({"$L_{max}$"})이 임계치를 초과했습니다. 이대로 방치할 경우, 비즈니스는 운영 불가능 상태에 도달합니다.
             </p>
             <div className="text-5xl font-mono tracking-wider">
-              $L_{max}$ = <span className="text-6xl text-[#ffaaaa]">{currentLMax.toLocaleString()}</span>
+              {"$L_{max}$"} = <span className="text-6xl text-[#ffaaaa]">{currentLMax.toLocaleString()}</span>
             </div>
           </div>
         );

@@ -17,7 +17,7 @@ export function loadTokens(): Record<string, any> {
         } catch (error) {
             console.error(`❌ Failed to load design tokens from ${TOKEN_PATH}. Ensure the file exists and is valid JSON.`);
             // 에러 발생 시 폴백 값 반환하여 컴파일 실패 방지
-            tokens = { color: { background-primary: '#000', text-default: '#fff' } }; 
+            tokens = { color: { 'background-primary': '#000', 'text-default': '#fff' } }; 
         }
     }
     return tokens;

@@ -127,7 +127,7 @@ const RiskCheckPage: React.FC<RiskCheckPageProps> = () => {
                     <div className="mt-16 p-8 bg-[#231818] rounded-xl shadow-inner border border-gray-700">
                         <h2 className="text-2xl font-bold text-red-400 mb-4">진단 요약</h2>
                         <p className={`text-lg ${lTotalMax >= 75 ? 'text-yellow-300' : 'text-green-300'}`}>
-                            현재 임시 계산된 $L_{totalMax}$ (미개방 책임 리스크 점수): <span class="font-mono text-2xl ml-2">${lTotalMax}</span> / 120점
+                            현재 임시 계산된 {"$L_{totalMax}$"} (미개방 책임 리스크 점수): <span className="font-mono text-2xl ml-2">${lTotalMax}</span> / 120점
                         </p>
                         <p className="mt-4 text-gray-400">
                             (이 수치는 내부 알고리즘과 현재의 시장 데이터를 기반으로 실시간 산출됩니다. 정확한 진단은 유료 리포트를 통해 확인 가능합니다.)

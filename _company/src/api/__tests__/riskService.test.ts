@@ -19,7 +19,7 @@ describe('RiskService - Audit Ledger Integration Test (Immutability Check)', () 
         // Arrange: 체인의 중간 지점부터 시작하는 테스트 케이스
         const request: AuditLogRequest = {
             userId: 'user-abc-123',
-            actionType: ActionType.WRITE,
+            actionType: 'WRITE',
             targetResource: "report/financial",
             details: { riskScore: 85, mitigationSteps: ["A", "B"] },
             previousHash: "0xdeadbeef0000deadbeef0000deadbeef00" // 임의의 이전 해시
@@ -40,7 +40,7 @@ describe('RiskService - Audit Ledger Integration Test (Immutability Check)', () 
         // Arrange: 체인의 시작점 테스트 케이스
         const request: AuditLogRequest = {
             userId: 'system-initial',
-            actionType: ActionType.WRITE,
+            actionType: 'WRITE',
             targetResource: "system/genesis",
             details: { message: "System initialization start." },
             previousHash: null // 체인 시작이므로 null 허용
@@ -60,7 +60,7 @@ describe('RiskService - Audit Ledger Integration Test (Immutability Check)', () 
         // Arrange: 유효성 검증 실패 케이스
         const request: AuditLogRequest = {
             userId: 'user-fail',
-            actionType: ActionType.READ,
+            actionType: 'READ',
             targetResource: "dummy",
             details: {},
             previousHash: null // Null은 체인 시작 시에만 허용되므로, 여기서는 실패 유도

@@ -11,11 +11,11 @@ const PaywallBarrier: React.FC<PaywallProps> = () => {
             <div className="paywall-content">
                 <h1>🚨 시스템 강제 진입 지점: 위험 경고!</h1>
                 <p className="warning-text">
-                    현재 귀하의 리스크 점수(TRE)는 임계치 $T_{crit}$를 초과했습니다. 
+                    현재 귀하의 리스크 점수(TRE)는 임계치 {"$T_{crit}$"}를 초과했습니다. 
                     이 상태로는 서비스 이용이 불가능하며, 재정적 손실을 막기 위해 즉시 구독해야 합니다.
                 </p>
                 <div className="lmax-display">
-                    최대 예상 손실액: <span style={{ color: '#FF0000' }}>$L_{max} (미확인)</span>
+                    최대 예상 손실액: <span style={{ color: '#FF0000' }}>{"$L_{max}$"} (미확인)</span>
                 </div>
                 <button 
                     className="cta-button" 

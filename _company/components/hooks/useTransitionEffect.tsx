@@ -26,5 +26,5 @@ export const useTransitionEffect = (initialValue: number, transitionDelayMillis:
     setCurrentLMax(newValue);
   };
 
-  return [currentLMax, resetLMax];
+  return [currentLMax, resetLMax] as const;
 };

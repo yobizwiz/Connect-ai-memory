@@ -15,6 +15,7 @@ export type FunnelState = 'INITIAL' | 'ANSWERING' | 'CALCULATING' | 'FUNNELING_P
 
 export interface DiagnosisContextType {
     formData: FormData;
+    questions: DiagnosticQuestion[];
     lTotalMaxScore: number; // 최종 계산된 최대 위험 노출도 점수
     funnelState: FunnelState;
     updateAnswer: (id: string, score: number) => void;

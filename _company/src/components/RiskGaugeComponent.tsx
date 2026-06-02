@@ -1,6 +1,6 @@
 // 실시간 리스크 게이지 컴포넌트 (시각적 공포 유발)
-import React, { useContext } from 'react';
-import { DiagnosisContextType } from '../context/DiagnosisContext';
+import React from 'react';
+import { useDiagnosisContext } from '../context/DiagnosisContext';
 
 interface RiskGaugeProps {}
 
@@ -33,7 +33,7 @@ const RiskGaugeComponent: React.FC<RiskGaugeProps> = () => {
             color: '#E0E0E0' 
         }}>
             <h3 style={{ color: statusColor, borderBottom: `1px solid ${statusColor}` }}>
-                $L_{totalMax}$ (Maximum Loss Exposure)
+                {"$L_{totalMax}$"} (Maximum Loss Exposure)
             </h3>
             <div style={{ fontSize: '4em', fontWeight: 'bold', margin: '10px 0' }}>
                 {score.toFixed(2)} / 100

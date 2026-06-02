@@ -19,7 +19,7 @@ export interface RiskInputs {
     numberOfAffectedRecords: number; // N (사용자/데이터 건수)
     riskMultiplier: number;         // R (위험 계수)
     dailyLossRate: number;          // T_rate (%)
-    jurisdiction: string;           // 규제 관할권
+    jurisdiction?: string;           // 규제 관할권
 }
 
 export interface RiskOutput {

@@ -2,6 +2,8 @@ import React from 'react';
 import { getDesignTokens } from '../utils/designTokensLoader';
 
 interface PaywallModalProps {
+    isOpen?: boolean;
+    isVisible?: boolean;
     onClose: () => void; // 모달 닫기 함수 (사용자에게는 거의 주어지지 않아야 함)
 }
 
@@ -20,7 +22,7 @@ const PaywallModal: React.FC<PaywallModalProps> = ({ onClose }) => {
                     🚨 [경고] 필수 진단 완료! 🔴
                 </h2>
                 <p className="text-lg text-gray-300 mb-6 border-l-4 pl-4" style={{ borderColor: threatRed }}>
-                    사용자님의 기업은 현재 **미개방 책임(Uncovered Liability)**에 심각하게 노출되어 있습니다. $L_{totalMax}$ 수치 확인이 필수적입니다.
+                    사용자님의 기업은 현재 **미개방 책임(Uncovered Liability)**에 심각하게 노출되어 있습니다. {"$L_{totalMax}$"} 수치 확인이 필수적입니다.
                 </p>
 
                 <div className="text-center mb-10">

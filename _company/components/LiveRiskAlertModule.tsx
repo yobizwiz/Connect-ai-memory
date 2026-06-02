@@ -154,7 +154,7 @@ const LiveRiskAlertModule: React.FC = () => {
           <div className='text-right'>
             {/* [DATA BINDING POINT 3]: 재정적 손실액 ($L_{min}$) */}
             <span className={`text-2xl font-extrabold ${point.tars_score > 70 ? 'text-red-500' : 'text-yellow-400'}`}>
-                $ {point.min_loss_usd.toLocaleString()} <span className="text-base opacity-60">($L_{min}$)</span>
+                $ {point.min_loss_usd.toLocaleString()} <span className="text-base opacity-60">{"($L_{min}$)"}</span>
             </span>
           </div>
         </div>

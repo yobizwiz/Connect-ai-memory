@@ -27,7 +27,7 @@ const PaywallBarrierMock: React.FC<{ riskData: RiskData }> = ({ riskData }) => {
     }, [riskData.treScore]);
 
     // Focus Trap이 적용될 컨테이너의 Ref를 생성합니다.
-    const modalRef = React.useRef<HTMLElement>(null);
+    const modalRef = React.useRef<HTMLDivElement>(null);
     useFocusTrap(modalRef); // 훅 실행 (가장 중요한 단계)
 
     if (!isPaywallActive) {
@@ -44,7 +44,7 @@ const PaywallBarrierMock: React.FC<{ riskData: RiskData }> = ({ riskData }) => {
             <div className="paywall-modal-backdrop" ref={modalRef}>
                 <div className="paywall-modal-content">
                     <h2>🚨 [SYSTEM ALERT] 리스크 임계치 초과 감지 🚨</h2>
-                    <p>현재 귀사의 총 위험 노출도 ($\text{TRE}$): <strong style={{color: 'red'}}>{riskData.treScore}</strong></p>
+                    <p>현재 귀사의 총 위험 노출도 ({"$\\text{TRE}$"}): <strong style={{color: 'red'}}>{riskData.treScore}</strong></p>
                     <p>이는 시스템이 정의한 최대 허용치를 ${PAYWALL_THRESHOLD}를 초과했습니다. **지금 당장** 전문가의 진단 없이는 다음 단계로 진행할 수 없습니다.</p>
 
                     {/* Mock Input Fields: Focus Trap 테스트용 요소들 */}
