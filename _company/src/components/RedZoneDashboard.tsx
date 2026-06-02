@@ -137,7 +137,7 @@ const RedZoneDashboard: React.FC = () => {
     }
 
     // Determine the current state and render accordingly
-    const showPaywall = riskData?.treScore >= 70 && riskData.isCritical;
+    const showPaywall = !!riskData && riskData.treScore >= 70 && riskData.isCritical;
     
     return (
         <div className={`dashboard-container ${showPaywall ? 'red-zone' : ''}`}>

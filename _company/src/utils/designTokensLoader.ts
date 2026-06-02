@@ -20,7 +20,7 @@ export function loadTokens(): Record<string, any> {
             tokens = { color: { 'background-primary': '#000', 'text-default': '#fff' } }; 
         }
     }
-    return tokens;
+    return tokens || { color: { 'background-primary': '#000', 'text-default': '#fff' } };
 }
 
 export function getDesignTokens(): Record<string, any> {

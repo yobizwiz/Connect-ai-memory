@@ -9,7 +9,7 @@ interface QuestionCardProps {
 
 const QuestionCard: React.FC<QuestionCardProps> = ({ question }) => {
     const context = useDiagnosisContext();
-    const [scoreInput, setScoreInput] = useState<number | ''>(null);
+    const [scoreInput, setScoreInput] = useState<number | '' | null>(null);
 
     // 로직 1: 점수 변경 핸들러 (유효성 검사 및 Context 업데이트)
     const handleScoreChange = (e: React.ChangeEvent<HTMLInputElement>) => {

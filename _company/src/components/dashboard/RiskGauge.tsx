@@ -110,9 +110,9 @@ const RiskGauge: React.FC = () => {
 
             {/* Gauge Container */}
             <div className="flex justify-between space-x-4">
-                {renderGauge("데이터 주권 위반 지수 (DSI)", riskData?.data_sovereignty_index_dsi)}
-                {renderGauge("구조적 공백 리스크 (SGR)", riskData?.structural_gap_risk_sgr)}
-                {renderGauge("규정 준수 잠재력 (CVP)", riskData?.compliance_violation_potential_cvp)}
+                {renderGauge("데이터 주권 위반 지수 (DSI)", riskData?.data_sovereignty_index_dsi || 0)}
+                {renderGauge("구조적 공백 리스크 (SGR)", riskData?.structural_gap_risk_sgr || 0)}
+                {renderGauge("규정 준수 잠재력 (CVP)", riskData?.compliance_violation_potential_cvp || 0)}
             </div>
 
              <div className="mt-6 text-right text-xs text-gray-400">

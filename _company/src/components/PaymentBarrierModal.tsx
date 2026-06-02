@@ -23,14 +23,11 @@ const PaymentBarrierModal: React.FC<PaymentBarrierModalProps> = ({
 
   return (
     <Modal
-      title={({ statusBarComponent }) => (
-        <>
-          {/* B2B 콘솔 스타일의 경고 바를 여기에 위치시킬 수 있습니다 */}
-          <div style={{ color: '#ff4d4d', fontSize: '16px', fontWeight: 'bold' }}>
-            🚨 [CRITICAL ALERT] 진단 결과 분석 완료. 즉각적인 조치가 필수적입니다.
-          </div>
-        </>
-      )}
+      title={
+        <div style={{ color: '#ff4d4d', fontSize: '16px', fontWeight: 'bold' }}>
+          🚨 [CRITICAL ALERT] 진단 결과 분석 완료. 즉각적인 조치가 필수적입니다.
+        </div>
+      }
       open={isVisible}
       onCancel={onClose}
       footer={null} // 기본 닫기 버튼 숨김

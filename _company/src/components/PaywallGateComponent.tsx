@@ -17,10 +17,10 @@ const AnimatedStage = ({ children, stageName }: { children: React.ReactNode, sta
  */
 const PaywallGateComponent: React.FC = () => {
     // Zustand 스토어 사용 및 현재 상태 구독
-    const state = usePaywallStore(s => s.state);
-    const isLoading = usePaywallStore(s => s.isLoading);
-    const riskData = usePaywallStore(s => s.riskData);
-    const error = usePaywallStore(s => s.error);
+    const state = usePaywallStore((s: any) => s.state);
+    const isLoading = usePaywallStore((s: any) => s.isLoading);
+    const riskData = usePaywallStore((s: any) => s.riskData);
+    const error = usePaywallStore((s: any) => s.error);
 
     // 🚀 useEffect를 사용하여 상태 변화에 따른 사이드 이펙트 (예: 애니메이션 클래스 추가) 정의
     useEffect(() => {
