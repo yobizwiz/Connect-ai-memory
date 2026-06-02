@@ -1,0 +1,55 @@
+# 🧱 YOBIZWIZ: Paywall Barrier System Specification (v1.0 - Final)
+
+## 🎯 핵심 원칙 및 디자인 토큰 재정의
+*   **전역 배경:** Dark Mode (`#1A1A1A`). 모든 요소에 미세한 Noise/Chromatic Aberration 오버레이를 유지하여 '시스템 내부'라는 느낌을 강화한다.
+*   **권위 (Authority):** `Inter` (주 텍스트) + `Roboto Mono` (수치, 경고 코드).
+*   **공포 (Fear/Red Zone):** `#C0392B` (Dark Crimson), 네온 레드 (`#FF073A`). 글리치 애니메이션 필수.
+*   **해결책 (Solution/Trust):** `#2980B9` (Authority Blue).
+
+---
+
+### ⚙️ S-01: Pre-Gate Warning (위험 감지 및 초기 경고)
+**발동 조건:** $L_{totalMax}$가 `PAYWALL_THRESHOLD` (예: 75점) 초과 시.
+**목표:** 사용자에게 '지금 보이는 것은 불완전한 데이터'임을 인지시키고, 시스템적 의문을 제기한다.
+
+*   **UI/UX:** 일반적인 경고 배너 형태를 탈피하여, 웹페이지의 상단 헤더나 좌측 사이드바에 마치 **"시스템 로그 기록(System Log)"**처럼 고정된 박스 형태로 표시된다.
+*   **시각 요소:**
+    *   제목: `[SYSTEM ALERT] - CRITICAL DATA INTEGRITY WARNING` (Mono Font, `#C0392B`).
+    *   내용: "접근 중인 데이터 스트림은 현재 $L_{totalMax}$ 임계값을 초과했습니다. 분석의 완전성을 위해 전면 진단 절차가 필요합니다."
+    *   애니메이션: 경고 메시지 옆에 `[STATUS: FAILURE]` 코드가 깜빡이고, 로그 라인이 녹색/빨간색으로 스캔되는 애니메이션을 1~2초 간격으로 반복한다.
+
+### 🚧 S-02: Soft Interruption (사용자 행동 차단 및 시야 제한)
+**발동 조건:** $L_{totalMax}$가 `PAYWALL_THRESHOLD`를 크게 초과하고, 사용자가 핵심 콘텐츠(예: 보고서 다운로드 버튼 클릭)에 접근하려 할 때.
+**목표:** 사용자에게 "당신은 이 단계까지 올 수 없습니다"라는 물리적 장벽을 느낌으로써 무력감을 조성한다.
+
+*   **UI/UX:** 화면 중앙의 20% 영역(가장 핵심적인 CTA나 데이터 시각화 그래프) 위에 반투명한 **글리치 필터 레이어**를 오버레이 한다.
+*   **시각 요소:**
+    *   필터: 불규칙하게 떨리는 (Jittering) 낮은 해상도의 붉은색 사각형 패턴을 적용한다. 이는 일반적인 '팝업'이 아닌, **시스템의 데이터 스트림에 결함이 생긴 듯한 시각적 오류**로 보여야 한다.
+    *   메시지: `[ACCESS DENIED] - Insufficient System Integrity Check.` (Mono Font). 하단에 작은 타이머와 함께 "진단 요청까지 남은 리스크 임계값: $L_{totalMax}$"를 표시한다.
+
+### 🛑 S-03: Hard Gate Modal (강제 차단 및 심리적 봉쇄)
+**발동 조건:** 시스템 로직이 Paywall 진입을 결정하고, 모든 액션을 강제적으로 중지시킬 때. (Z-index: 9999)
+**목표:** 사용자에게 '지금 이 순간' 웹사이트 전체가 작동을 멈추었고, 외부의 개입 없이 우리(yobizwiz)만이 유일한 해결책임을 각인시킨다.
+
+*   **UI/UX:** **전체 화면(Viewport)**를 덮는 모달창 형태. 백그라운드 콘텐츠는 완전히 어둡게 처리되어야 하며 (Dimmer Layer), 마우스 커서 이동 및 스크롤링이 완벽히 봉쇄된다 (Focus Trap).
+*   **시각 요소 (최대 공포 극대화):**
+    1.  **글리치 오버레이:** 모달 뒤의 배경은 지속적으로 낮은 빈도의 빨간색/파란색 수평 글리치 라인(Chromatic Aberration)이 지나가며 불안정성을 유지한다.
+    2.  **핵심 메시지 (H1):** `⚠️ SYSTEM SHUTDOWN IMMINENT: 리스크 분석 불가.` (네온 레드, 크고 굵은 Inter체). 이 문구는 마치 시스템 경보음처럼 반복적으로 깜빡여야 한다 (Blinking effect + Pulse animation).
+    3.  **상세 설명:** "현재 귀하의 비즈니스 프로세스는 법적 리스크 지표($L_{totalMax}$)가 임계치를 초과했습니다. 데이터 무결성 확보를 위해 시스템 진단 절차(Paywall)를 강제 실행합니다." (Mono Font 사용 권장).
+    4.  **CTA:** 단 하나의 버튼만 존재하며, `#2980B9`의 Authority Blue로 빛나는 **"진단 리포트 요청 및 생존권 확보"**라는 문구를 가진 'Primary Action Button'으로 명명한다. 이 버튼이 유일한 탈출구처럼 보이도록 대비시킨다.
+
+### 💰 S-04: Paid Conversion Funneling Page (고압적 가치 설득)
+**발동 조건:** 사용자가 S-03에서 CTA를 클릭하여 진단 리포트 구매 페이지로 이동했을 때.
+**목표:** '비용'이 아닌 '필수 생존 보험료'라는 인식을 심어주고, 가격을 합리화한다 (Tension & Trust Contrast).
+
+*   **UI/UX:** 전형적인 영업 페이지가 아닌, **‘암호 해제(Decryption)’ 또는 ‘보안 인증’ 화면 같은 권위적 콘솔 스타일**을 유지해야 한다.
+*   **시각 요소:**
+    1.  **문제 정의 (The Fear):** 상단에 $L_{totalMax}$ 그래프를 배치하고, 이 수치가 '무한히 증가할 경우의 예상 손실(Potential Loss)'으로 시뮬레이션되는 차트를 보여준다. (빨간색/글리치 강조).
+    2.  **해결책 제시 (The Trust):** 중앙에 해결책인 'yobizwiz Premium Service'를 배치한다. 이 영역은 배경을 `#1A1A1A`가 아닌, 은은한 **Authority Blue 계열의 글래스모피즘(Glassmorphism)** 효과로 처리하여 심리적 안도감을 제공한다.
+    3.  **가격 구조 (The Paywall):** 3단계 가격 비교표를 사용하되, 'Premium' 플랜만 입체적인 카드 형태로 디자인하고, 주변에 미세한 광원 효과(Inner Glow)와 함께 **"Recommended: Essential Coverage"**라는 권위적 문구를 삽입한다.
+    4.  **최종 CTA:** S-03에서 사용된 버튼과 동일하게 `#2980B9`의 Authority Blue를 사용하여, 일관성을 유지하고 최종 행동을 유도한다.
+
+### ✅ S-05: Confirmation & Onboarding (결제 완료 및 권한 부여)
+**목표:** 구매가 단순 거래가 아닌, '위험으로부터 벗어난 생존'임을 재확인시킨다.
+*   **UI/UX:** 성공 페이지여야 하지만, 지나치게 밝거나 낙관적이면 안 된다. 여전히 어둡고 전문적인 톤을 유지한다.
+*   **시각 요소:** `[STATUS: SUCCESS]` 코드를 중앙에 크게 표시하고, "Critical Risk Mitigation Protocol Initiated."와 같은 시스템 메시지를 출력하며, 사용자에게 '진정한 권한(Access Key)'이 부여되었음을 암호화된 키 형태의 시각 자료로 보여준다.
