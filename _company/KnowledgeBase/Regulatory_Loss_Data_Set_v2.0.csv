@@ -1,0 +1,6 @@
+[Violation Type], [Governing Regulation/Domain], [Root Cause Description], [Min Fine Estimate ($Fine_{min}$)], [Max Fine Estimate ($Fine_{max}$)], [Operational Loss Min ($L_{op, min}$)], [Operational Loss Max ($L_{op, max}$)], [Loss Driver], [Provenance Source]
+PII Leakage (Health/Financial), HIPAA / GDPR / CCPA, 비식별화 실패 및 목적 외 데이터 사용, 50,000, 2000000, 100000, 5000000, 규제벌금 + 소송비 + 시스템재구축비, sessions/2026-05-26/PII_Leakage_Index
+AI Hallucination & Provenance Failure, EU AI Act / DORA (Draft), LLM 답변의 출처 미제시 및 허위 정보 기반 의사결정 유도, 25000, 10000000, 500000, 20000000, 전문가 배상책임 + 명예/신뢰도 하락, sessions/2026-05-28/Self-RAG
+Compliance Drift (Process Failure), ISO 27001 / 금융 규제, 필수 절차(Multi-step Approval) 누락 및 문서화 미비로 인한 시스템적 취약성 노출, 100000, 5000000, 300000, 10000000, 비즈니스 연속성 위협 + 계약 위약금, sessions/2026-05-26/Compliance_Drift_Score
+Cross-Border Data Sovereignty Breach, GDPR / 국경 간 데이터 전송법, 개인정보의 지정된 지역 외 이동 또는 제3국 법규 미준수, 1000000, 20000000, 500000, 10000000, 국제 규제벌금 + 데이터 무효화 위험, sessions/2026-05-28/Researcher_Personal_Memory
+Lack of Audit Trail (Immutable Ledger), DORA / 금융 시스템 보안, 변경 이력 추적(Audit Trail) 불가능 및 감사 증거 부재로 인한 의사결정 과정의 투명성 결여, 1000000, 50000000, 1000000, 20000000, 시스템적 신뢰성 붕괴 + 최대 재무 손실액 ($L_{max}$), personal_goal.md
