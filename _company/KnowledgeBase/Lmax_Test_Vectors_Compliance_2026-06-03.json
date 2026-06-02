@@ -1,0 +1,77 @@
+{
+  "metadata": {
+    "data_type": "Lmax Test Vectors & Compliance Scenarios",
+    "version": "1.1",
+    "creation_date": "2026-06-03",
+    "researcher_agent": "Researcher (yobizwiz)",
+    "description": "개발자가 Lmax 계산 API의 입력 유효성 검증 및 기대 출력을 테스트할 수 있도록, 핵심 법적 위협 시나리오와 정량화된 재무 손실 범위(Lmax)를 JSON 형태로 제공함. 모든 수치는 과거 판례/규제 경고 자료에 기반한 최소-최대 추정치임.",
+    "provenance_source": "Self-RAG Knowledge Base & Researcher Personal Memo (2026-05-19 ~ 2026-05-28)"
+  },
+  "test_vectors": [
+    {
+      "scenario_id": "SCN_PII_LEAKAGE_HIPAA",
+      "title": "Critical: PII 비식별화 실패 및 유출 (규제 위반)",
+      "risk_type": "Data Sovereignty & Privacy Breach",
+      "severity": "High (Mandatory Test)",
+      "lmax_component": ["Regulatory Fine", "Litigation Settlement"],
+      "description": "PII(개인 식별 정보)가 적절히 마스킹되지 않은 상태로 외부 또는 비인가된 AI 모델 학습에 사용되어 대규모 유출이 발생한 경우. (예: 의료정보, 계좌번호)",
+      "mock_api_input_payload": {
+        "userId": "TEST-PII-001",
+        "dataPointsCount": 50000,
+        "hasAuditLogs": false,
+        "currentRiskScores": {
+          "HIPAA/GDPR": 0.95,
+          "DataMaskingFailure": 0.8
+        }
+      },
+      "expected_lmax_range": "$10M - $20M+",
+      "notes": "최소 벌금($50K)와 최대 소송 비용($2M+)을 합산하고, 시스템 재구축 및 영업 정지 비용을 반영한 추정치. [근거: sessions/2026-05-19T04-23/secretary.md | Researcher 개인 메모리]",
+      "test_case_focus": "Input validation for data points count and masking failure flag."
+    },
+    {
+      "scenario_id": "SCN_HALLUCINATION_PROVENANCE",
+      "title": "High: AI 환각(Hallucination) 기반 잘못된 자문 제공 (법적 책임 전가)",
+      "risk_type": "Professional Liability & Provenance Failure",
+      "severity": "Critical (Mandatory Test)",
+      "lmax_component": ["Expert Negligence Fee", "Reputational Damage"],
+      "description": "LLM이 출처(Provenance)가 불분명하거나, 근거 없는 법적/재무적 조언을 생성하여 고객사 의사결정의 핵심 자료로 사용되었으나 오류가 판명된 경우.",
+      "mock_api_input_payload": {
+        "userId": "TEST-AI-002",
+        "dataPointsCount": 1,
+        "hasAuditLogs": true,
+        "currentRiskScores": {
+          "ProvenanceDeficit": 0.9,
+          "SourceAttributionFailure": 0.85
+        }
+      },
+      "expected_lmax_range": "$5M - $15M+",
+      "notes": "단순 벌금 외에 '명예 및 신뢰도 하락'으로 인한 투자 손실액($5M~$20M)을 포함하여 고가중치 부여. [근거: Researcher 개인 메모리 | 세션 2026-05-26]",
+      "test_case_focus": "High weight on 'ProvenanceDeficit' score and the necessity of an immutable audit trail."
+    },
+    {
+      "scenario_id": "SCN_COMPLIANCE_DRIFT",
+      "title": "Medium: 필수 내부 절차(Compliance Drift) 누락 및 문서화 미비 (운영 리스크)",
+      "risk_type": "Operational Risk & Process Failure",
+      "severity": "High (Process Test)",
+      "lmax_component": ["Contractual Penalty", "Rework Cost"],
+      "description": "프로젝트 진행 중 필수적인 내부 승인 절차(Critical Checkpoint)가 누락되거나, 문서화된 규정 준수 프로세스를 따르지 않아 사업 연속성에 위협이 발생한 경우.",
+      "mock_api_input_payload": {
+        "userId": "TEST-OPR-003",
+        "dataPointsCount": 12,
+        "hasAuditLogs": false,
+        "currentRiskScores": {
+          "CriticalCheckpointFailureCount": 0.75,
+          "ProceduralGap": 0.6
+        }
+      },
+      "expected_lmax_range": "$5M - $10M",
+      "notes": "단순 벌금보다는 '비즈니스 연속성'에 대한 위협으로 해석하여 높은 가중치 적용. 재작업 비용 및 계약 위약금을 반영함. [근거: Researcher 개인 메모리]",
+      "test_case_focus": "Validation of the procedural failure flags and calculating indirect operational losses."
+    }
+  ],
+  "data_provenance_summary": {
+    "source_type": ["Academic Case Study", "Regulatory Mandate (HIPAA/GDPR)", "Internal Gap Analysis"],
+    "date_collected": "2026-05-19 ~ 2026-06-03",
+    "action_required": "개발자는 이 데이터를 기반으로 Lmax 계산 함수의 최소값, 최대값을 테스트하고, 각 시나리오별 가중치(Weighting) 로직을 구현해야 합니다."
+  }
+}

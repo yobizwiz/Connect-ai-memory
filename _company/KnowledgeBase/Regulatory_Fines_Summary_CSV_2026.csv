@@ -1,0 +1,5 @@
+"Violation Category","Risk Index Tag","Min Fine Estimate (USD)","Max Fine Estimate (USD)","Associated Risk","Source Provenance","Last Updated Date"
+"PII Leakage","PII_Leakage_Index","50000","2000000+","Data Sovereignty Breach","sessions/2026-05-19T04-23/secretary.md","2026-05-26"
+"Hallucination Risk","Source_Attribution_Deficit","25000","10000000+","False Information & Liability","Researcher 개인 메모리","2026-05-26"
+"Process Gap","Compliance_Drift_Score","100000","5000000","Operational Failure & Non-compliance","Researcher 개인 메모리","2026-05-26"
+"Jurisdiction Breach","Scope_Violation_Flag","75000","3000000","Unauthorized Service Provision","Researcher 개인 메모리","2026-05-26"
