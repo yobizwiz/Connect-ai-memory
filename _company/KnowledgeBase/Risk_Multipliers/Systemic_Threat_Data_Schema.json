@@ -1,0 +1,10 @@
+{
+  "schema_version": "2.1",
+  "description": "고객사의 최대 잠재 손실액(L_totalMax)을 계산하기 위한 구조화된 위험 계수 데이터셋.",
+  "risk_factors": [
+    {"factor_id": "AI_Contamination", "threat_name": "AI 모델 지능적 오염 책임", "l_base_estimate": {"min": 50000000, "max": 200000000}, "rm_jurisdiction": 1.5, "rm_systemic": 2.5, "description": "AI 학습 데이터의 편향성/기밀 정보 유입으로 인한 책임 범위 확장."},
+    {"factor_id": "CrossBorder_Conflict", "threat_name": "국경 간 데이터 주권 충돌 위험", "l_base_estimate": {"min": 100000000, "max": 3000000000}, "rm_jurisdiction": 3.0, "rm_systemic": 1.2, "description": "상충되는 국가 법규 충족 실패로 인한 시스템 강제 중단 위험."},
+    {"factor_id": "Quantum_Decimation", "threat_name": "양자 컴퓨팅 암호 파괴 위험", "l_base_estimate": {"min": 1000000000, "max": 5000000000}, "rm_jurisdiction": 2.0, "rm_systemic": 3.0, "description": "암호화 체계 무력화로 인한 핵심 자산(IP)의 영구적 손실 위험."}
+  ],
+  "calculation_formula": "L_totalMax = L_Base * RM_Jurisdiction * RM_Systemic (Multiplicative)"
+}
