@@ -47,7 +47,7 @@ export const DiagnosisProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
 
     // 답변 업데이트 핸들러 (안전성 확보)
-    const updateAnswer = useCallback((id: string, score: number) => {
+    const updateAnswer = useCallback((id: string, score: number | null) => {
         setFormData(prev => ({ ...prev, [id]: score }));
         calculateAndSetLTotalMax(); // 답변 변경 시 즉시 재계산
     }, [calculateAndSetLTotalMax]);

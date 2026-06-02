@@ -15,7 +15,7 @@ const PaywallGate: React.FC = () => {
                 </h1>
                 <p className="text-3xl text-red-200 mb-8 max-w-xl mx-auto">
                     당신의 조직은 현재 심각한 구조적 리스크에 노출되어 있습니다. <br />
-                    이 진단 보고서를 보는 것만으로도 잠재적 손실액($L_{max}$)이 확인되었습니다.
+                    이 진단 보고서를 보는 것만으로도 잠재적 손실액({"$L_{max}$"})이 확인되었습니다.
                 </p>
                 <div className="text-xl mb-10">
                     <span className="font-bold text-red-300">✅ 해결책:</span> <br />
@@ -140,7 +140,7 @@ const DiagnosisPage: React.FC = () => {
                 <h2 className="text-3xl font-bold mb-4">다음 단계가 필수적입니다.</h2>
                 <p className="text-lg text-gray-700">
                     이 보고서는 잠재적 위험을 진단했을 뿐, 해결책은 아닙니다. <br />
-                    실제 시스템 감사 및 방어벽 구축을 통해 $L_{max}$를 줄여야 합니다.
+                    실제 시스템 감사 및 방어벽 구축을 통해 {"$L_{max}$"}를 줄여야 합니다.
                 </p>
                  <button 
                     onClick={() => alert("Paywall로의 강제 전환 시도! (Final CTA)")}
