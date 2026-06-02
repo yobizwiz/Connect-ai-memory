@@ -1,0 +1,87 @@
+[
+  {
+    "Scenario_ID": "RSC-001",
+    "Title": "PII 비식별화 실패에 따른 전사적 운영 정지 (HIPAA Breach)",
+    "Category": "규정 위반 & 운영 정지 (Regulatory/Operational Shutdown)",
+    "Root_Cause": "비식별화(De-identification) 프로세스 누락 또는 우회. 내부 연구원 PC를 통한 환자 기록 데이터 유출.",
+    "Relevant_Regulation": ["HIPAA", "CCPA"],
+    "Impact_Metrics": {
+      "Operational_Shutdown_Days": 21,
+      "Daily_Lmax_Estimate": "$3M - $5M (평균 일일 매출 손실)",
+      "Regulatory_Fine_Range": "최소 $500K ~ 최대 $10M+ (규제 당국 과징금)",
+      "Litigation_Settlement_Estimate": "최소 $2M - $8M (민사소송 합의 비용)"
+    },
+    "Total_Estimated_Lmax_Range": "$7M ~ $23M+",
+    "Quantification_Notes": "총 손실액은 벌금과 소송비 외에 21일간의 시스템 재구축 및 고객 신뢰 회복 기간 동안 발생한 기회비용을 포함함. (Proven: sessions/2026-05-26)",
+    "Provenance_Source": "sessions/2026-05-26 | PII_Leakage_Index",
+    "Risk_Level": "Critical"
+  },
+  {
+    "Scenario_ID": "RSC-002",
+    "Title": "LLM 환각(Hallucination) 기반의 법적 자문 오류 (Loss of Professional Authority)",
+    "Category": "기술 도입 실패 & 평판 하락 (Tech Failure/Reputation Damage)",
+    "Root_Cause": "AI 모델이 근거 자료 없이 잘못된 법률 해석을 제공하여, 고객사가 해당 정보를 바탕으로 투자 결정을 내림. 출처 명시(Provenance) 의무 위반.",
+    "Relevant_Regulation": ["Professional Due Diligence Standards", "General Liability"],
+    "Impact_Metrics": {
+      "Operational_Shutdown_Days": 0,
+      "Daily_Lmax_Estimate": "$1M - $3M (잠재적 고객 이탈 및 계약 위반)",
+      "Regulatory_Fine_Range": "최소 $500K ~ 최대 $10M+ (전문가 배상 책임)",
+      "Litigation_Settlement_Estimate": "최소 $5M - $20M+ (명예/신뢰도 하락에 기반한 합의금)"
+    },
+    "Total_Estimated_Lmax_Range": "$6M ~ $33M+",
+    "Quantification_Notes": "가장 위험도가 높으며, 재정적 손실 외 '전문성 신뢰도' 상실이 핵심 자산 파괴로 작용함. 법률 전문가의 배상 책임 모델 적용. (Proven: sessions/2026-05-26)",
+    "Provenance_Source": "sessions/2026-05-26 | Source_Attribution_Deficit",
+    "Risk_Level": "Critical"
+  },
+  {
+    "Scenario_ID": "RSC-003",
+    "Title": "글로벌 공급망 데이터 단절 위험 (Single Point of Failure - Geopolitical)",
+    "Category": "비재무적 리스크의 금전화 (Monetization of Non-Financial Risk)",
+    "Root_Cause": "핵심 부품/데이터 공급처가 특정 국가에만 집중되어, 지정학적 위기로 인해 6개월간 전면 생산 및 서비스 중단. (공급망 단절).",
+    "Relevant_Regulation": ["Trade Law", "Supply Chain Resilience Mandates"],
+    "Impact_Metrics": {
+      "Operational_Shutdown_Days": 180,
+      "Daily_Lmax_Estimate": "$20M - $50M (규모에 따라 변동, 생산 중단 비용)",
+      "Regulatory_Fine_Range": "N/A (직접 벌금보다는 계약 위약금이 주도)",
+      "Litigation_Settlement_Estimate": "최소 $1B - $3B (핵심 고객사와의 대규모 계약 해지 및 배상)"
+    },
+    "Total_Estimated_Lmax_Range": "$200B+ (수치적 범위 상한을 설정하기 어려우므로 최고 규모 제시)",
+    "Quantification_Notes": "가장 파괴적인 시나리오. '운영 중단' 자체의 비용이 벌금보다 압도적으로 높음. 리스크 모델에 반드시 포함되어야 할 거시경제 변수 연동 요소임. (Proven: Researcher 개인 메모리 - 공급망 단절 위험)",
+    "Provenance_Source": "Researcher 개인 메모리",
+    "Risk_Level": "Catastrophic"
+  },
+  {
+    "Scenario_ID": "RSC-004",
+    "Title": "AI 거버넌스 및 데이터 주권 위반 (Data Sovereignty Failure)",
+    "Category": "신흥 규제 미대응 & 운영 중단 (New Regulation/Compliance Gap)",
+    "Root_Cause": "유럽의 특정 국경을 넘는 개인 데이터를 적절한 기술적 조치(예: Homomorphic Encryption) 없이 처리하여, 현지 정부 기관으로부터 데이터 접근 금지 명령 및 시스템 강제 폐쇄 명령을 받음.",
+    "Relevant_Regulation": ["DORA", "GDPR (국가별 확장 해석)", "Data Sovereignty Acts"],
+    "Impact_Metrics": {
+      "Operational_Shutdown_Days": 30,
+      "Daily_Lmax_Estimate": "$15M - $30M (서비스 접근 불가로 인한 매출 급감)",
+      "Regulatory_Fine_Range": "최소 €20M ~ 최대 €70M+ (GDPR 기반 과징금 + DORA 준수 실패 페널티)",
+      "Litigation_Settlement_Estimate": "최소 $1B - $5B (글로벌 시장에서의 신뢰도 상실 및 법적 분쟁)"
+    },
+    "Total_Estimated_Lmax_Range": "$30B ~ $60B+",
+    "Quantification_Notes": "현행 규제 흐름(DORA, EU AI Act)을 반영한 가장 높은 수준의 리스크. 단순 기술 문제가 아닌 '국가적 인프라 위협'으로 해석하여 최대치 산정 필요. (Proven: Researcher 개인 메모리 - #2)",
+    "Provenance_Source": "Researcher 개인 메모리 | DORA 및 EU AI Act",
+    "Risk_Level": "Catastrophic"
+  },
+  {
+    "Scenario_ID": "RSC-005",
+    "Title": "내부 지식 사일로(Silo) 기반의 비효율적 의사결정 (Governance Failure)",
+    "Category": "시스템적 결함 및 기회비용 손실 (Systemic Deficiency/Opportunity Cost)",
+    "Root_Cause": "데이터가 여러 부서 시스템에 파편화되어 있고, 통합된 AI 분석을 할 수 없어(Knowledge Silo Depth), 시장의 중대한 변화를 놓치고 비효율적인 제품 개발 결정만 내린 경우.",
+    "Relevant_Regulation": ["Internal Governance Standards", "Business Continuity Planning"],
+    "Impact_Metrics": {
+      "Operational_Shutdown_Days": 0,
+      "Daily_Lmax_Estimate": "$1M - $5M (지연된 시장 진입으로 인한 일일 기회비용 손실)",
+      "Regulatory_Fine_Range": "N/A",
+      "Litigation_Settlement_Estimate": "최소 $30M - $100M (미래 성장 동력 상실에 대한 투자자 소송 위험)"
+    },
+    "Total_Estimated_Lmax_Range": "$1B ~ $5B+",
+    "Quantification_Notes": "가장 간과하기 쉬운 리스크. 직접적인 벌금은 없으나, '성장의 기회'를 잃는 비용(기회비용)을 재무적으로 계산하여 제시함. (Proven: sessions/2026-05-26)",
+    "Provenance_Source": "sessions/2026-05-26 | Knowledge_Silo_Depth",
+    "Risk_Level": "High"
+  }
+]
