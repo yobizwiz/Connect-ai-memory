@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0",
+  "description": "B2B 리스크 분석을 위한 잠재적 최대 손실액(Lgap) 구조 데이터셋. 5대 치명적 규제 위반 아키타입.",
+  "risk_scenarios": [
+    {
+      "scenario_id": 1,
+      "title": "AI 기반 환각 보고서 제출 사건",
+      "primary_threat": "정보의 무결성 상실 (Data Integrity)",
+      "regulatory_focus": ["Provenance Mandate", "Hallucination Liability"],
+      "root_cause": "출처 불명확한 데이터 사용 및 검증 절차 부재.",
+      "loss_components": {
+        "fine_estimate": "High (Regulatory Body)",
+        "litigation_settlement_estimate": "Very High (Professional Negligence)",
+        "operational_loss_estimate": "Extreme (Loss of Trust/Client Portfolio)"
+      },
+      "lgap_range": "$5,000,000 - $20,000,000+",
+      "provenance": "[근거: sessions/2026-05-26T19-55/researcher.md]"
+    },
+    {
+      "scenario_id": 2,
+      "title": "국경 간 PII 비식별화 실패 사건",
+      "primary_threat": "데이터 주권 침해 (Data Sovereignty)",
+      "regulatory_focus": ["GDPR/HIPAA Compliance", "Cross-border Transfer"],
+      "root_cause": "PII 마스킹 프로세스의 결함 또는 목적 외 데이터 활용.",
+      "loss_components": {
+        "fine_estimate": "Maximum (Global Regulator)",
+        "litigation_settlement_estimate": "Medium to High",
+        "operational_loss_estimate": "High (System Rearchitecture Cost)"
+      },
+      "lgap_range": "$100,000,000 - $3M+",
+      "provenance": "[근거: sessions/2026-05-26T19-48/self-rag] (PII_Leakage_Index)"
+    },
+    {
+      "scenario_id": 3,
+      "title": "핵심 절차 누락으로 인한 감사 실패 사건",
+      "primary_threat": "운영 연속성 위협 (Operational Continuity Risk)",
+      "regulatory_focus": ["Internal Control (SOX) Compliance", "Audit Trail Integrity"],
+      "root_cause": "필수 체크포인트(Critical Checkpoint) 누락 및 프로세스 문서화 미비.",
+      "loss_components": {
+        "fine_estimate": "Medium (Contractual Penalty)",
+        "litigation_settlement_estimate": "Low to Medium",
+        "operational_loss_estimate": "High (Project Restart Cost)"
+      },
+      "lgap_range": "$100,000 - $5M",
+      "provenance": "[근거: sessions/2026-05-28T19-40/researcher.md] (Compliance_Drift_Score)"
+    },
+    {
+      "scenario_id": 4,
+      "title": "전문 영역 경계 침범 자문 사건",
+      "primary_threat": "공신력 및 전문성 리스크 (Reputation Damage)",
+      "regulatory_focus": ["Jurisdiction/Professional Ethics Compliance"],
+      "root_cause": "서비스 제공자의 법적 범위(Scope)에 대한 오해 또는 무리한 확장.",
+      "loss_components": {
+        "fine_estimate": "Medium",
+        "litigation_settlement_estimate": "High (Client Lawsuit)",
+        "operational_loss_estimate": "Medium (Ad Campaign Ban)"
+      },
+      "lgap_range": "$75,000 - $3M",
+      "provenance": "[근거: sessions/2026-05-26T19-59/researcher.md] (Scope_Violation_Flag)"
+    },
+     {
+      "scenario_id": 5,
+      "title": "시스템적 데이터 무결성 상실 사건",
+      "primary_threat": "비즈니스 모델 무효화 (Business Model Nullification)",
+      "regulatory_focus": ["Systemic Risk Management", "Data Governance"],
+      "root_cause": "단일 실패 지점(Single Point of Failure) 발생 및 데이터 추적 불가능.",
+      "loss_components": {
+        "fine_estimate": "Varies (Industry Specific)",
+        "litigation_settlement_estimate": "Very High",
+        "operational_loss_estimate": "Extreme (Market Trust Loss)"
+      },
+      "lgap_range": "$5M - $100M+",
+      "provenance": "[근거: sessions/2026-05-28T19-10/researcher.md] (Systemic Failure Archetype)"
+    }
+  ]
+}
