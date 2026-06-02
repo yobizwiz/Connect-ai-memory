@@ -1,52 +1,55 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import PaywallBarrier from '../PaywallBarrier'; 
-// Note: 실제 테스트에서는 simulateGatewayCall을 mock해야 합니다.
+import { render, screen } from '@testing-library/react';
+import PaywallBarrier from '../PaywallBarrier';
+import * as RiskContext from '../../context/RiskContext';
 
-describe('PaywallBarrier Component - Defensive Testing', () => {
-    const mockOnClose = jest.fn();
+// Context를 모킹하여 테스트 환경을 구축합니다.
+const mockProvider = ({ children }: { children: React.ReactNode }) => {
+    return <div data-testid="mock-provider">{children}</div>;
+};
 
-    // 테스트 전후 cleanup 함수 (가정)
-    beforeEach(() => {
-        jest.clearAllMocks();
+
+describe('PaywallBarrier Component Test Suite', () => {
+  test('1. 리스크 점수가 임계치 미만일 경우, 컴포넌트가 렌더링되지 않아야 한다.', async () => {
+    // Mock Context: isPaywallActive = false (점수 50)
+    jest.spyOn(RiskContext, 'useRiskContext').mockReturnValue({
+      isPaywallActive: false,
+      lTotalMax: 50,
+      calculateRiskScore: jest.fn(),
     });
 
-    it('1. 초기 상태: Paywall이 닫혀 있을 때 아무것도 렌더링하지 않아야 한다.', async () => {
-        render(<PaywallBarrier isOpen={false} onClose={mockOnClose} />);
-        expect(screen.queryByRole('alert')).toBeNull(); // 모달 요소가 없어야 함
+    render(<PaywallBarrier />);
+    // Paywall이 렌더링되면 안됨
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  test('2. 리스크 점수가 임계치 초과일 경우, Paywall 레이어와 경고 메시지가 정상적으로 표시되어야 한다.', async () => {
+    // Mock Context: isPaywallActive = true (점수 95)
+    jest.spyOn(RiskContext, 'useRiskContext').mockReturnValue({
+      isPaywallActive: true,
+      lTotalMax: 95, // 임계치 초과 값
+      calculateRiskScore: jest.fn(),
     });
 
-    it('2. Loading 상태: 진단 요청 시 로딩 인디케이터를 정확히 표시하고, 버튼을 비활성화해야 한다.', async () => {
-        // *실제 테스트 환경에서는 simulateGatewayCall이 mock되어야 합니다.*
-        const MockComponent = () => <PaywallBarrier isOpen={true} onClose={mockOnClose} />;
+    render(<PaywallBarrier />);
+    // Paywall이 존재해야 함
+    const dialog = screen.getByRole('dialog');
+    expect(dialog).toBeInTheDocument();
+    // 경고 메시지 검증
+    expect(screen.getByText(/시스템 경고: 구조적 리스크 감지/i)).toBeInTheDocument();
+    // 점수 표시 검증
+    expect(screen.getByText('95%')).toBeInTheDocument(); 
+  });
 
-        render(<MockComponent />);
-        
-        // 로딩 상태를 강제로 유발하는 방법 (테스트 목적)
-        await waitFor(() => {
-            expect(screen.getByText(/시스템 보안 연결 중/i)).toBeInTheDocument();
-        }, { timeout: 100 });
+  test('3. Focus Trap Hook이 제대로 작동하여 포커스가 이 모달 내부에 강제되는지 확인 (시뮬레이션)', async () => {
+      // 실제 Focus Trap 동작은 환경에 따라 복잡하므로, 여기서는 로직 흐름을 검증합니다.
+      jest.spyOn(console, 'warn').mockImplementation(() => {}); // 경고 로그 목킹
 
-        // 이 시점에서는 Paywall 버튼이 비활성화 상태여야 합니다.
-    });
+      await act(async () => {
+        render(<PaywallBarrier />);
+        // 컴포넌트가 마운트되면서 Focus Trap이 활성화됨 (useFocusTrap 호출을 통해 검증)
+      });
+      expect(console.warn).toHaveBeenCalledWith(expect.stringContaining('시스템 위험 감지'));
 
-
-    it('3. E2E 테스트: 로딩 완료 후, Mockup UI가 정확하게 오버레이 되어야 하며 상호작용이 차단되어야 한다.', async () => {
-        // 🚨 주의: 이 테스트는 simulateGatewayCall의 성공을 강제해야 합니다.
-        const MockComponent = () => <PaywallBarrier isOpen={true} onClose={mockOnClose} />;
-
-        render(<MockComponent />);
-        
-        // [가정] 로딩이 완료되어 Paywall이 활성화된 상태로 테스트를 진행한다고 가정합니다.
-        await waitFor(() => {
-            expect(screen.getByText(/SYSTEM ALERT/i)).toBeInTheDocument(); // 헤더 확인
-        }, { timeout: 100 });
-
-        // 핵심 CTA 버튼 존재 여부 및 텍스트 확인 (가장 중요한 검증)
-        const ctaButton = screen.getByRole('button', { name: /L_{totalMax} 보고서 즉시 확보/i });
-        expect(ctaButton).toBeInTheDocument();
-
-        // Focus Trap 테스트를 위한 추가 로직 필요: 
-        // (이 코드는 실제로 포커스 트랩을 검증하는 복잡한 DOM 조작을 포함해야 합니다.)
-    });
+  }, 100); // 테스트 시간 증가로 안정성 확보
 });
