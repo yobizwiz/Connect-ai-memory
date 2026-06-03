@@ -13,7 +13,7 @@
         "min_fine_estimate_usd": 5000000,
         "max_settlement_estimate_usd": 20000000,
         "loss_type": "Reputational & Professional Liability Loss (Non-Monetary)",
-        "severity_weight": 0.8 // 고위험 가중치
+        "severity_weight": 0.8
       },
       "mitigation_action": "모든 LLM 출력물에 출처(Source Path/Document ID)를 필수적으로 병기하고, 참조 프로세스를 기록하는 감사 추적장치(Audit Trail) 구현."
     },
@@ -27,7 +27,7 @@
         "min_fine_estimate_usd": 100000000,
         "max_settlement_estimate_usd": 500000000,
         "loss_type": "Regulatory Fine & System Re-architecture Cost",
-        "severity_weight": 1.0 // 치명적 고위험 가중치
+        "severity_weight": 1.0
       },
       "mitigation_action": "데이터 입출력 전 단계에서 민감 정보의 유형별 마스킹(Tokenization)을 의무화하고, 국가/지역별 데이터 사용 목적 제한 모듈 구현."
     },
@@ -41,7 +41,7 @@
         "min_fine_estimate_usd": 100000,
         "max_settlement_estimate_usd": 5000000,
         "loss_type": "Operational Loss & Opportunity Cost (System Shutdown)",
-        "severity_weight": 0.7 // 점진적 위협 가중치
+        "severity_weight": 0.7
       },
       "mitigation_action": "규제 변화 감지 시 즉각적인 경고 시스템(Alert System)을 구축하고, 규정 변경에 맞춰 시스템 재검증 및 문서화를 자동화하는 전용 프로세스 도입."
     }
