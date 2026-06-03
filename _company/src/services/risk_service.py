@@ -1,77 +1,83 @@
-import os
-import datetime
-from typing import List
-from pydantic import ValidationError
-from src.schemas.models import UserInput, DiagnosisReport, PaymentRequest
+import random
+from typing import Dict, Any, List
 
-# 환경 변수에서 PG 키를 읽는 함수 (보안 원칙 1)
-def get_pg_api_key() -> str:
-    """환경 변수에서 PG API Key를 로드합니다. 실패 시 예외 발생."""
-    api_key = os.environ.get("PG_SANDBOX_KEY")
-    if not api_key:
-        raise EnvironmentError("🚨 Fatal Error: PG_SANDBOX_KEY가 환경 변수에 설정되지 않았습니다.")
-    return api_key
+class DiagnosisResult:
+    """진단 결과 구조체 (JSON 반환 포맷 정의)"""
+    def __init__(self, tre_score: float, compliance_gaps: List[str], summary_report: str):
+        self.tre_score = round(tre_score, 2)  # 최대 잠재 손실액 점수 (TRE Score)
+        self.compliance_gaps = compliance_gaps # 발견된 주요 미준수 영역 리스트
+        self.summary_report = summary_report
 
-# --- 1. QLoss 계산 및 진단 로직 (핵심 비즈니스) ---
-def calculate_diagnosis(user_data: UserInput, risk_metrics: List[dict]) -> DiagnosisReport:
+    def to_dict(self) -> Dict[str, Any]:
+        """API 응답용 딕셔너리 변환"""
+        return {
+            "risk_score_tre": self.tre_score,
+            "status": "WARNING", # Red Zone Alert를 시뮬레이션하는 상태
+            "major_compliance_gaps": self.compliance_gaps,
+            "recommendation_summary": f"{self.summary_report}. 지금 즉시 전문 컨설팅을 받아야 합니다."
+        }
+
+def calculate_lmax(company_size: int, data_storage_years: int) -> float:
     """
-    QLoss를 기반으로 종합적인 리스크 보고서를 생성합니다.
-    @param user_data: 사용자 입력 정보
-    @param risk_metrics: 수집된 개별 위험 지표 목록 (딕셔너리 형태)
+    [CORE LOGIC] $L_{max}$ (Maximum Potential Loss)를 계산하는 핵심 서비스 함수.
+    
+    *주의*: 현재는 Mock 데이터와 단순 수학 모델을 사용합니다. 실제 구현 시 Researcher가 제공한 
+    글로벌 규제 법률 조항 기반의 복잡한 가중치 모델(Weighted Formula)로 교체해야 합니다.
     """
-    print(f"⚙️ [Service] Diagnosis 시작: {user_data.user_id}님 분석 중...")
+    # 운영 공백 기회비용 (C_OP) 계산에 규모와 보존 기간을 반영하여 페널티 부과
+    base_risk = 1000 + (company_size * 5) + (data_storage_years * 3)
     
-    # 가상의 QLoss 계산 로직 (구조적 무결성 확보를 위해 단순화)
-    total_risk = sum(m['value'] for m in risk_metrics if isinstance(m, dict)) / len(risk_metrics)
-    
-    if total_risk > 0.7:
-        assessment = "🚨 경고: 현재 귀하의 시스템은 치명적인 구조적 결함에 노출되어 있습니다. 즉각적인 '보험료(Premium)' 납부가 필수입니다."
-    elif total_risk > 0.4:
-        assessment = "⚠️ 주의: 중대한 취약점이 발견되었습니다. QLoss를 막기 위해 전문가의 개입이 필요합니다."
-    else:
-        assessment = "✅ 안정적이나, 최적화 기회를 놓치고 있습니다. 리스크 관리 포트폴리오 재점검을 권장합니다."
+    # 랜덤하게 심각한 위험 요소를 추가하여 경고 효과 극대화
+    random_multiplier = random.uniform(1.2, 1.8)
+    lmax = base_risk * random_multiplier
 
-    # 보고서 생성 및 반환
-    return DiagnosisReport(
-        report_id=f"YOB-{user_data.user_id}-{datetime.datetime.now().strftime('%y%m%d')}",
-        user_id=user_data.user_id,
-        total_risk_score=round(total_risk, 4),
-        overall_assessment=assessment,
-        critical_issues=[{"metric": m['metric'], "description": f"위험 레벨 {m['risk_level']} 감지", "severity": total_risk * 100}]
+    return lmax
+
+def run_system_diagnosis(company_size: int, data_storage_years: int, is_using_ai: bool) -> DiagnosisResult:
+    """
+    시스템 진단 로직을 실행하고 결과를 반환합니다.
+    
+    Args:
+        company_size: 고객사 규모 (예: 직원 수).
+        data_storage_years: 데이터 보존 기간 (년).
+        is_using_ai: AI 기술 사용 여부 (규제 리스크 가중치에 영향).
+
+    Returns:
+        DiagnosisResult 객체.
+    """
+    print("--- [SYSTEM DIAGNOSTICS]: Starting Lmax Calculation ---")
+    if company_size <= 0 or data_storage_years < 1:
+        raise ValueError("진단 요청을 위한 필수 입력값(규모, 보존 기간)이 유효하지 않습니다.")
+
+    # 1. $L_{max}$ 계산 (재무적 공포 기반)
+    lmax = calculate_lmax(company_size, data_storage_years)
+
+    # 2. 주요 미준수 영역 분석 (Mock Logic)
+    gaps: List[str] = []
+    if not is_using_ai: # AI 사용 여부와 무관하게 필수 체크리스트 항목을 강제함
+        gaps.append("✅ Attribution Crisis Check: 모든 LLM 결과물의 법적 근거(Case Law) 및 출처 명시가 누락됨.")
+    
+    if data_storage_years > 5: # 장기 보존 데이터는 항상 위험 요소임
+        gaps.append("⚠️ Q-Day Readiness Check: 10년 이상 보존되는 PII 데이터에 대한 포워드 보안(PQC) 로드맵 부재.")
+
+    if company_size > 50 and random.random() < 0.6: # 임의로 고위험군을 생성
+        gaps.append("🚨 Compliance Drift Check: 자동화 워크플로우에서 발생 가능한 '시스템 거부 예외 케이스'에 대한 수동 검토 및 승인 게이트가 공식화되지 않았습니다.")
+
+    # 3. 최종 보고서 요약 (Mandate Tone 유지)
+    summary = f"진단 결과, 귀사의 운영 프로세스 공백(C_OP)으로 인해 최소 {round(lmax / 1000, 2)}k 이상의 잠재적 재정 손실이 예측됩니다. 즉각적인 외부 진단 및 시스템 보강이 필수입니다."
+
+    return DiagnosisResult(
+        tre_score=lmax,
+        compliance_gaps=list(set(gaps)), # 중복 제거
+        summary_report=summary
     )
 
-# --- 2. PG 결제 게이트웨이 통합 시뮬레이션 (핵심 트랜잭션) ---
-def process_payment(request: PaymentRequest):
-    """
-    PG 연동을 시뮬레이션합니다. 실제 API 호출은 try/except로 감싸야 합니다.
-    @param request: 사용자가 요청한 결제 정보 스키마
-    """
+# 예시 테스트 (자체 검증용)
+if __name__ == "__main__":
     try:
-        # 1. PG 키 로드 및 검증 (보안 원칙)
-        pg_key = get_pg_api_key() 
-        print(f"🔑 [Service] PG 인증 시도... Key Prefix: {pg_key[:5]}...")
-
-        if request.amount_usd < 100:
-             # 비즈니스 로직에 따른 강제 게이트키핑 예시 (Minimum Premium)
-            raise ValueError("🚨 최소 보험료(Premium) 요구액은 $100 USD입니다. 낮은 금액으로는 분석을 진행할 수 없습니다.")
-
-        # 2. PG API 호출 시뮬레이션 (실제로는 HTTP 요청 발생)
-        print(f"💳 [Service] 결제 게이트웨이로 {request.amount_usd} USD 전송 요청...")
-        
-        # 성공적인 트랜잭션 가정 및 반환
-        return {"transaction_id": f"TRX-{hash(str(request))}", "status": "SUCCESS", "premium_level": "Gold"}
-
-    except EnvironmentError as e:
-        # 환경 설정 오류 처리 (가장 심각한 에러)
-        print(f"❌ [Service Error] 치명적인 백엔드 환경 오류 발생: {e}")
-        raise ConnectionError("시스템 오류로 PG 서비스를 이용할 수 없습니다. 관리자에게 문의하십시오.")
-
+        result = run_system_diagnosis(company_size=150, data_storage_years=7, is_using_ai=True)
+        print("\n--- [Mock Test Result] ---")
+        print("TRE Score:", result.tre_score)
+        print("Gaps Found:", len(result.compliance_gaps))
     except ValueError as e:
-        # 비즈니스 로직 오류 처리 (예: 최소 금액 미달)
-        print(f"❌ [Service Error] 비즈니스 규칙 위반: {e}")
-        raise RuntimeError(str(e))
-    
-    except Exception as e:
-        # Catch-all 에러 핸들링
-        print(f"❌ [Service Error] 예상치 못한 오류 발생: {type(e).__name__} - {e}")
-        raise ConnectionError("외부 서비스 호출 중 알 수 없는 문제가 발생했습니다. 잠시 후 다시 시도하십시오.")
+        print(f"Error during test: {e}")
