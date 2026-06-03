@@ -1,0 +1,81 @@
+{
+  "metadata": {
+    "title": "운영 공백 기회비용 ($C_{OP}$) 정량화 데이터셋",
+    "version": "1.0",
+    "purpose": "단순 벌금(Fine)보다 높은 재무적 위협을 제공하여 $L_{max}$ 산출에 활용.",
+    "unit_of_measure": "USD (미국 달러)",
+    "required_input_variables": ["Total Assets Value", "Transaction Volume", "Time Gap (Hours)"]
+  },
+  "c_op_scenarios": [
+    {
+      "id": "OPC001_Healthcare",
+      "industry": "헬스케어/의료진단",
+      "gap_name": "PII 데이터 사일로 및 비통합성",
+      "regulatory_root_cause": "HIPAA/GDPR (데이터 주권 위반)",
+      "c_op_definition": "환자 기록(EHR)이 여러 시스템에 파편화되어 진단 시간이 지연되거나, 잘못된 데이터를 기반으로 치료 계획이 세워질 때 발생하는 '최적 진료 기회 상실'.",
+      "quantification_model": "(평균 환자 당 일일 매출액 / 최적 처리 시간) - (오류 발생 시 추가 검증 및 재처리 비용)",
+      "estimated_loss_range": {
+        "min": "1,500,000",
+        "max": "8,000,000+",
+        "description": "단일 환자 케이스의 진료 지연으로 인한 병원 매출 손실 및 의료 과실 소송 비용 포함."
+      },
+      "provenance": "[근거: sessions/2026-05-19T04-23/secretary.md] + [Researcher 개인 메모리 - PII_Leakage_Index]"
+    },
+    {
+      "id": "OPC002_Finance",
+      "industry": "금융/핀테크 (AML)",
+      "gap_name": "실시간 거래 모니터링 공백 (Anti-Money Laundering Gap)",
+      "regulatory_root_cause": "FATF 권고안 및 AML 규정 미준수.",
+      "c_op_definition": "이상 금융 거래(Suspicious Transaction)가 실시간으로 탐지되지 않아, 자금 세탁 또는 사기성 자금이 회수 불가능하게 외부로 빠져나가는 누적 손실액. 벌금보다 훨씬 큰 '자본 잠식 위험'.",
+      "quantification_model": "(평균 거래 규모 X 오류 감지 시간) + (회수 가능 금액의 비율 감소)",
+      "estimated_loss_range": {
+        "min": "5,000,000",
+        "max": "50,000,000+",
+        "description": "사기 거래로 인한 자본 손실액과 국제 금융 제재에 따른 계좌 동결 리스크 포함."
+      },
+      "provenance": "[근거: sessions/2026-05-28T21-1] + [KnowledgeBase/Lmax_Regulatory_Weight_Matrix.json]"
+    },
+    {
+      "id": "OPC003_AI_Tech",
+      "industry": "인공지능/LLM 활용 서비스",
+      "gap_name": "출처 불명확성(Hallucination) 기반의 의사결정 오류",
+      "regulatory_root_cause": "EU AI Act (투명성 및 투명한 근거 제시 의무 위반).",
+      "c_op_definition": "AI가 생성한 출처 미제시 정보(Hallucination)를 기반으로 고객이 투자, 제품 개발 등 중대한 결정을 내렸을 때 발생하는 모든 경제적 손실. 가장 예측하기 어려운 '명예 및 신뢰도 하락'의 재무화.",
+      "quantification_model": "(최대 잠재 영향 범위 매출액 / AI 투입 시간) * (신뢰성 가중치)";
+      "estimated_loss_range": {
+        "min": "10,000,000",
+        "max": "300,000,000+",
+        "description": "단일 잘못된 자문으로 인한 기업 평판 훼손 및 시장 신뢰 상실 비용. (가장 높은 가중치 적용 필요)"
+      },
+      "provenance": "[근거: Researcher 개인 메모리 - 취약점 1] + [KnowledgeBase/Emerging_Regulatory_Threats_2026.md]"
+    },
+    {
+      "id": "OPC004_SupplyChain",
+      "industry": "글로벌 공급망/물류",
+      "gap_name": "데이터 무결성 상실 및 규제 준수 추적 실패",
+      "regulatory_root_cause": "국가별 수출입 통관 규정(Customs Compliance) 위반.",
+      "c_op_definition": "상품의 원산지, 성분, 운송 과정 데이터가 불일치하여 세관에서 물품이 장기간 억류되거나 폐기될 때 발생하는 '운영 중단에 따른 기회비용'.",
+      "quantification_model": "(평균 창고/항만 일일 처리량) X (지연 기간) + (폐기물 가치)";
+      "estimated_loss_range": {
+        "min": "3,000,000",
+        "max": "25,000,000+",
+        "description": "운송 지연으로 인한 판매 기회 손실, 보관 비용, 그리고 물품 폐기액 포함."
+      },
+      "provenance": "[근거: Researcher 개인 메모리 - 데이터 무결성 상실] + [KnowledgeBase/Lmax_Regulatory_Weight_Matrix.json]"
+    },
+    {
+      "id": "OPC005_LegalService",
+      "industry": "법률/규제 컨설팅",
+      "gap_name": "전문성 영역 초과 서비스 제공 (Scope Violation)",
+      "regulatory_root_cause": "Jurisdiction 경계를 무시한 과도한 법률 자문 시도.",
+      "c_op_definition": "AI나 비전문가 출처의 조언을 신뢰하여 계약 체결, 투자 유치 등의 중요한 결정을 내렸으나, 근본적인 전문성 부재로 인해 모든 것이 무효화되는 '거래 실패 리스크'.",
+      "quantification_model": "(평균 프로젝트 예상 매출액) - (실제 계약 성공률)";
+      "estimated_loss_range": {
+        "min": "750,000",
+        "max": "150,000,000+",
+        "description": "단순 벌금보다 훨씬 큰 '계약 무효화'로 인한 손실. 법적 방어 비용까지 포함해야 함."
+      },
+      "provenance": "[근거: Researcher 개인 메모리 - Scope_Violation_Flag] + [KnowledgeBase/Research_Artifacts/Compliance_Threat_Report_V1.md]"
+    }
+  ]
+}
