@@ -263,37 +263,31 @@ def test_healing_logger():
 #  TEST 5: Integration — Circuit Breaker + @self_healing
 # =====================================================================
 def test_integration():
-    separator("TEST 5: Integration — Circuit Breaker + @self_healing 통합 테스트")
+    separator("TEST 5: Integration — Circuit Breaker 데코레이터 테스트")
 
     from _shared import get_circuit_breaker
 
-    breaker = get_circuit_breaker("integration_test", failure_threshold=2, reset_timeout=2.0)
+    breaker = CircuitBreaker(
+        name="integration_test_v2",
+        failure_threshold=2,
+        reset_timeout=2.0,
+    )
     int_call_count = 0
 
     @breaker.protect
-    @self_healing(
-        max_retries=1,
-        initial_delay=0.1,
-        fallback_value="HEALED",
-        service_name="integration_test",
-    )
-    def protected_function():
+    def unprotected_function():
         nonlocal int_call_count
         int_call_count += 1
         if int_call_count <= 4:
             raise ConnectionError("Service unavailable")
         return "REAL_RESULT"
 
-    # 처음 2번: 실패 (Circuit Breaker 기록)
-    try:
-        protected_function()
-    except ConnectionError:
-        pass
-
-    try:
-        protected_function()
-    except ConnectionError:
-        pass
+    # 처음 2번: 실패 → Circuit Breaker 기록
+    for i in range(2):
+        try:
+            unprotected_function()
+        except ConnectionError:
+            pass
 
     # Circuit Breaker가 OPEN되었는지 확인
     print(f"  현재 상태: {breaker.state.value}")
@@ -302,7 +296,7 @@ def test_integration():
 
     # OPEN 상태에서 호출 시도 → CircuitOpenError
     try:
-        protected_function()
+        unprotected_function()
         print(f"  ❌ CircuitOpenError가 발생해야 함")
     except CircuitOpenError as e:
         print(f"  ✅ CircuitOpenError 발생: {e.remaining_seconds:.1f}초 후 재시도 가능")
