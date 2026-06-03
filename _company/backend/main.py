@@ -2,8 +2,15 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 import random
 import time
+import sys
+import os
+
+# Self-Healing 모듈 임포트
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+from _shared import self_healing, classify_error, get_circuit_breaker, HealingLogger
 
 app = FastAPI(title="Yobizwiz Risk Diagnostic API")
+_healing_logger = HealingLogger()
 
 # --- Pydantic Schema for Input Validation (Defensive Programming) ---
 class UserContext(BaseModel):
@@ -19,8 +26,14 @@ class RiskAnalysisResult(BaseModel):
     lmax_calculated: float = Field(..., gt=0.0, description="최대 재무 손실액 ($L_{max}$) (단위: USD)")
     risk_level_message: str = Field(..., description="사용자에게 보여줄 리스크 레벨 메시지")
     is_paywall_triggered: bool = Field(..., description="페이월 결제 모달 활성화 여부 플래그")
+    was_self_healed: bool = Field(False, description="자가 복구를 통해 생성된 결과인지 여부")
 
 # --- Core Business Logic (Lmax Calculation & Status Gauge Update) ---
+@self_healing(
+    max_retries=2,
+    fallback_value=(0.0, 0.0),
+    service_name="calculate_lmax_and_status",
+)
 def calculate_lmax_and_status(context: UserContext) -> tuple[float, float]:
     """
     핵심 비즈니스 로직: 리스크 온톨로지 기반 $L_{max}$ 및 StatusGauge 값 산출.
@@ -40,15 +53,57 @@ def calculate_lmax_and_status(context: UserContext) -> tuple[float, float]:
     return lmax, status_gauge_value
 
 
+# --- Circuit Breaker for the diagnose endpoint ---
+_diagnose_breaker = get_circuit_breaker(
+    name="diagnose_risk_endpoint",
+    failure_threshold=5,
+    reset_timeout=30.0,
+)
+
+# --- 안전한 기본 응답 (fallback) ---
+_SAFE_FALLBACK_RESULT = RiskAnalysisResult(
+    status_gauge_value=0.0,
+    lmax_calculated=0.01,  # gt=0.0 제약 충족
+    risk_level_message="⚠️ 시스템이 자가 복구 중입니다. 잠시 후 다시 시도해 주세요.",
+    is_paywall_triggered=False,
+    was_self_healed=True,
+)
+
+
 @app.post("/api/v1/diagnose-risk", response_model=RiskAnalysisResult)
+@self_healing(
+    max_retries=3,
+    backoff_factor=2.0,
+    fallback_value=None,  # fallback은 아래에서 직접 제어
+    service_name="diagnose_risk",
+)
 async def diagnose_risk(context: UserContext):
     """
     사용자 입력 데이터를 받아 실시간 리스크 진단을 수행하고 결과를 반환합니다.
     이 엔드포인트는 Paywall 로직의 핵심입니다.
+
+    Self-Healing 전략:
+    - ConnectionError/TimeoutError → 지수 백오프 재시도 (최대 3회)
+    - ValidationError → 입력값 보정 후 안전한 기본값 반환
+    - Circuit Breaker OPEN → 즉시 fallback 응답
     """
+    # Circuit Breaker 검사
+    if not _diagnose_breaker.can_execute():
+        _healing_logger.log_recovery(
+            service="diagnose_risk",
+            error_type="CircuitOpenError",
+            action="circuit_breaker_fallback",
+            result="degraded",
+            recovery_time_ms=0,
+        )
+        return _SAFE_FALLBACK_RESULT
+
     try:
         # 1. 비즈니스 규칙 실행 및 데이터 산출
         lmax, status_gauge = calculate_lmax_and_status(context)
+
+        # self_healing fallback이 반환된 경우 (lmax=0, gauge=0)
+        was_healed = (lmax == 0.0 and status_gauge == 0.0 and context.input_risk_score > 0)
 
         # 2. 결과 해석 및 플래그 설정 (Paywall Triggering Logic)
         if lmax > 5000: # 임계값 정의 ($L_{max}$가 높을수록 Paywall 유도 강함)
@@ -57,24 +112,57 @@ async def diagnose_risk(context: UserContext):
         elif status_gauge >= 75.0:
             risk_level = "HIGH: 주의가 필요하며, 전문 진단이 권장됩니다."
             is_paywall = False # 낮은 Lmax라도 게이지만으로 경고 가능
+        elif was_healed:
+            risk_level = "⚠️ 진단 엔진이 자가 복구되어 임시 결과를 반환합니다."
+            is_paywall = False
         else:
             risk_level = "LOW: 현재 리스크 수준은 관리 가능한 범위입니다."
             is_paywall = False
 
         # 3. 최종 결과 모델 반환 (타입 안전성 확보)
-        return RiskAnalysisResult(
+        result = RiskAnalysisResult(
             status_gauge_value=round(status_gauge, 2),
-            lmax_calculated=round(lmax, 2),
+            lmax_calculated=round(max(lmax, 0.01), 2),  # gt=0.0 제약 충족 보장
             risk_level_message=risk_level,
-            is_paywall_triggered=is_paywall
+            is_paywall_triggered=is_paywall,
+            was_self_healed=was_healed,
         )
 
-    except Exception as e:
-        # Catch-all for unexpected errors (Root Cause Analysis 필요 영역)
-        print(f"🚨 Internal Server Error during diagnosis: {e}")
-        raise HTTPException(status_code=500, detail="진단 프로세스 중 예상치 못한 오류가 발생했습니다. 관리자에게 문의하세요.")
+        # Circuit Breaker 성공 기록
+        _diagnose_breaker.record_success()
+        return result
 
-# --- Basic Health Check Endpoint ---
+    except Exception as e:
+        # Circuit Breaker 실패 기록
+        _diagnose_breaker.record_failure(e)
+
+        # 에러 분류에 따른 복구 시도
+        classification = classify_error(e)
+
+        _healing_logger.log_error(
+            service="diagnose_risk",
+            error=e,
+            classification=classification,
+        )
+
+        # 최종 방어: 어떤 에러든 안전한 기본 응답 반환
+        _healing_logger.log_recovery(
+            service="diagnose_risk",
+            error_type=type(e).__name__,
+            action="final_fallback",
+            result="degraded",
+            recovery_time_ms=0,
+        )
+        return _SAFE_FALLBACK_RESULT
+
+# --- Basic Health Check Endpoint (Self-Healing 상태 포함) ---
 @app.get("/health")
 def check_health():
-    return {"status": "OK", "service": "Yobizwiz Risk Diagnostic Engine"}
+    return {
+        "status": "OK",
+        "service": "Yobizwiz Risk Diagnostic Engine",
+        "self_healing": {
+            "circuit_breaker_state": _diagnose_breaker.state.value,
+            "recovery_stats": _healing_logger.get_recovery_stats("diagnose_risk"),
+        },
+    }

@@ -1,9 +1,18 @@
 import random
+import sys
+import os
 from fastapi import FastAPI, HTTPException, status
 from pydantic import BaseModel, Field
 # Assume schemas are available in the same directory for demonstration
 from .schemas import ThreatInput, OutputSchema 
 from typing import Optional
+
+# Self-Healing 모듈 임포트
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+from _shared import self_healing, classify_error, HealingLogger
+from _shared.error_classifier import ErrorCategory
+
+_healing_logger = HealingLogger()
 
 # --- [1. Error Handling Module] ---
 class CalculationError(Exception):
@@ -12,11 +21,96 @@ class CalculationError(Exception):
         super().__init__(message)
         self.status_code = status_code
 
-# --- [2. Scoring Engine Core Logic] ---
+# CalculationError를 DEGRADABLE로 등록 (자가 복구 시 기본값 fallback)
+from _shared import register_custom_error
+from _shared.error_classifier import RecoveryStrategy
+register_custom_error(
+    CalculationError,
+    ErrorCategory.DEGRADABLE,
+    RecoveryStrategy.FALLBACK_TO_DEFAULT,
+    max_retries=0,
+    description="계산 오류 — 안전한 기본값으로 fallback"
+)
+
+
+# --- [2. Input Sanitization (자가 보정)] ---
+def sanitize_input(input_data: dict) -> dict:
+    """
+    입력 데이터를 자동 보정합니다 (Self-Healing: sanitize_and_retry).
+
+    보정 규칙:
+    - 필수 필드 누락 시 안전한 기본값 삽입
+    - 숫자 범위 초과 시 클리핑
+    - 타입 불일치 시 자동 변환 시도
+    """
+    sanitized = input_data.copy() if isinstance(input_data, dict) else {}
+    was_sanitized = False
+
+    # 필수 필드 기본값 보정
+    defaults = {
+        "company_annual_revenue_usd": 10000,
+        "pii_exposure_count": 0,
+        "compliance_violation_likelihood": 0.0,
+        "critical_workflow_gap_count": 0,
+        "process_failure_cost_estimate": 0,
+        "ai_hallucination_dependency_score": 0.0,
+    }
+
+    for field, default_val in defaults.items():
+        if field not in sanitized or sanitized[field] is None:
+            sanitized[field] = default_val
+            was_sanitized = True
+            _healing_logger.log_recovery(
+                service="threat_calculator",
+                error_type="MissingField",
+                action=f"sanitize_field_{field}",
+                result="degraded",
+                recovery_time_ms=0,
+                details={"field": field, "default_applied": default_val}
+            )
+
+    # 숫자 범위 클리핑
+    if isinstance(sanitized.get("compliance_violation_likelihood"), (int, float)):
+        sanitized["compliance_violation_likelihood"] = max(0.0, min(1.0, float(sanitized["compliance_violation_likelihood"])))
+
+    if isinstance(sanitized.get("ai_hallucination_dependency_score"), (int, float)):
+        sanitized["ai_hallucination_dependency_score"] = max(0.0, min(1.0, float(sanitized["ai_hallucination_dependency_score"])))
+
+    # 타입 변환 시도
+    for numeric_field in ["company_annual_revenue_usd", "pii_exposure_count", "process_failure_cost_estimate"]:
+        try:
+            sanitized[numeric_field] = float(sanitized[numeric_field])
+        except (ValueError, TypeError):
+            sanitized[numeric_field] = defaults[numeric_field]
+            was_sanitized = True
+
+    if was_sanitized:
+        _healing_logger.log_recovery(
+            service="threat_calculator",
+            error_type="InputValidation",
+            action="input_sanitization_complete",
+            result="degraded",
+            recovery_time_ms=0,
+        )
+
+    return sanitized
+
+
+# --- [3. Scoring Engine Core Logic] ---
+@self_healing(
+    max_retries=1,
+    fallback_value=0.0,
+    service_name="threat_calculator.calculate_tre_score",
+)
 def calculate_tre_score(input_data: ThreatInput) -> float:
     """
     Threat Risk Index (TRE) 점수를 계산하는 핵심 비즈니스 로직.
     가중치(Weights)와 위험 요소 간의 상관관계에 따라 점수가 결정됩니다.
+
+    Self-Healing 전략:
+    - 필수 데이터 누락 → 자동 보정(sanitization) 후 재계산
+    - CalculationError → 안전한 기본 점수(0.0) 반환
+    - 예상 외 에러 → fallback 0.0 반환
 
     [기술적 검증 포인트]
     1. 필수 데이터 누락 시 즉시 예외 발생 유도.
@@ -24,9 +118,28 @@ def calculate_tre_score(input_data: ThreatInput) -> float:
     3. 가중치는 주기적으로 조정될 수 있는 상수(Constants)로 관리해야 합니다.
     """
     try:
+        # --- Self-Healing: 입력값 자동 보정 ---
+        if isinstance(input_data, dict):
+            input_data = sanitize_input(input_data)
+
         # --- A. 데이터 유효성 검사 및 기본 점수 초기화 ---
-        if input_data.get("company_annual_revenue_usd") is None or input_data["company_annual_revenue_usd"] < 1000:
-            raise CalculationError("회사 매출액 정보가 필수적이거나 유효하지 않습니다. 기준점 확보 필요.", status_code=422)
+        revenue = input_data.get("company_annual_revenue_usd") if isinstance(input_data, dict) else getattr(input_data, "company_annual_revenue_usd", None)
+        if revenue is None or revenue < 1000:
+            # Self-Healing: 기존에는 여기서 CalculationError를 발생시켰지만,
+            # 이제는 자동 보정 후 계속 진행합니다.
+            _healing_logger.log_recovery(
+                service="threat_calculator",
+                error_type="CalculationError",
+                action="revenue_auto_corrected",
+                result="degraded",
+                recovery_time_ms=0,
+                details={"original_revenue": revenue, "corrected_to": 10000}
+            )
+            if isinstance(input_data, dict):
+                input_data["company_annual_revenue_usd"] = 10000
+                revenue = 10000
+            else:
+                revenue = 10000
 
         # --- B. 리스크별 가중치 정의 (Weighting Factors - Hardcoded for now, should be config) ---
         W_PII = 0.35  # PII Leakage는 가장 흔하고 치명적인 초기 위험 요소
@@ -35,24 +148,33 @@ def calculate_tre_score(input_data: ThreatInput) -> float:
         W_REVENUE = 0.15 # 회사 규모에 따른 리스크 민감도 (Revenue가 높으면 리스크 지수 배율 증가)
 
         # --- C. 개별 위험 점수 계산 및 정규화 (Normalization & Scoring) ---
-        # Score는 [0, 1] 범위로 먼저 산출하고, 나중에 가중치를 곱합니다.
+        # Helper: 안전한 값 추출 (KeyError 방지)
+        def safe_get(key, default=0.0):
+            if isinstance(input_data, dict):
+                val = input_data.get(key, default)
+            else:
+                val = getattr(input_data, key, default)
+            try:
+                return float(val) if val is not None else default
+            except (ValueError, TypeError):
+                return default
 
         # 1. PII Risk Component (가장 높은 영향력)
-        pii_score = input_data["pii_exposure_count"] * 0.05 + input_data["compliance_violation_likelihood"] * 0.6
+        pii_score = safe_get("pii_exposure_count") * 0.05 + safe_get("compliance_violation_likelihood") * 0.6
         if pii_score > 1.0: pii_score = 1.0 # 상한선 제한
 
         # 2. Audit/Process Risk Component (가장 구조적 결함을 측정)
-        audit_score = min(input_data["critical_workflow_gap_count"] * 0.2, 0.8) + input_data["process_failure_cost_estimate"] / 1_000_000 # Cost를 기준으로 스케일 조정
+        audit_score = min(safe_get("critical_workflow_gap_count") * 0.2, 0.8) + safe_get("process_failure_cost_estimate") / 1_000_000
         if audit_score > 1.0: audit_score = 1.0
 
         # 3. AI Hallucination Risk Component
-        ai_score = input_data["ai_hallucination_dependency_score"] * 0.9 # 의존도가 높을수록 점수 증가
+        ai_score = safe_get("ai_hallucination_dependency_score") * 0.9
 
         # --- D. 최종 가중 평균 산출 (Final Weighted Average) ---
         raw_tre_score = (pii_score * W_PII + audit_score * W_AUDIT + ai_score * W_AI)
         
         # 회사 규모에 따른 민감도 조절 (Revenue가 높을수록 위험은 더 커진다 가정)
-        revenue_factor = 1.0 + (input_data["company_annual_revenue_usd"] / 100_000_000) * W_REVENUE
+        revenue_factor = 1.0 + (revenue / 100_000_000) * W_REVENUE
         final_tre_score = raw_tre_score * revenue_factor
 
         # 점수 클리핑 및 최종 반환 (최대 100점 스케일로 조정 가능하도록 처리)
@@ -60,11 +182,35 @@ def calculate_tre_score(input_data: ThreatInput) -> float:
 
 
     except CalculationError as e:
-        raise HTTPException(status_code=e.status_code, detail=str(e))
+        _healing_logger.log_error(
+            service="threat_calculator",
+            error=e,
+            classification=classify_error(e),
+        )
+        # Self-Healing: CalculationError는 기본 점수 반환
+        _healing_logger.log_recovery(
+            service="threat_calculator",
+            error_type="CalculationError",
+            action="fallback_to_zero_score",
+            result="degraded",
+            recovery_time_ms=0,
+        )
+        return 0.0  # 안전한 기본 점수
     except Exception as e:
         # 예상치 못한 시스템 오류 처리 (Root Cause 분석 필수!)
-        print(f"CRITICAL ERROR during TRE calculation: {e}") 
-        raise HTTPException(status_code=500, detail="서버 내부 로직 오류. 개발팀에 문의하세요.")
+        _healing_logger.log_error(
+            service="threat_calculator",
+            error=e,
+            classification=classify_error(e),
+        )
+        _healing_logger.log_recovery(
+            service="threat_calculator",
+            error_type=type(e).__name__,
+            action="fallback_to_zero_score",
+            result="degraded",
+            recovery_time_ms=0,
+        )
+        return 0.0  # 안전한 기본 점수 (HTTPException 대신)
 
 
 def determine_risk_level(score: float) -> tuple[str, str, str]:
@@ -81,6 +227,11 @@ def determine_risk_level(score: float) -> tuple[str, str, str]:
         return "Red", warning, "Tier 2 - Prevention"
 
 
+@self_healing(
+    max_retries=1,
+    fallback_value=None,
+    service_name="threat_calculator.generate_report",
+)
 def generate_report(input_data: ThreatInput):
     """메인 실행 함수: 점수 계산 및 최종 리포트 구조화."""
     try:
@@ -102,17 +253,29 @@ def generate_report(input_data: ThreatInput):
         # 이미 계산 엔진에서 처리된 에러는 그대로 전파
         raise e
     except Exception as e:
-        # 만약 여기에서도 실패한다면, 가장 안전한 기본값을 반환하며 로그를 남긴다.
-        print(f"FATAL UNHANDLED ERROR in report generation: {e}")
+        # Self-Healing: 안전한 기본값 반환 + 구조화된 로깅
+        _healing_logger.log_error(
+            service="threat_calculator.generate_report",
+            error=e,
+            classification=classify_error(e),
+        )
+        _healing_logger.log_recovery(
+            service="threat_calculator.generate_report",
+            error_type=type(e).__name__,
+            action="fallback_to_safe_report",
+            result="degraded",
+            recovery_time_ms=0,
+        )
         return {
             "threat_risk_index": 0.0,
             "risk_level": "Green",
-            "systemic_warning_message": "시스템 분석 오류로 임시 값을 반환합니다. 다시 시도해주세요.",
-            "suggested_tier": "Tier 0 - None"
+            "systemic_warning_message": "⚠️ 자가 복구 완료: 시스템 분석 중 에러가 발생하여 안전한 기본값을 반환합니다.",
+            "suggested_tier": "Tier 0 - None",
+            "_was_self_healed": True,
         }
 
 
-# --- [3. FastAPI Application Setup (Mock Endpoint)] ---
+# --- [4. FastAPI Application Setup (Mock Endpoint)] ---
 app = FastAPI(title="yobizwiz TRE Calculator API")
 
 @app.post("/api/v1/calculate-threat", response_model=dict)

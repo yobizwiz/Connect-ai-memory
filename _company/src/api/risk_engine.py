@@ -2,6 +2,19 @@ from typing import Dict, Any
 from pydantic import BaseModel, Field, ValidationError
 import random
 import time
+import sys
+import os
+
+# Self-Healing 모듈 임포트
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+from _shared import self_healing, classify_error, get_circuit_breaker, HealingLogger
+
+_healing_logger = HealingLogger()
+_risk_breaker = get_circuit_breaker(
+    name="risk_analysis_api",
+    failure_threshold=5,
+    reset_timeout=30.0,
+)
 
 # --- 1. Pydantic 스키마 정의 (API Contract) ---
 # 입력 데이터의 형식을 강제하여 안정성 확보가 최우선입니다.
@@ -19,8 +32,27 @@ class RiskAnalysisReport(BaseModel):
     estimated_loss_usd: float = Field(..., gt=0, description="미해결 리스크로 인한 예상 재무 손실액 (USD)") # [근거: 🏢 회사 정체성]
     time_discount_rate: float = Field(..., ge=0.01, le=0.5, description="시간적 기회비용 할인율 (0.0~0.5)") # [근거: 🏢 회사 정체성]
     report_details: Dict[str, Any] = Field(..., description="추가 분석 상세 내역")
+    was_self_healed: bool = Field(False, description="자가 복구를 통해 생성된 결과인지 여부")
+
+# 안전한 기본 응답 (fallback)
+_SAFE_REPORT_FALLBACK = RiskAnalysisReport(
+    risk_level="Unknown",
+    is_compliant=True,
+    estimated_loss_usd=1.0,  # gt=0 제약 충족
+    time_discount_rate=0.01,  # ge=0.01 제약 충족
+    report_details={
+        "status": "self_healed",
+        "message": "⚠️ 자가 복구 완료: 분석 엔진 에러 발생 후 안전한 기본값을 반환합니다."
+    },
+    was_self_healed=True,
+)
 
 # --- 2. 비즈니스 로직 핵심 함수 ---
+@self_healing(
+    max_retries=1,
+    fallback_value=0.0,
+    service_name="risk_engine.calculate_risk_score",
+)
 def calculate_risk_score(payload: RiskInputPayload) -> float:
     """
     입력 페이로드 기반으로 복합적인 위험 점수를 계산합니다.
@@ -45,6 +77,11 @@ def calculate_risk_score(payload: RiskInputPayload) -> float:
 
     return base_score
 
+@self_healing(
+    max_retries=1,
+    fallback_value=None,
+    service_name="risk_engine.generate_report",
+)
 def generate_report(payload: RiskInputPayload) -> tuple[str, float, float, dict]:
     """
     위험 점수를 기반으로 최종 보고서의 핵심 변수들을 산출합니다.
@@ -84,11 +121,33 @@ import json # JSON 직렬화 테스트용 임포트
 router = APIRouter(prefix="/v1/risk", tags=["RiskAnalysis"])
 
 @router.post("/analyze", response_model=RiskAnalysisReport)
+@self_healing(
+    max_retries=2,
+    backoff_factor=2.0,
+    fallback_value=None,  # fallback은 아래에서 직접 제어
+    service_name="risk_engine.analyze_risk_endpoint",
+)
 async def analyze_risk(payload: RiskInputPayload):
     """
     사용자 데이터를 받아 통합 리스크 분석을 수행하고 보고서를 반환합니다.
     이 함수는 모든 비즈니스 로직의 중앙 통제 지점입니다.
+
+    Self-Healing 전략:
+    - Circuit Breaker OPEN → 즉시 안전한 기본 보고서 반환
+    - 계산 에러 → 안전한 기본값 fallback
+    - 모든 실패 → was_self_healed=True와 함께 기본 보고서 반환
     """
+    # Circuit Breaker 검사
+    if not _risk_breaker.can_execute():
+        _healing_logger.log_recovery(
+            service="risk_engine",
+            error_type="CircuitOpenError",
+            action="circuit_breaker_fallback",
+            result="degraded",
+            recovery_time_ms=0,
+        )
+        return _SAFE_REPORT_FALLBACK
+
     try:
         # 1. 위험 점수 계산 및 상세 보고서 생성
         risk_level, estimated_loss, time_discount, report_details = generate_report(payload)
@@ -97,16 +156,37 @@ async def analyze_risk(payload: RiskInputPayload):
         final_report = RiskAnalysisReport(
             risk_level=risk_level,
             is_compliant=False, # 초기에는 항상 의심스러운 상태로 설정하여 긴급성 부여 [근거: 🏢 회사 정체성]
-            estimated_loss_usd=round(estimated_loss, 2),
-            time_discount_rate=round(time_discount, 4),
-            report_details=report_details
+            estimated_loss_usd=round(max(estimated_loss, 1.0), 2),  # gt=0 제약 충족 보장
+            time_discount_rate=round(max(min(time_discount, 0.5), 0.01), 4),  # 범위 보장
+            report_details=report_details,
+            was_self_healed=False,
         )
+
+        # Circuit Breaker 성공 기록
+        _risk_breaker.record_success()
         return final_report
 
     except Exception as e:
-        # 예상치 못한 시스템 오류에 대한 방어 로직 (Robustness)
-        print(f"CRITICAL API FAILURE: {e}")
-        raise HTTPException(status_code=500, detail="System internal error during analysis. Check logs.")
+        # Circuit Breaker 실패 기록
+        _risk_breaker.record_failure(e)
+
+        # 에러 분류 및 로깅
+        classification = classify_error(e)
+        _healing_logger.log_error(
+            service="risk_engine",
+            error=e,
+            classification=classification,
+        )
+
+        # 최종 방어: 안전한 기본 보고서 반환
+        _healing_logger.log_recovery(
+            service="risk_engine",
+            error_type=type(e).__name__,
+            action="final_fallback",
+            result="degraded",
+            recovery_time_ms=0,
+        )
+        return _SAFE_REPORT_FALLBACK
 
 
 # --- 4. 테스트용 Mocking 함수 (테스트 스켈레톤과 연동되도록 설계) ---
