@@ -1,0 +1,35 @@
+{
+    "metadata": {
+        "description": "최대 잠재 손실액 ($L_{max}$) 계산을 위한 글로벌 규제 위반 유형별 가중치 및 재무적 패널티 매트릭스. 모든 수치는 공포(Fear of Loss) 유발에 최적화되도록 설계됨.",
+        "provenance_source": "Researcher 개인 메모리, Self-RAG 검증 지식, 2026년 규제 트렌드 분석 (Zero-Speculation)",
+        "version": "1.0",
+        "last_updated": "2026-06-03"
+    },
+    "risk_factors": [
+        {
+            "category": "데이터 개인정보보호 위반 (Data Privacy Breach)",
+            "regulations": [
+                {"name": "GDPR", "violation_type": "PII Leakage/Misuse (Article 32, 5)", "penalty_metric": "최대 매출액의 4% 또는 €20M 중 높은 금액.", "severity_weighting": 0.9, "notes": "위반 대상 데이터 수와 영향 범위에 따라 가중치(Multiplier)가 복합 적용됨."},
+                {"name": "CCPA/CPRA", "violation_type": "Right to Know / Opt-Out Failure", "penalty_metric": "사건당 $750 (또는 집단 소송 합의액).", "severity_weighting": 0.6, "notes": "주민 동의 및 데이터 처리 목적 제한 위반에 초점."},
+                {"name": "HIPAA (미국 의료)", "violation_type": "PHI Breach (Protected Health Information)", "penalty_metric": "$50,000 ~ $2M+ (위반 심각도별 단계적 부과).", "severity_weighting": 0.8, "notes": "특히 비식별화(De-identification) 실패 시 가중치 극대화."}
+            ],
+            "data_variables": ["PII_Leakage_Index", "Data_Volume_Affected"]
+        },
+        {
+            "category": "AI 시스템 컴플라이언스 위반 (AI System Compliance)",
+            "regulations": [
+                {"name": "EU AI Act", "violation_type": "High-Risk Classification Failure / Lack of Traceability", "penalty_metric": "시장 출시 금지 및 최대 350만 유로의 벌금. 위반 사유에 따라 가중치 차등 적용.", "severity_weighting": 1.2, "notes": "가장 높은 가중치를 부여해야 함. '설계 단계부터 컴플라이언스'를 요구함."},
+                {"name": "DORA (금융 부문)", "violation_type": "ICT Risk Management Failure", "penalty_metric": "운영 공백 기회비용 ($C_{OP}$) 기반의 과징금 및 시스템 재구축 비용.", "severity_weighting": 1.1, "notes": "금융기관에 특화되었으나 모든 기업의 '운영 연속성' 위협으로 확장 적용 가능."}
+            ],
+            "data_variables": ["Model_Opacity_Score", "Critical_System_Dependency"]
+        },
+        {
+            "category": "데이터 거버넌스/출처 문제 (Governance & Provenance)",
+            "regulations": [
+                {"name": "General Law / Professional Standard", "violation_type": "Hallucination & Source Attribution Deficit", "penalty_metric": "$25,000 ~ $10M+ (전문가 배상 책임 + 명예 실추 비용).", "severity_weighting": 1.3, "notes": "벌금보다 '신뢰성(Trust)' 상실이 가장 큰 위험 요소로 정의되어야 함."},
+                {"name": "Compliance Drift", "violation_type": "Critical Checkpoint Failure (절차적 하자)", "penalty_metric": "$100K ~ $5M (프로젝트 재시작 비용 + 계약 위약금).", "severity_weighting": 0.9, "notes": "단순 오류가 아닌 '비즈니스 연속성'에 대한 시스템적 결함으로 접근."}
+            ],
+            "data_variables": ["Source_Attribution_Deficit", "Process_Gap_Count"]
+        }
+    ]
+}
