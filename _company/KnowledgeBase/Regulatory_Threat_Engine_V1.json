@@ -28,9 +28,7 @@
               "risk_multiplier_tau": 2.5, 
               "lmax_notes": "주요 규제 지역의 데이터 주권 침해로 인한 시스템 재구축 비용 포함."
             }
-          ],
-          "[근거: sessions/2026-05-31T12-52/youtube.md, Researcher 개인 메모리]"
-        },
+          ]},
         {
           "acronym": "HIPAA",
           "full_name": "Health Insurance Portability and Accountability Act (US)",
@@ -48,9 +46,7 @@
               "risk_multiplier_tau": 1.5, 
               "lmax_notes": "최소한의 내부 통제 로그 부재로 인한 감사 지적 및 재발 방지 비용."
             }
-          ],
-          "[근거: sessions/2026-05-31T12-52/youtube.md, KnowledgeBase/AI_Health_Regulatory_Threat_Model_V1.json]"
-        }
+          ]}
       ]
     },
     {
@@ -73,9 +69,7 @@
               "risk_multiplier_tau": 2.0, 
               "lmax_notes": "시장 출시 전 필수적인 위험 예측 및 검증 프로세스 부재로 인한 리콜 비용."
             }
-          ],
-          "[근거: Researcher 개인 메모리 - #1, #2, sessions/2026-05-31T13:37]"
-        }
+          ]}
       ]
     },
     {
@@ -92,9 +86,7 @@
               "risk_multiplier_tau": 1.9, 
               "lmax_notes": "데이터 삭제 요청에 대한 시스템적 대응 실패 및 재발 방지 비용."
             }
-          ],
-          "[근거: Researcher 개인 메모리]"
-        },
+          ]},
          {
           "acronym": "Compliance Drift",
           "full_name": "내부 통제/절차 미준수 (General)",
@@ -106,9 +98,7 @@
               "risk_multiplier_tau": 2.8, 
               "lmax_notes": "단순 벌금보다 프로젝트 전체 재시작 및 계약 파기로 인한 손실액이 핵심."
             }
-          ],
-          "[근거: sessions/2026-05-26T19-40/, Researcher 개인 메모리]"
-        }
+          ]}
       ]
     }
   ]

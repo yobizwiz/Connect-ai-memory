@@ -415,3 +415,45 @@ function fmt(n) {
     if (n >= 1000) return '$' + (n / 1000).toFixed(0) + 'K';
     return '$' + n;
 }
+
+
+// ============================================================
+// EMAIL CAPTURE
+// ============================================================
+
+document.addEventListener('DOMContentLoaded', () => {
+    const btnNotify = document.getElementById('btn-notify');
+    if (!btnNotify) return;
+
+    btnNotify.addEventListener('click', () => {
+        const input = document.getElementById('email-input');
+        const status = document.getElementById('email-status');
+        const email = input.value.trim();
+
+        // Validate
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email || !emailRegex.test(email)) {
+            status.textContent = '⚠️ Please enter a valid email address.';
+            status.className = 'email-status error';
+            return;
+        }
+
+        // Save to localStorage (later: send to backend/API)
+        const leads = JSON.parse(localStorage.getItem('yobizwiz_leads') || '[]');
+        leads.push({
+            email,
+            timestamp: new Date().toISOString(),
+            industry: state.companyInfo.industry || '',
+            employees: state.companyInfo.employees || 0,
+        });
+        localStorage.setItem('yobizwiz_leads', JSON.stringify(leads));
+
+        // Success
+        status.textContent = '✅ You\'re on the list! We\'ll notify you when the full report launches.';
+        status.className = 'email-status success';
+        input.value = '';
+        btnNotify.textContent = 'Signed Up ✓';
+        btnNotify.disabled = true;
+        btnNotify.style.opacity = '0.6';
+    });
+});

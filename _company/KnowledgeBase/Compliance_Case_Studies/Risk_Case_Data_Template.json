@@ -25,12 +25,6 @@
         "legal_source": "[실제 법률/규정 출처 명시]",
         "reporting_agency": "[보고 기관명 및 보고서 URL]"
       }
-    },
-    {
-      "case_id": 2,
-      "title": "...",
-      "primary_regulation": "...",
-      // ... 나머지 케이스는 동일한 구조로 반복 (총 5개)
     }
   ]
 }

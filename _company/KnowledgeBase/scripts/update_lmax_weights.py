@@ -110,6 +110,8 @@ def main():
             print("\n[SYSTEM CHECK] Lmax Matrix Update successful and committed.")
         else:
             print("\n[FAIL] Lmax Matrix Update failed due to schema or I/O error.")
+    except Exception as e:
+        print(f"\n[FAIL] Unexpected error: {e}")
 
 
 if __name__ == "__main__":

@@ -39,7 +39,7 @@
         "root_cause": "모델 학습 데이터의 문화적 편향 또는 법률 미반영.",
         "estimated_Lmax": "$2M - $10M+"
       },
-      "provenance": "[근거: Research_Artifacts\Compliance_Threat_Report_V1.md]"
+      "provenance": "Research_Artifacts/Compliance_Threat_Report_V1.md"
     }
   ]
 }

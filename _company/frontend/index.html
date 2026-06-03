@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yobizwiz — Free Compliance Risk Assessment</title>
     <meta name="description" content="Free 20-question compliance self-assessment. Get your risk score, see real enforcement cases, and receive actionable remediation guides.">
+    <!-- OG Tags for social sharing -->
+    <meta property="og:title" content="Is Your Company One Breach Away From a Million-Dollar Fine?">
+    <meta property="og:description" content="Free 2-minute compliance self-assessment. Based on 44 real US enforcement cases. Get your risk score instantly.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yobizwiz.com">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Yobizwiz — Free Compliance Risk Assessment">
+    <meta name="twitter:description" content="Answer 20 questions. See your compliance score. Based on real FTC, HIPAA, CCPA enforcement data.">
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%237c3aed'/%3E%3Cstop offset='100%25' stop-color='%2306b6d4'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='50' cy='50' r='45' fill='url(%23g)'/%3E%3Ctext x='50' y='65' text-anchor='middle' font-size='50' fill='white' font-weight='bold'%3EY%3C/text%3E%3C/svg%3E">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -26,7 +36,7 @@
         </nav>
         <div class="hero-content">
             <div class="hero-badge">FREE SELF-ASSESSMENT</div>
-            <h1>Is your company one satisfying away from a <span class="gradient-text">million-dollar fine?</span></h1>
+            <h1>Is your company one breach away from a <span class="gradient-text">million-dollar fine?</span></h1>
             <p class="hero-subtitle">
                 Answer 20 questions. Get your compliance score instantly.<br>
                 See real enforcement cases from companies like yours.
@@ -213,7 +223,14 @@
                     <li>✅ Regulatory citation for each requirement</li>
                     <li>✅ Exportable PDF compliance report</li>
                 </ul>
-                <button class="btn-upgrade">Get Full Report — Coming Soon</button>
+                <div id="email-capture" class="email-capture">
+                    <p class="email-cta">Get notified when the full report launches — plus a <strong>free risk summary PDF</strong>:</p>
+                    <div class="email-form">
+                        <input type="email" id="email-input" placeholder="you@company.com" class="email-input">
+                        <button id="btn-notify" class="btn-upgrade">Notify Me →</button>
+                    </div>
+                    <p id="email-status" class="email-status"></p>
+                </div>
             </div>
         </div>
     </section>
@@ -222,9 +239,16 @@
     <!-- FOOTER -->
     <!-- ============================================ -->
     <footer class="footer">
-        <p>© 2024 Yobizwiz. Data sourced from FTC, HHS OCR, SEC, California AG, and IBM Cost of Data Breach Report 2024.</p>
+        <div class="footer-links">
+            <a href="privacy.html">Privacy Policy</a>
+            <span class="footer-divider">|</span>
+            <a href="terms.html">Terms of Service</a>
+        </div>
+        <p>© 2025 Yobizwiz. Data sourced from FTC, HHS OCR, SEC, California AG, and IBM Cost of Data Breach Report 2024.</p>
     </footer>
 
     <script src="app.js"></script>
+    <script defer src="/_vercel/insights/script.js"></script>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
 </body>
 </html>

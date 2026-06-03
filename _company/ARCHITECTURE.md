@@ -1,30 +1,82 @@
-# 🏛️ Yobizwiz Global Architecture Mandate (v3.0)
+# ⚠️ 모든 에이전트 필독 — 프로젝트 아키텍처 (2026-06-03 확정)
 
-## 🎯 목적: 시스템 무결성(Structural Integrity) 및 코드 품질의 절대적 수호
-본 문서는 모든 개발자, 디자이너, 그리고 에이전트가 반드시 준수해야 하는 코딩 아키텍처 규정집입니다. 단 한 줄의 코드도 비즈니스 로직을 깨거나, 구조적 취약점을 유발해서는 안 됩니다.
+> **이 파일을 덮어쓰지 마세요. 읽기만 하세요.**
 
----
+## 절대 규칙
+1. `backend/`, `services/`, `src/`, `yobizwiz_backend/` 폴더의 파일을 수정하지 마세요. **DEPRECATED** 입니다.
+2. 새 파일을 만들지 마세요. 기존 파일만 수정하세요.
+3. `random()`, `random.uniform()`, 하드코딩된 숫자로 계산하지 마세요.
+4. **이 파일(ARCHITECTURE.md)을 수정하거나 덮어쓰지 마세요.**
 
-### 📜 1. 최우선 지침: Knowledge Base와 Design Principle 우선순위
-모든 신규 기능 구현 또는 기존 모듈 수정 시, 개발자는 다음 순서로 요구사항을 파악하고 검증해야 합니다.
-1. **`ARCHITECTURE.md`**: 현재 아키텍처 규정 및 변경 사항 확인 (최우선 참조).
-2. **`KnowledgeBase/regulatory_standards_guide.md`**: 핵심 도메인 지식과 규제 로직의 근거를 파악합니다.
-3. **사용자 요구사항**: 최종 사용자 가치를 고려하여 기능을 구현합니다.
+## 현재 소스 오브 트루스 (Source of Truth)
 
-### 🚧 2. 접근 금지 구역 (Hard Guardrails)
-**절대적으로, 어떤 경우에도 `deprecated/` 폴더 내의 파일이나 로직을 읽거나 수정해서는 안 됩니다.**
-*   해당 코드는 시스템에서 공식적으로 제거(Deprecation)된 기능이며, 참조하는 것 자체가 구조적 부채를 유발합니다.
-*   만약 사용해야 할 부분이 있다면, 반드시 리팩토링 계획서를 작성하고 아키텍트 승인(Architect Approval)을 거쳐 새로운 모듈로 분리해야 합니다.
+### 핵심 엔진 (절대 임의 수정 금지)
+| 파일 | 역할 | 수정 시 사용자 승인 필수 |
+|---|---|---|
+| `core/engine.py` | TRE 점수 계산, Lmax 산출, 유사 사례 매칭 | ⚠️ YES |
+| `core/schemas.py` | 모든 입출력 데이터 구조 (Pydantic) | ⚠️ YES |
+| `core/api.py` | FastAPI 엔드포인트 4개 | ⚠️ YES |
+| `core/checklist.py` | 20문항 체크리스트 + 채점 엔진 | ⚠️ YES |
 
-### 🔄 3. 워크플로우 자동 복구 및 검증 (The Final Gate)
-모든 End-to-End 작업 사이클이 종료될 때마다, 개발자는 시스템 기술적 부채를 제거하고 무결성을 최종적으로 검증하는 코루틴을 의무적으로 실행해야 합니다.
+### 데이터 (추가는 가능, 기존 삭제 금지)
+| 파일 | 역할 | 에이전트가 할 수 있는 것 |
+|---|---|---|
+| `core/data/regulatory_fines.py` | 미국 벌금 사례 44건 | ✅ 새 사례 추가 (기존 형식 따를 것) |
+| `core/data/breach_costs.py` | IBM 2024 유출 비용 | ✅ 새 연도 데이터 추가 |
+| `core/data/industry_benchmarks.py` | 산업별 벤치마크 | ✅ 새 산업 추가 |
 
-**필수 커맨드:**
+### 프론트엔드
+| 파일 | 역할 | 에이전트가 할 수 있는 것 |
+|---|---|---|
+| `frontend/index.html` | 메인 UI | ✅ UI 개선 (구조 유지) |
+| `frontend/style.css` | 스타일 | ✅ 디자인 개선 |
+| `frontend/app.js` | 전체 로직 | ⚠️ 로직 변경 시 승인 필요 |
+
+### KnowledgeBase (자유롭게 수정 가능)
+| 폴더 | 에이전트가 할 수 있는 것 |
+|---|---|
+| `KnowledgeBase/*.json` | ✅ 데이터 추가/수정 (JSON 유효성 필수) |
+| `KnowledgeBase/*.md` | ✅ 문서 작성/수정 |
+
+### 테스트
+| 파일 | 에이전트가 할 수 있는 것 |
+|---|---|
+| `tests/test_*.py` | ✅ 새 테스트 추가 (기존 테스트 삭제/수정 금지) |
+
+### 인프라
+| 파일 | 역할 |
+|---|---|
+| `_shared/auto_healer.py` | 자동 에러 감지/수정 스크립트 |
+| `_shared/circuit_breaker.py` | 장애 차단기 |
+| `_shared/retry_decorator.py` | 재시도 데코레이터 |
+
+## 작업 후 검증 (필수)
+모든 파일 수정 후 반드시 실행:
 ```bash
+cd c:\Users\jinoh\Desktop\Connect AI\_company
 python _shared/auto_healer.py --fix
 ```
-*   **실행 목적**: 이 스크립트는 모든 모듈의 타입 일관성, API 계약 준수 여부, 그리고 잠재적인 런타임 오류(Type Mismatch, Null Pointer)를 자동으로 감지하여 복구하는 역할을 수행합니다.
-*   이 커맨드를 실행하지 않은 코드는 '미완성된 무결점 코드'로 간주됩니다.
+에러가 0건일 때만 작업 완료로 간주합니다.
 
-### 🛡️ 4. 개발 원칙 (Codari Style Guide)
-(기존의 TypeScript/Python/Bash 및 SRP 등의 원칙은 그대로 유지하며, 여기에 '무결성 검증 우선'을 추가합니다.)
+## DEPRECATED — 사용하지 마세요
+다음 폴더/파일은 더 이상 사용하지 않습니다. 수정하지 마세요:
+- `backend/` → `core/`로 대체됨
+- `services/` → `core/`로 대체됨
+- `src/api/` → `core/api.py`로 대체됨
+- `src/services/` → `core/engine.py`로 대체됨
+- `yobizwiz_backend/` → `core/api.py`로 대체됨
+- `lmax_calculator.py` → `core/engine.py`로 대체됨
+
+## 아키텍처 다이어그램
+```
+사용자 브라우저
+    ↓
+frontend/ (HTML/CSS/JS) — 체크리스트 입력 + 결과 표시
+    ↓
+core/api.py (FastAPI) — 엔드포인트 라우팅
+    ↓
+core/engine.py — TRE 점수 계산 + Lmax 산출
+core/checklist.py — 체크리스트 채점
+    ↓
+core/data/ — 실제 벌금 사례 + IBM 통계 + 산업 벤치마크
+```

@@ -4,8 +4,8 @@
     "creation_date": "[Current Date]",
     "description": "실시간 위험 점수(TRE) 계산을 위한 통합 규제 위협 원본 데이터셋. 모든 수치는 재무적 최대 손실액($L_{max}$) 기준으로 정량화되었으며, 개발팀의 API 입력 근거 자료로 사용되어야 함.",
     "source_provenance": [
-      "[근거: c:\\Users\\jinoh\\Desktop\\Connect AI\\_company\\KnowledgeBase\\Regulatory_Evidence_Bank_v2.md]",
-      "[근거: Researcher 개인 메모리 - DORA, EU AI Act 관련 논의 기록]"
+      "KnowledgeBase/Regulatory_Evidence_Bank_v2.md",
+      "Researcher Memory - DORA, EU AI Act"
     ],
     "schema_version": "JSON-Schema-V3"
   },
@@ -63,7 +63,7 @@
           "description": "데이터 주권 강화 추세로 인해, 국경 간 데이터 전송 실패 시 벌금 구조가 복합적으로 적용됨. (예: GDPR과 HIPAA의 결합 위협)",
           "multiplier_increase_estimate": "1.5x"
         },
-        "l_max_formula": "$L_{base} \times N_{records} + L_{civil\_suit}$ (N_{records}: 유출된 레코드 수, L_{civil\_suit}: 민사 소송 합의 비용)"
+        "l_max_formula": "$L_{base} \times N_{records} + L_{civil\\_suit}$ (N_{records}: 유출된 레코드 수, L_{civil\\_suit}: 민사 소송 합의 비용)"
       },
       "compliance_gap": "데이터 수명 주기(Data Lifecycle) 전반에 걸친 자동화된 PII 마스킹 검증 시스템 부재."
     },

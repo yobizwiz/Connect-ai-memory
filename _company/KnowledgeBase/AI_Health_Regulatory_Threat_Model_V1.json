@@ -31,7 +31,7 @@
         "KeyViolationPoint": "데이터의 수집 목적(Purpose Limitation) 및 최소화 원칙(Minimization) 위반."
       },
       "QuantifiableLossModel": {
-        "L_max_Formula": "(Global Revenue * 3%) + (N_DataPoints * $10K_{Per\ Point})",
+        "L_max_Formula": "(Global Revenue * 3%) + (N_DataPoints * $10K_PerPoint)",
         "EstimatedRange": "$50M ~ $500M+",
         "TimeMultiplier_tau": "중간-높음 (Medium-High)",
         "Tau_Mechanism": "초기 유출은 관리 부실로 치부되나, 시간이 지나면서 '악의적 의도'가 규명될 경우(Intentional Misuse), 단순 벌금 수준을 넘어 사업 모델 전체를 부정하는 '신뢰성 훼손'으로 확장됨."
