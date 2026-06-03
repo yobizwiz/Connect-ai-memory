@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yobizwiz — Free Compliance Risk Assessment</title>
+    <meta name="description" content="Free 20-question compliance self-assessment. Get your risk score, see real enforcement cases, and receive actionable remediation guides.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- ============================================ -->
+    <!-- HERO SECTION -->
+    <!-- ============================================ -->
+    <section id="hero" class="hero">
+        <div class="hero-bg-glow"></div>
+        <nav class="nav">
+            <div class="nav-logo">
+                <span class="logo-icon">🛡️</span>
+                <span class="logo-text">Yobizwiz</span>
+            </div>
+            <div class="nav-links">
+                <a href="#how-it-works">How It Works</a>
+                <a href="#checklist-section" class="nav-cta">Free Assessment →</a>
+            </div>
+        </nav>
+        <div class="hero-content">
+            <div class="hero-badge">FREE SELF-ASSESSMENT</div>
+            <h1>Is your company one satisfying away from a <span class="gradient-text">million-dollar fine?</span></h1>
+            <p class="hero-subtitle">
+                Answer 20 questions. Get your compliance score instantly.<br>
+                See real enforcement cases from companies like yours.
+            </p>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-number">$4.88M</span>
+                    <span class="stat-label">Avg. data breach cost (IBM 2024)</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">44</span>
+                    <span class="stat-label">Real US enforcement cases</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">2 min</span>
+                    <span class="stat-label">Assessment time</span>
+                </div>
+            </div>
+            <a href="#checklist-section" class="hero-btn">Start Free Assessment →</a>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- HOW IT WORKS -->
+    <!-- ============================================ -->
+    <section id="how-it-works" class="how-section">
+        <h2>How It Works</h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h3>Answer 20 Questions</h3>
+                <p>Simple Yes/No questions across 10 compliance categories. Takes under 2 minutes.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>Get Your Score</h3>
+                <p>Instant compliance grade (A-F) with category breakdown and gap analysis.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>See Real Cases</h3>
+                <p>We match your profile to real FTC, HIPAA, CCPA enforcement actions against similar companies.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <h3>Fix What Matters</h3>
+                <p>Get a free remediation guide for the easiest fix, plus cost estimates for everything else.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- CHECKLIST SECTION -->
+    <!-- ============================================ -->
+    <section id="checklist-section" class="checklist-section">
+        <h2>Free Compliance Self-Assessment</h2>
+        <p class="section-subtitle">Answer honestly — your data stays in your browser. Nothing is sent until you click Submit.</p>
+
+        <!-- STEP 1: Company Info -->
+        <div id="step-company" class="form-step active">
+            <div class="form-card">
+                <div class="form-header">
+                    <span class="form-step-badge">Step 1 of 2</span>
+                    <h3>About Your Company</h3>
+                </div>
+                <div class="form-fields">
+                    <div class="field">
+                        <label for="industry">Industry</label>
+                        <select id="industry">
+                            <option value="">Select your industry</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="Financial">Financial Services / Fintech</option>
+                            <option value="Technology">Technology / SaaS</option>
+                            <option value="Retail">Retail / E-commerce</option>
+                            <option value="Manufacturing">Manufacturing</option>
+                            <option value="Education">Education / EdTech</option>
+                            <option value="Hospitality">Hospitality / Travel</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="employees">Number of Employees</label>
+                        <input type="number" id="employees" placeholder="e.g., 50" min="1">
+                    </div>
+                    <div class="field">
+                        <label for="data-size">Estimated Data Storage (TB)</label>
+                        <input type="number" id="data-size" placeholder="e.g., 2.5" min="0.1" step="0.1">
+                    </div>
+                    <div class="field">
+                        <label for="revenue">Annual Revenue (USD, optional)</label>
+                        <input type="number" id="revenue" placeholder="e.g., 5000000">
+                    </div>
+                    <div class="field">
+                        <label for="pii-count">PII Records Managed (optional)</label>
+                        <input type="number" id="pii-count" placeholder="e.g., 50000">
+                    </div>
+                </div>
+                <button id="btn-to-checklist" class="btn-primary" disabled>Continue to Checklist →</button>
+            </div>
+        </div>
+
+        <!-- STEP 2: Checklist Questions -->
+        <div id="step-checklist" class="form-step">
+            <div class="form-card">
+                <div class="form-header">
+                    <span class="form-step-badge">Step 2 of 2</span>
+                    <h3>Compliance Checklist</h3>
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                    <span id="progress-text" class="progress-text">0 / 20 answered</span>
+                </div>
+
+                <div id="questions-container"></div>
+
+                <button id="btn-submit" class="btn-primary" disabled>🔍 Submit & Get Results</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- RESULTS SECTION (hidden until submit) -->
+    <!-- ============================================ -->
+    <section id="results-section" class="results-section hidden">
+        <div class="results-container">
+            <!-- Score Header -->
+            <div id="score-header" class="score-header">
+                <div class="score-circle">
+                    <svg viewBox="0 0 120 120" class="score-ring">
+                        <circle cx="60" cy="60" r="54" class="ring-bg"/>
+                        <circle cx="60" cy="60" r="54" class="ring-fill" id="score-ring-fill"/>
+                    </svg>
+                    <div class="score-value">
+                        <span id="score-number">0</span>
+                        <span class="score-max">/100</span>
+                    </div>
+                </div>
+                <div class="score-details">
+                    <div class="grade-badge" id="grade-badge">F</div>
+                    <h2 id="score-title">Your Compliance Score</h2>
+                    <p id="score-summary"></p>
+                </div>
+            </div>
+
+            <!-- Category Breakdown -->
+            <div class="results-card">
+                <h3>📊 Category Breakdown</h3>
+                <div id="category-bars"></div>
+            </div>
+
+            <!-- Similar Cases -->
+            <div class="results-card">
+                <h3>⚖️ Similar Enforcement Cases</h3>
+                <p class="card-subtitle">Real fines imposed on companies with a similar profile to yours</p>
+                <div id="similar-cases"></div>
+            </div>
+
+            <!-- Breach Cost -->
+            <div class="results-card">
+                <h3>💰 Estimated Breach Cost</h3>
+                <div id="breach-cost"></div>
+            </div>
+
+            <!-- Gaps -->
+            <div class="results-card">
+                <h3>🔓 Compliance Gaps Found</h3>
+                <div id="gaps-list"></div>
+            </div>
+
+            <!-- Free Guide -->
+            <div class="results-card highlight-card" id="free-guide-card">
+                <div class="free-badge">✨ FREE REMEDIATION GUIDE</div>
+                <h3 id="free-guide-title"></h3>
+                <div id="free-guide-content" class="guide-content"></div>
+            </div>
+
+            <!-- Paywall -->
+            <div class="results-card paywall-card">
+                <h3>🔒 Unlock Full Remediation Package</h3>
+                <p id="paywall-text"></p>
+                <ul class="paywall-features">
+                    <li>✅ Detailed step-by-step guides for all gaps</li>
+                    <li>✅ Cost estimates and vendor recommendations</li>
+                    <li>✅ Regulatory citation for each requirement</li>
+                    <li>✅ Exportable PDF compliance report</li>
+                </ul>
+                <button class="btn-upgrade">Get Full Report — Coming Soon</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- FOOTER -->
+    <!-- ============================================ -->
+    <footer class="footer">
+        <p>© 2024 Yobizwiz. Data sourced from FTC, HHS OCR, SEC, California AG, and IBM Cost of Data Breach Report 2024.</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
