@@ -9,10 +9,10 @@
   ],
   "Knowledge_Items": [
 
-    // =======================================================
-    // 🚨 GDPR (General Data Protection Regulation) 시나리오
-    // 핵심 위험: PII 유출, 데이터 주권 위반. 벌금 상한: 전 세계 연 매출의 최대 4%.
-    // =======================================================
+    
+    
+    
+    
     {
       "regulation": "GDPR",
       "violation_type": "PII Leakage & Inadequate Encryption (제3자 공유)",
@@ -47,10 +47,10 @@
       "mitigation_mandate": "AI 모델의 모든 의사결정 단계에 대한 투명한 감사 추적(Audit Trail, Provenance) 기록 및 보고서 생성."
     },
 
-    // =======================================================
-    // 🚨 CCPA/CPRA (California Consumer Privacy Act / California Privacy Rights Act) 시나리오
-    // 핵심 위험: 데이터 판매 동의 부재, 개인 식별 정보(PII) 오용. 벌금 상한: 최대 $7,500/violation.
-    // =======================================================
+    
+    
+    
+    
     {
       "regulation": "CCPA/CPRA",
       "violation_type": "Do Not Sell Signal Ignored (판매 동의 회피)",
@@ -85,10 +85,10 @@
       "mitigation_mandate": "데이터의 수집 목적과 보존 기간을 정의하고, 만료 시 자동 파기(Automated Purging) 메커니즘 구현."
     },
 
-    // =======================================================
-    // 🚨 HIPAA (Health Insurance Portability and Accountability Act) 시나리오
-    // 핵심 위험: PHI 유출. 벌금 상한: 심각도에 따라 연간 수백만 달러.
-    // =======================================================
+    
+    
+    
+    
     {
       "regulation": "HIPAA",
       "violation_type": "Business Associate Agreement (BAA) Failure (위탁사 관리 부재)",
@@ -123,10 +123,10 @@
       "mitigation_mandate": "최소 권한 원칙(Principle of Least Privilege, PoLP)을 적용하고, 모든 접근 시도를 실시간으로 로깅 및 모니터링."
     },
 
-    // =======================================================
-    // 🚨 EU AI Act (Artificial Intelligence Act) 시나리오
-    // 핵심 위험: 고위험(High-Risk) 시스템의 투명성/책임 부재. 벌금 상한: 최대 전 세계 매출의 7%.
-    // =======================================================
+    
+    
+    
+    
     {
       "regulation": "EU AI Act",
       "violation_type": "Transparency Failure in High-Risk System (투명성 결여)",

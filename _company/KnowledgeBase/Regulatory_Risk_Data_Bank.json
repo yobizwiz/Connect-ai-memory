@@ -9,8 +9,8 @@
             "metric": "Cross-Border Transfer Count (unsecured)"
         },
         "financialImpactModel": {
-            "minFineUSD": 1000000, // 최소 벌금: 4% of global annual turnover
-            "maxFineUSD": 200000000, // 최대 벌금: Global Annual Turnover의 4% (최대화)
+            "minFineUSD": 1000000, 
+            "maxFineUSD": 200000000, 
             "settlementRiskFactor": 3.5,
             "indirectLossMultiplier": 5.0
         },
@@ -30,8 +30,8 @@
             "metric": "Masking Failure Count (unmasked fields)"
         },
         "financialImpactModel": {
-            "minFineUSD": 50000, // 최소 벌금: 연간 $1.2M ~ $1.5M 사이의 낮은 등급부터 시작
-            "maxFineUSD": 2000000, // 최대 벌금: 사안 심각도에 따라 가중치가 급증 (최대 $2M+)
+            "minFineUSD": 50000, 
+            "maxFineUSD": 2000000, 
             "settlementRiskFactor": 4.0,
             "indirectLossMultiplier": 7.0
         },
@@ -51,10 +51,10 @@
             "metric": "Downtime Hours Exceeding Threshold (e.g., 24h)"
         },
         "financialImpactModel": {
-            "minFineUSD": 500000, // 최소 벌금: 시스템 중단에 대한 초기 과태료
-            "maxFineUSD": 10000000, // 최대 벌금: 매출액의 일정 비율 (매우 높게 설정)
+            "minFineUSD": 500000, 
+            "maxFineUSD": 10000000, 
             "settlementRiskFactor": 2.5,
-            "indirectLossMultiplier": 9.0 // 가장 높은 배율 적용: 비즈니스 연속성 손실이 핵심
+            "indirectLossMultiplier": 9.0 
         },
         "requiredControl": {
             "controlName": "Incident Response Plan & Business Continuity Testing",
@@ -72,8 +72,8 @@
             "metric": "Uncited Claim Count (Lack of Provenance)"
         },
         "financialImpactModel": {
-            "minFineUSD": 250000, // 최소 벌금: 초기 경고 및 시정 비용
-            "maxFineUSD": 10000000, // 최대 벌금: 신뢰도 하락에 따른 영업 손실 예측 (매우 높게 설정)
+            "minFineUSD": 250000, 
+            "maxFineUSD": 10000000, 
             "settlementRiskFactor": 4.5,
             "indirectLossMultiplier": 8.0
         },

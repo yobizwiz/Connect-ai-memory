@@ -7,21 +7,21 @@
       "regulation_id": "GDPR",
       "name": "General Data Protection Regulation (EU)",
       "scope": "개인 식별 정보(PII)의 처리 및 데이터 주권.",
-      "base_fine_rate": 0.4,  // 최대 매출액 대비 비율 (2% 또는 4%)
+      "base_fine_rate": 0.4,  
       "violation_multiplier": {
-        "data_volume_factor": 1.5, // 데이터 유출 규모에 따른 가중치 증가
-        "severity_factor": 2.0       // 민감성(Health/Financial) 데이터 처리 시 추가 계수
+        "data_volume_factor": 1.5, 
+        "severity_factor": 2.0       
       },
       "penalty_breakdown": [
         {
           "violation": "PII_Leakage",
-          "coefficient_Wfine": 150, // PII 건당 기본 벌금 증가 계수 ($)
+          "coefficient_Wfine": 150, 
           "risk_metric": "data_record_count",
           "loss_type": "Financial Penalty & Civil Lawsuit"
         },
         {
           "violation": "Data_Sovereignty_Violation",
-          "coefficient_Wfine": 50,  // 국외 전송 목적 외 사용 시 계수
+          "coefficient_Wfine": 50,  
           "risk_metric": "cross_border_transfer_count",
           "loss_type": "Regulatory Mandate Violation"
         }
@@ -31,21 +31,21 @@
       "regulation_id": "EUAIAct",
       "name": "EU AI Act (Artificial Intelligence)",
       "scope": "AI 시스템의 투명성, 안전성 및 법적 책임(Hallucination 포함).",
-      "base_fine_rate": 0.25, // 시장 가치 대비 비율 (규제 등급에 따라 변동)
+      "base_fine_rate": 0.25, 
       "violation_multiplier": {
-        "risk_level_factor": 3.0,  // 고위험(High-Risk) AI 모델 사용 시 최대 계수 적용
-        "provenance_deficit_penalty": 2.5 // 출처 명시 실패에 대한 높은 가중치 (가장 중요)
+        "risk_level_factor": 3.0,  
+        "provenance_deficit_penalty": 2.5 
       },
       "penalty_breakdown": [
         {
           "violation": "Hallucination_Failure",
-          "coefficient_Wfine": 100, // 잘못된 법률/기술 정보 제공 건당 벌금 계수 ($)
+          "coefficient_Wfine": 100, 
           "risk_metric": "misinformation_instance_count",
           "loss_type": "Professional Misconduct & Liability"
         },
         {
           "violation": "Lack_of_Provenance",
-          "coefficient_Wfine": 200, // 근거 자료 미제시 시 가장 높은 벌금 계수 적용 (Critical)
+          "coefficient_Wfine": 200, 
           "risk_metric": "unattributed_output_instance",
           "loss_type": "Trust & Credibility Loss"
         }
@@ -55,15 +55,15 @@
       "regulation_id": "HIPAA",
       "name": "Health Insurance Portability and Accountability Act (US)",
       "scope": "의료 정보(PHI) 보호 및 비식별화 기준.",
-      "base_fine_rate": 0.1, // 미국 연방 벌금 위주로 모델링
+      "base_fine_rate": 0.1, 
       "violation_multiplier": {
-        "record_sensitivity_factor": 3.5, // 건강 기록의 민감도 극대 반영
-        "masking_failure_penalty": 2.8  // 비식별화 실패에 대한 가중치
+        "record_sensitivity_factor": 3.5, 
+        "masking_failure_penalty": 2.8  
       },
       "penalty_breakdown": [
         {
           "violation": "PHI_Leakage",
-          "coefficient_Wfine": 500, // PHI 건당 높은 벌금 계수 (최대 $2M+ 규모 반영)
+          "coefficient_Wfine": 500, 
           "risk_metric": "phi_record_count",
           "loss_type": "Direct Statutory Fine & Class Action Lawsuit"
         }
@@ -73,15 +73,15 @@
       "regulation_id": "OperationalCompliance",
       "name": "운영/절차적 컴플라이언스 (General)",
       "scope": "시스템 절차 누락, 내부 통제 시스템 실패.",
-      "base_fine_rate": 0.3, // 운영 연속성 측면의 벌금 반영
+      "base_fine_rate": 0.3, 
       "violation_multiplier": {
-        "critical_checkpoint_failure": 2.5, // 핵심 검증 단계 누락 시 가중치
-        "governance_gap_factor": 1.8     // 거버넌스 문서화 부재에 대한 패널티
+        "critical_checkpoint_failure": 2.5, 
+        "governance_gap_factor": 1.8     
       },
       "penalty_breakdown": [
         {
           "violation": "Compliance_Drift",
-          "coefficient_Wfine": 50, // 절차적 하자 발생 시 벌금 계수 ($)
+          "coefficient_Wfine": 50, 
           "risk_metric": "critical_process_failure_count",
           "loss_type": "Operational Disruption & Contractual Penalty"
         }

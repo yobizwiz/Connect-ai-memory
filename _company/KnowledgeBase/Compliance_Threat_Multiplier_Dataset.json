@@ -9,13 +9,13 @@
       "domain_id": "REG_GDPR",
       "name": "데이터 보호 및 주권 (General Data Protection Regulation)",
       "risk_area": "개인 식별 정보(PII)의 무단 처리 및 국경 간 전송 실패.",
-      "base_weighting": 0.45, // 높은 가중치: 유럽 시장 접근 필수
+      "base_weighting": 0.45, 
       "core_risks": [
         {
           "risk_type": "PII_Leakage",
-          "severity_score": 8.5, // (Critical Weighting)
+          "severity_score": 8.5, 
           "metric": "Masked/Unmasked Records Count",
-          "compliance_multiplier": 1.2, // 미흡할 경우 가중치 상승 배율
+          "compliance_multiplier": 1.2, 
           "estimated_loss_range_usd": "$50,000 ~ $2M+"
         },
         {
@@ -23,7 +23,7 @@
           "severity_score": 7.8,
           "metric": "Non-EU Storage Location Count",
           "compliance_multiplier": 1.15,
-          "estimated_loss_range_usd": "$10M ~ $30M+" // 시스템 재구축 비용 포함
+          "estimated_loss_range_usd": "$10M ~ $30M+" 
         }
       ]
     },
@@ -31,13 +31,13 @@
       "domain_id": "REG_HIPAA",
       "name": "의료 정보 보호 (Health Insurance Portability and Accountability Act)",
       "risk_area": "Protected Health Information (PHI) 취급 및 보안 프로토콜 미준수.",
-      "base_weighting": 0.35, // 의료 산업 특화 가중치
+      "base_weighting": 0.35, 
       "core_risks": [
         {
           "risk_type": "PHI_Breach",
-          "severity_score": 9.2, // 최상위 위협: 건강 정보는 최고 민감도
+          "severity_score": 9.2, 
           "metric": "Number of PHI access points without audit trail",
-          "compliance_multiplier": 1.3, // 규제 당국 감시 강화에 따른 배율 증가 가정
+          "compliance_multiplier": 1.3, 
           "estimated_loss_range_usd": "$2M ~ $50M+"
         }
       ]
@@ -46,13 +46,13 @@
       "domain_id": "REG_AIACT",
       "name": "AI 거버넌스 (EU AI Act)",
       "risk_area": "고위험 AI 시스템의 투명성 및 출처 증명이 불가능함.",
-      "base_weighting": 0.25, // 신규 규제에 대한 높은 가중치 부여
+      "base_weighting": 0.25, 
       "core_risks": [
         {
           "risk_type": "Hallucination_Responsibility",
-          "severity_score": 9.5, // 가장 예측 불가하고 파괴력이 큰 리스크 (근거: Researcher 개인 메모리)
+          "severity_score": 9.5, 
           "metric": "Lack of Provenance Layer on LLM output",
-          "compliance_multiplier": 1.4, // AI 책임 범위 확대로 인한 배율 증가 가정
+          "compliance_multiplier": 1.4, 
           "estimated_loss_range_usd": "$5M ~ $20M+"
         },
         {
@@ -68,13 +68,13 @@
       "domain_id": "SYS_GAP",
       "name": "시스템 운영 공백 (Operational & Process Gap)",
       "risk_area": "내부 프로세스의 문서화/승인 누락 및 감사 추적(Audit Trail) 부재.",
-      "base_weighting": 0.15, // 시스템의 근본적인 결함을 나타내는 지표
+      "base_weighting": 0.15, 
       "core_risks": [
         {
           "risk_type": "Compliance_Drift",
           "severity_score": 8.2,
           "metric": "Critical Checkpoint Failure Count",
-          "compliance_multiplier": 1.0, // 자체 프로세스 위반의 초기 단계 리스크
+          "compliance_multiplier": 1.0, 
           "estimated_loss_range_usd": "$100K ~ $5M+"
         }
       ]
