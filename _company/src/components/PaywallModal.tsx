@@ -12,7 +12,7 @@ const PaywallModal: React.FC<PaywallModalProps> = ({ onClose }) => {
           ⚠️ 시스템 무결성 결함 발견!
         </h3>
         <p className="text-lg text-gray-300 mb-6 border-b border-yellow-700 pb-4">
-          귀하의 비즈니스는 현재 {window.innerWidth > 1024 ? '구조적 결함' : '위협 레벨'}에 놓여 있습니다. $L_{max}$ 수치에 대한 전문 진단 없이는 시스템을 정상화할 수 없습니다.
+          귀하의 비즈니스는 현재 {window.innerWidth > 1024 ? '구조적 결함' : '위협 레벨'}에 놓여 있습니다. {"$L_{max}$"} 수치에 대한 전문 진단 없이는 시스템을 정상화할 수 없습니다.
         </p>
 
         {/* 모의 Payment Form */}
@@ -42,3 +42,5 @@ const PaywallModal: React.FC<PaywallModalProps> = ({ onClose }) => {
     </div>
   );
 };
+
+export default PaywallModal;

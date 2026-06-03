@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import './styles.module.css'; // CSS Module 사용 예정
 import PaywallModal from '../PaywallModal';
-import { calculateRiskLevel } from '@/lib/utils/riskCalculator';
 
 // ------------------------------------------
 // 1. [Interface Definition] 데이터와 상태를 명확히 정의합니다.
@@ -41,7 +40,7 @@ const ThreatGauge: React.FC<ThreatGaugeProps> = ({ initialMaxLoss }) => {
         Structural Risk Threat Gauge 🚨
       </h2>
       <p className="mb-8 text-lg max-w-3xl text-gray-400">
-        귀하의 비즈니스 모델이 직면한 잠재적 최대 재정 손실액($L_{max}$)을 실시간으로 분석합니다. 이 수치는 단순한 추정이 아닌, 시스템 무결성 관점에서 계산된 '위협 지수'입니다.
+        귀하의 비즈니스 모델이 직면한 잠재적 최대 재정 손실액({"$L_{max}$"})을 실시간으로 분석합니다. 이 수치는 단순한 추정이 아닌, 시스템 무결성 관점에서 계산된 '위협 지수'입니다.
       </p>
 
       {/* 핵심 게이지 컨테이너: 클릭 가능한 영역 */}

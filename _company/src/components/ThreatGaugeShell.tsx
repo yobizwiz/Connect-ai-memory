@@ -53,7 +53,7 @@ const calculateDisplayStyle = (props: ThreatGaugeProps) => {
  */
 const ThreatGaugeShell: React.FC = () => {
     // 상태 훅 사용: 모든 비즈니스 로직과 상태 관리는 여기서 가져옵니다.
-    const { inputs, result, updateInputs } = useRiskCalculation(INITIAL_RISK_STATE);
+    const { inputs, result, updateInputs, calculateRisk } = useRiskCalculation(INITIAL_RISK_STATE);
 
     if (!result) {
         return <div className="loading-state">Loading Risk Data...</div>;
@@ -72,7 +72,7 @@ const ThreatGaugeShell: React.FC = () => {
              newInputs = { [key]: value as any };
         } else {
             // 타입 안전성을 위해 기본적으로 number로 간주하고 처리하도록 유도
-            newInputs = { [key]: parseFloat(String(value) || 0) };
+            newInputs = { [key]: parseFloat(String(value) || "0") };
         }
 
         updateInputs(newInputs); // 상태 업데이트 -> useRiskCalculation 내부에서 재계산 트리거
@@ -100,7 +100,7 @@ const ThreatGaugeShell: React.FC = () => {
                     <p className={`text-3xl font-extrabold ${result.isCritical ? 'text-red-500' : 'text-green-400'}`}>{result.totalResilienceIndex}%</p>
                 </div>
                  <div>
-                    <p className="text-sm uppercase text-gray-300">Max Risk Score ($L_{max}$)</p>
+                    <p className="text-sm uppercase text-gray-300">Max Risk Score ({"$L_{max}$"})</p>
                     <p className={`text-3xl font-extrabold ${result.isCritical ? 'text-red-500' : 'text-yellow-400'}`}>{result.lmaxScore}%</p>
                 </div>
                  <div>

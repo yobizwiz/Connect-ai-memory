@@ -4,6 +4,7 @@
  */
 import { useState, useCallback } from 'react';
 import { RiskInput, LmaxResult, CRITICAL_THRESHOLD } from '../types/risk-types';
+import { RiskInputs, RiskOutput } from '../components/types/RiskInputs';
 
 // --- [Mock API Simulation] ---
 /**
@@ -51,16 +52,26 @@ const calculateLmax = (inputs: RiskInput): LmaxResult => {
  * 리스크 계산 상태를 관리하는 커스텀 훅.
  * 이 훅은 모든 UI 컴포넌트가 사용하는 '단일 진실 공급원' 역할을 합니다.
  */
-export const useRiskCalculation = (initialInputs: RiskInput) => {
-    const [inputs, setInputs] = useState<RiskInput>(initialInputs);
-    const [result, setResult] = useState<LmaxResult | null>(null);
+export function useRiskCalculation(initialInputs: RiskInput): {
+    inputs: RiskInput;
+    result: LmaxResult | null;
+    updateInputs: (newInputs: Partial<RiskInput>) => void;
+    calculateRisk: () => void;
+};
+export function useRiskCalculation(initialInputs: RiskInputs): [
+    RiskOutput,
+    (newInputs: Partial<RiskInputs>) => void
+];
+export function useRiskCalculation(initialInputs: any): any {
+    const isRiskInput = 'regulatoryComplianceScore' in initialInputs;
 
-    // 입력 값 변경 시 리스크 계산을 트리거하는 핸들러
-    const updateInputs = useCallback((newInputs: Partial<RiskInput>) => {
-        setInputs(prev => ({ ...prev, ...newInputs }));
+    const [inputs, setInputs] = useState<any>(initialInputs);
+    const [result, setResult] = useState<any>(null);
+
+    const updateInputs = useCallback((newInputs: any) => {
+        setInputs((prev: any) => ({ ...prev, ...newInputs }));
     }, []);
 
-    // 메인 로직 실행 함수 (API 호출 대체)
     const calculateRisk = useCallback(() => {
         try {
             if (!inputs) throw new Error("Input data cannot be null.");
@@ -74,13 +85,35 @@ export const useRiskCalculation = (initialInputs: RiskInput) => {
 
     // 컴포넌트 마운트 또는 의존성 변경 시 계산 실행
     useState(() => {
-        calculateRisk();
+        if (isRiskInput) {
+            calculateRisk();
+        }
     });
 
-    return {
-        inputs,
-        result,
-        updateInputs,
-        calculateRisk // 외부에서 강제로 재계산해야 할 경우를 대비해 노출
-    };
-};
+    if (isRiskInput) {
+        return {
+            inputs,
+            result,
+            updateInputs,
+            calculateRisk
+        };
+    } else {
+        const numberOfAffectedRecords = inputs.numberOfAffectedRecords ?? 0;
+        const riskMultiplier = inputs.riskMultiplier ?? 1.0;
+        const dailyLossRate = inputs.dailyLossRate ?? 0;
+
+        const lTotalMax = numberOfAffectedRecords * riskMultiplier * dailyLossRate * 100;
+        const isCritical = lTotalMax >= 150000;
+        const message = isCritical 
+            ? "🚨 [CRITICAL] 위협 수준이 임계치를 초과했습니다. 즉각 조치하십시오." 
+            : "✅ [STABLE] 시스템 리스크가 안정 범위 내에 있습니다.";
+
+        const riskOutput: RiskOutput = {
+            lTotalMax,
+            isCritical,
+            message
+        };
+
+        return [riskOutput, updateInputs];
+    }
+}

@@ -18,3 +18,25 @@ export interface LmaxResult {
 
 // Lmax 계산의 경계값 및 상수 정의 (Configuration Rule)
 export const CRITICAL_THRESHOLD: number = 75; // 예시 임계치: 이 점수 이상이면 Red Zone 발동
+
+export interface RiskParameters {
+    initialScore: number;
+    lMaxThreshold: number;
+}
+
+export interface RiskState {
+    currentScore: number;
+    isCritical: boolean;
+    lastChecked: Date;
+}
+
+export interface RiskScore {
+    structuralGap: number;
+    provenanceConfidence: number;
+    regulatoryExposureScore: number;
+}
+
+export interface SessionContext {
+    sessionId: string;
+    userTier: string;
+}

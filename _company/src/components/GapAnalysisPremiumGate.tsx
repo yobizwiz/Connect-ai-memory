@@ -98,8 +98,8 @@ const GapAnalysisPremiumGate: React.FC<{ lGapData: LGapResult }> = ({ lGapData }
         // 1. Glitch Noise 애니메이션 및 경고 UI/UX 트리거 구현
         content = (
             <div className="glitch-warning-box">
-                <h1>🚨 SYSTEM CRITICAL ALERT: $L_{gap}$ EXCEEDED 🚨</h1>
-                <p>당신의 조직은 현재 파악하지 못한 잠재적 손실액($L_{gap}$)에 심각하게 노출되어 있습니다. 이 수치는 법규 위반을 넘어선 '사업 생존 리스크'를 의미합니다.</p>
+                <h1>🚨 SYSTEM CRITICAL ALERT: {"$L_{gap}$"} EXCEEDED 🚨</h1>
+                <p>당신의 조직은 현재 파악하지 못한 잠재적 손실액({"$L_{gap}$"})에 심각하게 노출되어 있습니다. 이 수치는 법규 위반을 넘어선 '사업 생존 리스크'를 의미합니다.</p>
                 <div className="glitch-value">{lGapData.lGapValue.toFixed(2)} M USD</div>
             </div>
         );
@@ -121,7 +121,7 @@ const GapAnalysisPremiumGate: React.FC<{ lGapData: LGapResult }> = ({ lGapData }
         content = (
              <div className="payment-modal">
                 <h2>💳 Gap Analysis Premium - 즉시 진단 보고서 구매</h2>
-                <p>최종 $L_{gap}$ 보고서를 받으려면, 잠재적 손실액($L_{gap}$)을 최소화할 수 있는 선제적 컨설팅이 필요합니다.</p>
+                <p>최종 {"$L_{gap}$"} 보고서를 받으려면, 잠재적 손실액({"$L_{gap}$"})을 최소화할 수 있는 선제적 컨설팅이 필요합니다.</p>
                 {/* 실제 결제 모달 컴포넌트 호출 */}
                 <button onClick={() => console.log("Payment initiated...")}>Stripe로 결제하기</button>
              </div>
@@ -132,15 +132,15 @@ const GapAnalysisPremiumGate: React.FC<{ lGapData: LGapResult }> = ({ lGapData }
          // IDLE 상태 (임계치 미달)
         content = (
             <div className="normal-status">
-                <h2>✅ 현재 $L_{gap}$ 수치 분석 결과</h2>
-                <p>현재 계산된 잠재적 손실액($L_{gap}$)은 임계치 이내로 보입니다. 추가적인 리스크 진단이 필요합니다.</p>
+                <h2>✅ 현재 {"$L_{gap}$"} 수치 분석 결과</h2>
+                <p>현재 계산된 잠재적 손실액({"$L_{gap}$"})은 임계치 이내로 보입니다. 추가적인 리스크 진단이 필요합니다.</p>
             </div>
         );
     }
 
     return (
         <div style={{ padding: '40px', border: `2px solid ${lGapData.thresholdBreached ? '#ff0055' : '#1e90ff'}`, borderRadius: '10px', maxWidth: '800px', margin: 'auto' }}>
-            <h2 style={{ color: lGapData.thresholdBreached ? 'red' : 'blue' }}>[L_{gap} 리스크 진단 모듈]</h2>
+            <h2 style={{ color: lGapData.thresholdBreached ? 'red' : 'blue' }}>{"[L_{gap} 리스크 진단 모듈]"}</h2>
             {content}
 
             <button 

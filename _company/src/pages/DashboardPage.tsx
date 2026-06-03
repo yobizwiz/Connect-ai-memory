@@ -39,10 +39,11 @@ const DashboardPage: React.FC = () => {
       </div>
 
       {/* Paywall Modal 통합 */}
-      <PaywallModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-      />
+      {isModalOpen && (
+        <PaywallModal 
+          onClose={() => setIsModalOpen(false)} 
+        />
+      )}
     </div>
   );
 };

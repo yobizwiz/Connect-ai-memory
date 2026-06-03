@@ -137,10 +137,11 @@ const RiskCheckPage: React.FC<RiskCheckPageProps> = () => {
             )}
 
             {/* 3. Paywall Modal (강제 오버레이) */}
-            <PaywallModal 
-                isVisible={isPaywallVisible} 
-                onClose={() => { /* 실제로는 사용자가 닫을 수 없게 설계 */ }}
-            />
+            {isPaywallVisible && (
+                <PaywallModal 
+                    onClose={() => { /* 실제로는 사용자가 닫을 수 없게 설계 */ }}
+                />
+            )}
         </div>
     );
 };
