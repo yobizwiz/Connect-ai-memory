@@ -105,15 +105,28 @@ class ThreatMessage(BaseModel):
 # 출력 스키마
 # ============================================================
 
+class SimilarCase(BaseModel):
+    """유사 벌금 사례."""
+    company: str = Field(..., description="회사명")
+    year: int = Field(..., description="제재 연도")
+    industry: str = Field(..., description="산업")
+    regulation: str = Field(..., description="적용 규제")
+    fine_usd: float = Field(..., description="벌금액 (USD)")
+    description: str = Field(..., description="위반 내용 요약")
+    similarity_score: float = Field(..., description="유사도 점수 (0~1)")
+
+
+class BreachCostEstimate(BaseModel):
+    """데이터 유출 비용 추정 (IBM Report 기반)."""
+    avg_total_cost_usd: float = Field(..., description="산업 평균 유출 비용")
+    estimated_pii_cost_usd: float = Field(0.0, description="PII 규모 기반 추정 비용")
+    cost_per_record_usd: float = Field(..., description="레코드당 비용")
+    source: str = Field("IBM Cost of Data Breach Report 2024", description="출처")
+
+
 class DiagnosisReport(BaseModel):
     """
-    통합 리스크 진단 결과 보고서.
-    
-    기존 4개 서로 다른 출력 스키마를 하나로 병합했습니다:
-    - RiskAnalysisResult: status_gauge_value, lmax_calculated, is_paywall_triggered
-    - RiskReportOutput: risk_score_tre, is_red_zone, estimated_lmax_usd, threat_messages
-    - RiskAnalysisReport: risk_level, estimated_loss_usd, time_discount_rate
-    - lmax_calculator output: lmax_score, evidence_list
+    통합 리스크 진단 결과 보고서 (v2 — 실제 데이터 기반).
     """
     
     # --- 핵심 지표 ---
@@ -145,6 +158,18 @@ class DiagnosisReport(BaseModel):
     legal_evidence: List[Dict[str, str]] = Field(
         default_factory=list, 
         description="Lmax 계산에 사용된 법적 근거 상세"
+    )
+    
+    # --- 유사 사례 (Phase 2: 실제 데이터) ---
+    similar_cases: List[SimilarCase] = Field(
+        default_factory=list,
+        description="유사한 실제 벌금 사례 (산업/규모/위반유형 기반 매칭)"
+    )
+    
+    # --- 유출 비용 추정 (Phase 2: IBM Report) ---
+    breach_cost_estimate: Optional[BreachCostEstimate] = Field(
+        None,
+        description="IBM Data Breach Report 기반 예상 유출 비용"
     )
     
     # --- 요약 ---

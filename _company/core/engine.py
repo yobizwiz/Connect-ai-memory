@@ -25,7 +25,12 @@ from .schemas import (
     DiagnosisReport,
     ThreatMessage,
     RiskLevel,
+    SimilarCase,
+    BreachCostEstimate,
 )
+from .data.regulatory_fines import find_similar_cases
+from .data.breach_costs import get_breach_cost
+from .data.industry_benchmarks import get_industry_benchmark
 
 _healing_logger = HealingLogger()
 
@@ -127,21 +132,56 @@ class RiskDiagnosisEngine:
             # 3. 위험 등급 판정
             risk_level = self._determine_risk_level(tre_score)
 
-            # 4. 위협 메시지 생성
-            threats = self._generate_threats(input_data, tre_score, lmax)
+            # 4. 유사 실제 벌금 사례 검색 (Phase 2)
+            violation_types = list(input_data.violation_history.keys()) if input_data.violation_history else None
+            raw_cases = find_similar_cases(
+                industry=input_data.industry,
+                employee_count=input_data.employee_count,
+                has_compliance_audit=input_data.has_compliance_audit,
+                violation_types=violation_types,
+                top_n=3,
+            )
+            similar_cases = [
+                SimilarCase(
+                    company=c["company"],
+                    year=c["year"],
+                    industry=c["industry"],
+                    regulation=c["regulation"],
+                    fine_usd=c["fine_usd"],
+                    description=c["description"],
+                    similarity_score=c["similarity_score"],
+                )
+                for c in raw_cases
+            ]
 
-            # 5. 요약 메시지 생성
-            summary, recommendation = self._generate_summary(
-                risk_level, tre_score, lmax, input_data
+            # 5. IBM 유출 비용 추정 (Phase 2)
+            breach_data = get_breach_cost(
+                industry=input_data.industry,
+                pii_record_count=input_data.pii_record_count or 0,
+            )
+            breach_estimate = BreachCostEstimate(
+                avg_total_cost_usd=breach_data["avg_total_cost_usd"],
+                estimated_pii_cost_usd=breach_data["estimated_pii_cost_usd"],
+                cost_per_record_usd=breach_data["cost_per_record_usd"],
             )
 
-            # 6. 보고서 조립
+            # 6. 위협 메시지 생성
+            threats = self._generate_threats(input_data, tre_score, lmax)
+
+            # 7. 요약 메시지 생성 (유사 사례 인용 포함)
+            summary, recommendation = self._generate_summary(
+                risk_level, tre_score, lmax, input_data, similar_cases
+            )
+
+            # 8. 보고서 조립
             report = DiagnosisReport(
                 tre_score=round(tre_score, 2),
                 risk_level=risk_level,
                 estimated_lmax_usd=round(lmax, 2),
                 threat_messages=threats,
                 legal_evidence=legal_evidence,
+                similar_cases=similar_cases,
+                breach_cost_estimate=breach_estimate,
                 summary=summary,
                 recommendation=recommendation,
                 is_red_zone=(risk_level == RiskLevel.RED),
@@ -418,14 +458,26 @@ class RiskDiagnosisEngine:
         tre_score: float,
         lmax: float,
         data: DiagnosisInput,
+        similar_cases: List[SimilarCase] = None,
     ) -> tuple[str, str]:
         """위험 등급에 따른 요약 메시지와 권장 조치를 생성합니다."""
+
+        # 유사 사례 인용 문구 생성
+        case_citation = ""
+        if similar_cases and len(similar_cases) > 0:
+            top_case = similar_cases[0]
+            case_citation = (
+                f" 참고: {top_case.company}({top_case.industry})은 "
+                f"{top_case.year}년에 {top_case.regulation} 위반으로 "
+                f"${top_case.fine_usd:,.0f} 벌금을 부과받았습니다."
+            )
 
         if risk_level == RiskLevel.RED:
             summary = (
                 f"🚨 위험 등급 RED — TRE 점수 {tre_score:.1f}/100. "
                 f"예상 최대 손실액: ${lmax:,.0f} USD. "
                 f"즉각적인 조치가 필요합니다."
+                f"{case_citation}"
             )
             recommendation = (
                 "1) 즉시 전문 컴플라이언스 감사를 실시하세요. "
@@ -438,6 +490,7 @@ class RiskDiagnosisEngine:
                 f"⚠️ 위험 등급 YELLOW — TRE 점수 {tre_score:.1f}/100. "
                 f"일부 구조적 사각지대가 감지되었습니다. "
                 f"예상 잠재 손실액: ${lmax:,.0f} USD."
+                f"{case_citation}"
             )
             recommendation = (
                 "1) 프로세스 점검을 통해 사각지대를 식별하세요. "
