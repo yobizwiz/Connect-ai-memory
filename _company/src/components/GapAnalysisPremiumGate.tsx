@@ -154,49 +154,48 @@ const GapAnalysisPremiumGate: React.FC<{ lGapData: LGapResult }> = ({ lGapData }
              <p style={{ marginTop: '20px', fontSize: '12px', color: '#666' }}>
                 * 이 모듈은 A/B 테스트 및 Funneling 최적화를 목표로 설계되었습니다.
             </p>
+
+            <style jsx global>{`
+            /* 1. Glitch Noise Animation (CSS Definition) */
+            @keyframes glitch {
+              0% { transform: translate(0, 0); opacity: 1; }
+              20% { transform: translate(-3px, -2px); opacity: 0.9; }
+              40% { transform: translate(3px, 2px); opacity: 0.8; }
+              60% { transform: translate(-2px, 1px); opacity: 1; }
+              80% { transform: translate(2px, -1px); opacity: 0.95; }
+              100% { transform: translate(0, 0); opacity: 1; }
+            }
+
+            .glitch-warning-box {
+                border: 3px solid #ff0055; /* Neon Red */
+                padding: 20px;
+                background: rgba(40, 0, 0, 0.8); /* Dark background for drama */
+                animation: glitch 0.1s infinite steps(2); /* 강한 떨림 애니메이션 적용 */
+            }
+
+            .glitch-value {
+                font-size: 3rem;
+                color: #ff0055;
+                margin: 10px 0;
+                text-shadow: 0 0 10px rgba(255, 0, 85, 0.7); /* 네온 글로우 효과 */
+            }
+
+            /* 2. Payment Modal Styling (Visual Paywall) */
+            .payment-modal {
+                background: #fff3e0;
+                border: 1px solid orange;
+                padding: 30px;
+                text-align: center;
+            }
+
+            /* 3. Loading State */
+            .loading-state {
+                text-align: center;
+                color: #555;
+            }
+            `}</style>
         </div>
     );
 };
 
 export default GapAnalysisPremiumGate;
-```
-
-<style jsx global>{`
-/* 1. Glitch Noise Animation (CSS Definition) */
-@keyframes glitch {
-  0% { transform: translate(0, 0); opacity: 1; }
-  20% { transform: translate(-3px, -2px); opacity: 0.9; }
-  40% { transform: translate(3px, 2px); opacity: 0.8; }
-  60% { transform: translate(-2px, 1px); opacity: 1; }
-  80% { transform: translate(2px, -1px); opacity: 0.95; }
-  100% { transform: translate(0, 0); opacity: 1; }
-}
-
-.glitch-warning-box {
-    border: 3px solid #ff0055; /* Neon Red */
-    padding: 20px;
-    background: rgba(40, 0, 0, 0.8); /* Dark background for drama */
-    animation: glitch 0.1s infinite steps(2); /* 강한 떨림 애니메이션 적용 */
-}
-
-.glitch-value {
-    font-size: 3rem;
-    color: #ff0055;
-    margin: 10px 0;
-    text-shadow: 0 0 10px rgba(255, 0, 85, 0.7); /* 네온 글로우 효과 */
-}
-
-/* 2. Payment Modal Styling (Visual Paywall) */
-.payment-modal {
-    background: #fff3e0;
-    border: 1px solid orange;
-    padding: 30px;
-    text-align: center;
-}
-
-/* 3. Loading State */
-.loading-state {
-    text-align: center;
-    color: #555;
-}
-`}</style>

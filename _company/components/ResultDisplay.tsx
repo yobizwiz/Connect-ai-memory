@@ -38,13 +38,13 @@ const ResultDisplay: React.FC<ResultProps> = ({ totalScore }) => {
           진단 완료. 당신의 구조적 위험 점수 ($TRE$): {totalScore} Point
         </h2>
         <p className="text-xl text-gray-300">
-          이 수치는 귀사가 무지하거나 방치하는 **미인지 손실액($L_{gap}$)**을 의미합니다.
+          이 수치는 귀사가 무지하거나 방치하는 **미인지 손실액({"$L_{gap}$"})**을 의미합니다.
         </p>
       </div>
 
       {/* 1. 네온 레드 게이지 컴포넌트 호출 (시각적 공포 유발) */}
       <div className="w-full max-w-xl mx-auto p-6 bg-gray-900 rounded-2xl shadow-[0_0_30px_rgba(255,0,0,0.5)] border border-red-700">
-        <h3 className="text-2xl font-bold text-center mb-4 text-red-400">🔥 $L_{gap}$ 리스크 게이지</h3>
+        <h3 className="text-2xl font-bold text-center mb-4 text-red-400">🔥 {"$L_{gap}$"} 리스크 게이지</h3>
         {/* Mock Neon Gauge Implementation */}
         <div className="relative w-full h-6 bg-gray-700 rounded-full overflow-hidden border border-red-500">
           <div 
@@ -67,7 +67,7 @@ const ResultDisplay: React.FC<ResultProps> = ({ totalScore }) => {
           onClick={handleCheckoutClick}
           className="w-full py-4 text-2xl bg-red-600 hover:bg-red-700 transition duration-300 transform hover:scale-[1.02] shadow-red-800/50 border-b-4 border-double border-yellow-400"
         >
-          ✅ $L_{gap}$ 해소 및 완벽한 컴플라이언스 확보 (지금 리스크 진단 보고서 받기)
+          ✅ {"$L_{gap}$"} 해소 및 완벽한 컴플라이언스 확보 (지금 리스크 진단 보고서 받기)
         </button>
         <p className="text-xs text-gray-500 mt-2">
             (실제로는 결제 모달/Stripe 페이지로 연결되어야 합니다.)

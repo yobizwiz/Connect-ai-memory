@@ -183,7 +183,7 @@ const PaywallModal: React.FC<{ score: TREScore; onClose: () => void }> = ({ scor
                     🔒 Access Restricted: Critical Alert
                 </h3>
                 <p className="text-gray-300 mb-6">
-                    현재 리스크 점수 ({score.toFixed(1)})는 운영 중단($L_{max}$) 수준입니다. 이 데이터를 통해 안전성을 확보하려면 <span className="font-bold text-yellow-400">yobizwiz Authority Blue</span> 솔루션이 필수적입니다.
+                    현재 리스크 점수 ({score.toFixed(1)})는 운영 중단({"$L_{max}$"}) 수준입니다. 이 데이터를 통해 안전성을 확보하려면 <span className="font-bold text-yellow-400">yobizwiz Authority Blue</span> 솔루션이 필수적입니다.
                 </p>
                 <div className="space-y-4 mb-8">
                     <button 

@@ -6,7 +6,7 @@ interface DiagnosisState {
     stage: 'IDLE' | 'INPUTTING' | 'LOADING' | 'SUCCESS_REPORT' | 'ERROR' | 'PAYMENT';
     lmaxResult?: number;
     error?: string;
-    inputData: any; // 실제로는 타입 정의 필요
+    inputData?: any; // 실제로는 타입 정의 필요
 }
 
 const DiagnosisFunnelFlow: React.FC = () => {
@@ -33,7 +33,7 @@ const DiagnosisFunnelFlow: React.FC = () => {
 
         } catch (err) {
             // 실패 시, 상태를 '에러'로 업데이트 및 에러 메시지 저장
-            const errorMessage = err.response?.data?.detail || "알 수 없는 API 오류가 발생했습니다.";
+            const errorMessage = (err as any).response?.data?.detail || "알 수 없는 API 오류가 발생했습니다.";
             setState(prev => ({ ...prev, stage: 'ERROR', error: `🚨 ${errorMessage}` }));
         }
     };
@@ -56,8 +56,7 @@ const DiagnosisFunnelFlow: React.FC = () => {
             case 'IDLE':
                 return <InputForm onStart={handleStartDiagnosis} />; // 가상의 입력 폼 컴포넌트
             case 'LOADING':
-                // Designer가 정의한 글리치 효과 + 네온 레드 로딩 인디케이터 구현 지점
-                return <LoadingIndicator lmaxEstimate={/* Placeholder */} />; 
+                return <LoadingIndicator />; 
             case 'SUCCESS_REPORT':
                 return (
                     <ReportSummary onProceed={handleProceedToPayment} result={state.lmaxResult!} />
@@ -82,9 +81,9 @@ const DiagnosisFunnelFlow: React.FC = () => {
 // --- 가상 컴포넌트 스텁들 (실제 구현 필요) ---
 const InputForm = ({ onStart }: { onStart: (data: any) => void }) => <div className="input-form"><h3>1. 회사 정보 입력 (Input Stage)</h3><button onClick={() => onStart({ company_industry: 'Healthcare', employee_count: 20, data_pii_count: 50, compliance_gap_score: 0.8 })}>진단 시작 (테스트 데이터)</button></div>;
 const LoadingIndicator = ({ lmaxEstimate }: { lmaxEstimate?: number }) => <div className="loading-indicator">⚙️ 분석 중... 데이터를 처리하는 데 시간이 걸립니다.</div>;
-const ReportSummary = ({ onProceed, result }: { onProceed: () => void, result: number }) => <div className="report-summary"><h2>✅ 진단 보고서가 준비되었습니다!</h2><p>최대 위험 노출도 ($L_{max}$): ${result.toLocaleString()}원</p><button onClick={onProceed}>보고서 다운로드 및 결제 진행 💳</button></div>;
+const ReportSummary = ({ onProceed, result }: { onProceed: () => void, result: number }) => <div className="report-summary"><h2>✅ 진단 보고서가 준비되었습니다!</h2><p>최대 위험 노출도 ({"$L_{max}$"}): ${result.toLocaleString()}원</p><button onClick={onProceed}>보고서 다운로드 및 결제 진행 💳</button></div>;
 const ErrorDisplay = ({ message }: { message: string }) => <div className="error-display">❌ 오류 발생! {message} (다시 시도하거나 정보를 확인해주세요.)</div>;
-const PaymentModal = ({ lmaxValue }: { lmaxValue: number }) => <div className="payment-modal">💵 Premium 진입: $L_{max}$를 해결하려면 월 ${lmaxValue/10_000_000}만 원의 보험이 필요합니다.</div>;
+const PaymentModal = ({ lmaxValue }: { lmaxValue: number }) => <div className="payment-modal">💵 Premium 진입: {"$L_{max}$"}를 해결하려면 월 ${lmaxValue/10_000_000}만 원의 보험이 필요합니다.</div>;
 
 export default DiagnosisFunnelFlow;
 //

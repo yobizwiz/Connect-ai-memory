@@ -50,3 +50,6 @@ const QuizStep: React.FC<QuizProps> = ({ question, onAnswer }) => {
       </div>
     </div>
   );
+};
+
+export default QuizStep;

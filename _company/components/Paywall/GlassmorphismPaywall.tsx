@@ -34,7 +34,7 @@ const GlassmorphismPaywall: React.FC<PaywallProps> = ({ finalLossAmountLmax, onP
 
                 {/* 핵심 $L_{max}$ 노출 */}
                 <View style={styles.lmaxContainer}>
-                    <Text style={styles.lmaxLabel}>당신의 잠재적 최대 재정 손실 ($L_{max}):</Text>
+                    <Text style={styles.lmaxLabel}>{"당신의 잠재적 최대 재정 손실 ($L_{max}):"}</Text>
                     <Text style={styles.lmaxAmount}>{formattedLmax}</Text>
                     <Text style={styles.lmaxWarning}>이 금액은 최소한의 안전장치입니다.</Text>
                 </View>

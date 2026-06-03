@@ -37,7 +37,7 @@ const DiagnosticQuizPage: React.FC = () => {
   /**
    * QuizStep 컴포넌트에 전달할 질문 데이터를 정의합니다. (실제 데이터 기반)
    */
-  const questions = [
+  const questions: { id: string; title: string; options: { key: 'A' | 'B' | 'C'; label: string }[] }[] = [
     // Q1: PII 흐름 추적성 (Writer/Researcher의 체크리스트 활용)
     { id: 'Q1', title: "PII 흐름 추적성을 문서화하고 추적이 가능한가?", options: [{ key: 'A', label: '완벽히 추적 가능' }, { key: 'B', label: '일부 경로만 기록됨' }, { key: 'C', label: '흐름 자체가 파악되지 않음 (최대 리스크)' }] },
     // Q2: 비식별화 처리 표준 (Writer/Researcher의 체크리스트 활용)
@@ -66,7 +66,7 @@ const DiagnosticQuizPage: React.FC = () => {
           🚨 핵심 리스크 진단 퀴즈 (Structural Gap Assessment)
         </h1>
         <p className="text-gray-200 text-lg">
-          이 퀴즈는 단순한 점검표가 아닙니다. 귀사가 현재 인지하지 못하고 있는 **'미인지 손실액($L_{gap}$)'**을 측정합니다. 답변에 따라 잠재적 재정 리스크를 진단받으세요.
+          이 퀴즈는 단순한 점검표가 아닙니다. 귀사가 현재 인지하지 못하고 있는 **'미인지 손실액({"$L_{gap}$"})'**을 측정합니다. 답변에 따라 잠재적 재정 리스크를 진단받으세요.
         </p>
       </div>
 
