@@ -1,0 +1,5 @@
+# Agent Workspace Boundary Rules
+
+- **CRITICAL WORKSPACE BOUNDARY**: You are strictly prohibited from creating, deleting, or modifying any files or folders outside of the `C:\Users\jinoh\Desktop\Connect AI` directory.
+- **No Direct Desktop Activity**: Never create files, folders, or cache directories (like `.pytest_cache` or `yobizwiz` folders) directly on the Desktop (`C:\Users\jinoh\Desktop`).
+- **Command Execution Context**: All Python, pytest, Node, or npm development and testing commands must be executed within the specific project subfolders inside `Connect AI` (e.g., `C:\Users\jinoh\Desktop\Connect AI\_company`). Never run commands that generate output or caches directly onto the Desktop.
