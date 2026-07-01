@@ -1,0 +1,66 @@
+[
+    {
+        "Risk_ID": "R001",
+        "Violation_Type": "PII 비식별화 실패 (Masking Failure)",
+        "Description": "개인 식별 정보(PII)가 비정상적으로 노출되거나, 마스킹 처리가 누락되어 유출되는 경우. 특히 LLM 학습 과정 중 데이터 전송 단계에서 발생할 위험이 높음.",
+        "Applicable_Regulations": ["GDPR (Art 32)", "CCPA", "HIPAA"],
+        "Root_Cause_Failure": "데이터 파이프라인의 End-to-End 비식별화(Anonymization) 검증 로직 부재. 전송되는 모든 데이터 스트림에 대한 출처 추적성 및 마스킹 무결성 확보 실패.",
+        "Financial_Impact_Quantification": {
+            "Metric": "벌금 + 소송 비용 (Fines + Litigation)",
+            "Min_Penalty": "$50,000",
+            "Max_Penalty": "$2,500,000+",
+            "Severity_Level": "Critical",
+            "Explanation": "최소 벌금은 규제 당국의 초기 조사 단계에서 발생하며, 최대 벌금은 전 세계적인 집단 소송 및 영업 정지 처분을 포함함. 데이터 유출 규모에 따라 기하급수적 증가 가능."
+        },
+        "Mitigation_Strategy": "데이터 주권(Data Sovereignty) 보장: 데이터를 사용 목적과 지역에 맞춰 분리하고, 모든 AI 학습 전후 단계에서 자동화된 비식별화 게이트를 의무 적용해야 함.",
+        "Provenance": "[근거: sessions/2026-05-26 | PII_Leakage_Index]"
+    },
+    {
+        "Risk_ID": "R002",
+        "Violation_Type": "AI 환각 및 출처 부재 (Hallucination & Provenance Deficit)",
+        "Description": "AI 모델이 근거 자료 없이 사실처럼 잘못된 법적/기술적 정보를 생성하거나, 답변의 근거가 된 원본 데이터를 제시하지 못하는 경우.",
+        "Applicable_Regulations": ["EU AI Act (Transparency Mandate)", "Jurisdiction Specific Regulatory Guidelines"],
+        "Root_Cause_Failure": "LLM 산출물에 대한 Provenance Mandate(근거 자료 및 프로세스 기록) 미구현. 답변의 신뢰도와 투명성 검증 단계가 생략됨.",
+        "Financial_Impact_Quantification": {
+            "Metric": "전문가 배상 책임 + 명예/신뢰도 하락 (Expert Liability + Trust Loss)",
+            "Min_Penalty": "$25,000",
+            "Max_Penalty": "$10,000,000+",
+            "Severity_Level": "Extreme",
+            "Explanation": "벌금 외의 무형적 손실(신뢰도 하락)이 가장 치명적임. 잘못된 보고서 1건만으로 기업의 시장 평판 가치에 막대한 타격을 입힐 수 있음."
+        },
+        "Mitigation_Strategy": "Provenance Layer 구축: 모든 AI 산출물은 반드시 참조한 원본 자료(Source Document)와 추론 과정을 기록하는 감사 가능한 '블랙박스' 로직을 포함해야 함.",
+        "Provenance": "[근거: sessions/2026-05-26 | Source_Attribution_Deficit; Researcher 개인 메모리]"
+    },
+    {
+        "Risk_ID": "R003",
+        "Violation_Type": "규제 준수 프로세스 누락 (Compliance Drift)",
+        "Description": "필수적인 내부 통제 절차(예: 다중 승인, 영향 평가)를 건너뛰거나 문서화하지 않아 발생하는 시스템적 비효율 및 법적 위반 위험.",
+        "Applicable_Regulations": ["DORA", "GDPR (Art 32)", "Financial Industry Guidelines"],
+        "Root_Cause_Failure": "규제 준수(Compliance)를 일회성 이벤트로 인식하고, 프로세스 자체를 '지속적으로 감사'하는 시스템이 부재함. 절차적 하자가 핵심 위협 요인.",
+        "Financial_Impact_Quantification": {
+            "Metric": "운영 중단 비용 + 계약 위약금 (Operational Downtime + Contract Penalty)",
+            "Min_Penalty": "$100,000",
+            "Max_Penalty": "$5,000,000+",
+            "Severity_Level": "High",
+            "Explanation": "단순 벌금보다 비즈니스 연속성(BCP) 위협이 큼. 시스템 중단 시간($T_{down}$)과 일일 평균 매출액($R_{daily}$)을 곱한 값이 최대 손실액의 핵심 구성 요소임."
+        },
+        "Mitigation_Strategy": "Audit Trail 강제화: 모든 주요 의사결정 및 데이터 처리에 대해 '불변 감사 원장(Immutable Audit Log)'을 생성하고, 이 로그를 외부 규제 기관에 언제든 제출할 수 있도록 준비해야 함.",
+        "Provenance": "[근거: sessions/2026-05-26 | Compliance_Drift_Score; 개인 메모리]"
+    },
+    {
+        "Risk_ID": "R004",
+        "Violation_Type": "데이터 주권 및 관할권 위반 (Data Sovereignty & Scope Violation)",
+        "Description": "국가/지역별로 제한된 데이터(예: 중국, EU의 민감 의료 정보)를 적절한 법적 근거 없이 외부로 전송하거나 처리하는 행위.",
+        "Applicable_Regulations": ["GDPR (Art 46)", "Data Localization Laws", "Specific National Acts"],
+        "Root_Cause_Failure": "데이터 저장 및 처리의 물리적, 논리적 경계를 모니터링하지 못함. '글로벌'이라는 이유만으로 규제를 간과하는 오판이 치명적.",
+        "Financial_Impact_Quantification": {
+            "Metric": "규제 당국의 강제 판매 중단 및 재구축 비용 (Mandatory Halt & Rebuild Cost)",
+            "Min_Penalty": "$75,000",
+            "Max_Penalty": "무한대*",
+            "Severity_Level": "Catastrophic",
+            "Explanation": "*최악의 경우, 해당 시장에서의 서비스 자체가 전면 중단(Market Exit)에 이르는 재앙적 손실을 의미. 즉각적인 법률 검토가 필수."
+        },
+        "Mitigation_Strategy": "데이터 거버넌스 프레임워크: 데이터가 생성되고 사용되는 모든 단계에서 '지역별 처리 권한'과 '법적 근거(Legal Basis)'를 명확히 태깅하고, 국경 간 전송에 대한 자동 승인/감지 시스템을 구축해야 함.",
+        "Provenance": "[근거: sessions/2026-05-28 | Scope_Violation_Flag; 개인 메모리]"
+    }
+]
